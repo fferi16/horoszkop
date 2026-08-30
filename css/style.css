@@ -618,15 +618,30 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
 /* szimbólum-lapok (Lenormand, cigánykártya) */
 .t-glyphcard{
   width:100%; max-width:88px; margin:0 auto; aspect-ratio:2/3;
-  border:1px solid var(--line); border-radius:8px;
-  background:linear-gradient(160deg,var(--bg2),var(--accent-soft));
+  border:1px solid #b39a6a; border-radius:7px; position:relative;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 32%, rgba(255,252,240,.9), rgba(240,228,200,.9) 70%),
+    linear-gradient(160deg,#f3e8cf,#e2d2ab);
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:4px; padding:4px; box-shadow:0 3px 10px rgba(0,0,0,.25);
+  gap:6px; padding:8px 5px 6px;
+  box-shadow:
+    inset 0 0 0 2px #f7efdc, inset 0 0 0 3px #c2a877,
+    inset 0 0 14px rgba(140,110,60,.28), 0 3px 10px rgba(0,0,0,.3);
 }
-.t-glyphcard .t-glyph{font-size:1.7rem; line-height:1}
+.t-glyphcard::before,.t-glyphcard::after{
+  content:'❦'; position:absolute; font-size:.55rem; color:#a98d58; opacity:.85;
+}
+.t-glyphcard::before{top:4px; left:6px}
+.t-glyphcard::after{bottom:4px; right:6px; transform:rotate(180deg)}
+.t-glyphcard .t-glyph{
+  font-size:2rem; line-height:1;
+  filter:drop-shadow(0 2px 2px rgba(90,60,20,.35));
+}
 .t-glyphcard .t-gname{
-  font-size:.58rem; text-transform:uppercase; letter-spacing:.03em;
-  color:var(--muted); font-weight:700; text-align:center; line-height:1.2;
+  font-family:var(--serif); font-size:.6rem; letter-spacing:.05em;
+  color:#5d4a28; font-weight:700; text-align:center; line-height:1.25;
+  text-transform:uppercase; border-top:1px solid #c2a877;
+  padding-top:3px; width:86%;
 }
 .t-glyphcard.t-crossglyph{
   position:absolute; left:50%; top:50%; width:74%;
