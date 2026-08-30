@@ -1082,6 +1082,33 @@
 
   /* ---------------- indítás ---------------- */
 
+  /* ---------------- nézetválasztó: horoszkóp vagy kártyavetés ---------------- */
+
+  var MODE_KEY = 'asztrolab.mode';
+
+  function setMode(mode, persist) {
+    document.body.classList.remove('mode-horoszkop', 'mode-tarot');
+    if (mode) document.body.classList.add('mode-' + mode);
+    [].forEach.call(document.querySelectorAll('.mode-tile'), function (t) {
+      t.classList.toggle('active', t.dataset.mode === mode);
+    });
+    if (persist) {
+      try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
+    }
+  }
+
+  function initMode() {
+    var nav = $('modeNav');
+    if (!nav) return;
+    nav.addEventListener('click', function (e) {
+      var tile = e.target.closest('.mode-tile');
+      if (tile) setMode(tile.dataset.mode, true);
+    });
+    var saved = null;
+    try { saved = localStorage.getItem(MODE_KEY); } catch (e) {}
+    if (saved === 'horoszkop' || saved === 'tarot') setMode(saved, false);
+  }
+
   /* ------- kártyavető: tarot / Lenormand / cigánykártya ------- */
 
   var tarotState = { deck: 'tarot', manual: null };
@@ -1447,6 +1474,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    initMode();
     initPlace();
     initPartnerPlace();
     initSpecial();

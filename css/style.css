@@ -58,6 +58,36 @@ body{
   letter-spacing:.01em;
 }
 
+/* ---- nézetválasztó ---- */
+.mode-nav{
+  display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:0 0 24px;
+}
+.mode-tile{
+  background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px 20px 18px; text-align:center; cursor:pointer;
+  display:flex; flex-direction:column; gap:5px; align-items:center;
+  box-shadow:var(--shadow); transition:border-color .15s, transform .12s;
+  font:inherit; color:var(--ink);
+}
+.mode-tile:hover{border-color:var(--accent); transform:translateY(-2px)}
+.mode-tile.active{
+  border-color:var(--accent2);
+  background:
+    radial-gradient(ellipse 80% 120% at 50% -30%, color-mix(in srgb,var(--accent) 14%,transparent), transparent 70%),
+    var(--bg2);
+}
+.mode-tile .mt-icon{font-size:2rem; color:var(--accent2)}
+.mode-tile .mt-title{
+  font-family:var(--serif); font-size:1.25rem; font-weight:600; letter-spacing:.02em;
+}
+.mode-tile .mt-sub{font-size:.84rem; color:var(--muted)}
+/* láthatóság mód szerint: választás előtt csak a csempék látszanak */
+body:not(.mode-horoszkop) #formCard,
+body:not(.mode-horoszkop) #result{display:none !important}
+body:not(.mode-tarot) #tarotBox{display:none !important}
+@media (max-width:560px){ .mode-nav{grid-template-columns:1fr} }
+@media print{ .mode-nav{display:none !important} }
+
 /* ---- kártyák ---- */
 .card{
   background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius);
