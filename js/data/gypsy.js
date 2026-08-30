@@ -13,7 +13,8 @@ window.HDATA.gypsy = {
 
   name: 'Cigánykártya',
   reversals: false,
-  glyphCards: true,
+  imgPath: 'assets/gypsy-ai/',   // helyben generált antik illusztrációk
+  imgExt: '.png',
 
   cards: {
     g01: { name: 'Ajándék', glyph: '🎁', polarity: '+', tag: 'orom',
