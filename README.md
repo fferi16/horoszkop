@@ -36,7 +36,7 @@ indításkor automatikusan is keres frissítést.
 2. `npm run dist`, majd hozd létre a release-t és töltsd fel a fájlokat:
 
    ```bash
-   gh release create v1.1.0 --title "Horoszkóp 1.1.0" --notes "Újdonságok..." "dist/Horoszkóp Setup 1.1.0.exe" "dist/Horoszkóp Setup 1.1.0.exe.blockmap" dist/latest.yml
+   gh release create v1.1.0 --title "Horoszkóp 1.1.0" --notes "Újdonságok..." dist/horoszkop-setup-1.1.0.exe dist/horoszkop-setup-1.1.0.exe.blockmap dist/latest.yml
    ```
 
 3. A telepített alkalmazás a következő indításkor magától észreveszi, letölti

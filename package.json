@@ -28,6 +28,7 @@
       ]
     },
     "nsis": {
+      "artifactName": "horoszkop-setup-${version}.${ext}",
       "oneClick": true,
       "perMachine": false,
       "runAfterFinish": true,
