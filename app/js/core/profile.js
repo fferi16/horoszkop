@@ -72,6 +72,7 @@
     buildWestern(out);
     buildHouses(out);
     buildPlanetDetails(out);
+    buildStructure(out);
     buildMoonSection(out);
     buildVedic(out);
     buildChinese(out);
@@ -474,7 +475,9 @@
         var otherKey = a.a === p.key ? a.b : a.a;
         var pair = [p.key, otherKey].sort().join('-');
         return {
-          text: a.symbol + ' ' + a.name + ' — ' + other,
+          text: a.symbol + ' ' + a.name + ' — ' + other +
+            (a.applying === true ? ' · közeledő' :
+             (a.applying === false ? ' · távolodó' : '')),
           orb: a.orb.toFixed(1).replace('.', ',') + '°',
           exact: a.exactness > 0.8,
           interp: get(D(), 'westernExt.aspectText.' + pair + '.' + a.type, '')
@@ -504,12 +507,232 @@
     }
     s.notes.push('A retrográd (℞) jelölés nem hibát jelent: a hagyomány szerint az ' +
       'ilyen bolygó befelé fordulva, lassabban és tudatosabban működik.');
+    var apn = get(D(), 'westernDeep.applyingNote', '');
+    if (apn) s.notes.push(apn);
     var critIntro = get(D(), 'degrees.critical.intro', '');
     if (critIntro) s.notes.push('Kritikus fokok: ' + critIntro);
     s.notes.push(SABIAN_NOTE);
     s.notes.push('A dekanátusok a modern, triplicitás-alapú felosztást követik: ' +
       'a jegy három harmadát a saját elemének három jegye uralja. Létezik egy másik, ' +
       'régebbi (kaldeus) rendszer is, amely eltérő uralkodókat ad.');
+    out.sections.push(s);
+  }
+
+  /* ================= a képlet szerkezete és erőviszonyai ================= */
+
+  var HU_PLANET_KEY = { 'Nap': 'sun', 'Hold': 'moon', 'Merkúr': 'mercury',
+    'Vénusz': 'venus', 'Mars': 'mars', 'Jupiter': 'jupiter',
+    'Szaturnusz': 'saturn', 'Uránusz': 'uranus', 'Neptunusz': 'neptune',
+    'Plútó': 'pluto' };
+
+  function dignityRow(signKey) {
+    var dl = get(D(), 'western.dignities', []);
+    for (var i = 0; i < dl.length; i++) if (dl[i].sign === signKey) return dl[i];
+    return null;
+  }
+
+  function buildStructure(out) {
+    var WD = get(D(), 'westernDeep', null);
+    if (!WD) return;
+    var c = out.chart;
+    var s = section('szerkezet', 'A képlet szerkezete és erőviszonyai', '⚖', 'nyugati');
+    var KEYS = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
+      'saturn', 'uranus', 'neptune', 'pluto'];
+    var hasTime = out.input.hasTime && c.houses;
+
+    /* --- szekta --- */
+    var isDay = null;
+    if (hasTime) {
+      isDay = c.planets.sun.house >= 7;         // 7–12. ház: a horizont felett
+      var sd = isDay ? WD.sect.day : WD.sect.night;
+      item(s, 'Szekta', sd.name, sd.text);
+      out.sect = isDay ? 'day' : 'night';
+    } else {
+      s.notes.push(WD.sect.noTime);
+    }
+
+    /* --- a képlet ura --- */
+    if (hasTime && c.ascSign) {
+      var ascSd = signData(c.ascSign.key);
+      var rulerKey = ascSd && HU_PLANET_KEY[ascSd.ruler];
+      if (rulerKey && c.planets[rulerKey]) {
+        var rp = c.planets[rulerKey];
+        item(s, 'A képlet ura', rp.symbol + ' ' + rp.name + ' — ' +
+          rp.sign.text + (rp.house ? ' · ' + rp.house + '. ház' : ''),
+          WD.chartRuler.intro + ' ' + WD.chartRuler.line
+            .replace(/%P%/g, rp.name).replace('%S%', c.ascSign.name));
+      }
+    }
+
+    /* --- diszpozitor-lánc --- */
+    var disp = {};
+    KEYS.forEach(function (k) {
+      var row = dignityRow(c.planets[k].sign.key);
+      disp[k] = row ? HU_PLANET_KEY[row.domicile] : null;
+    });
+    var finals = KEYS.filter(function (k) { return disp[k] === k; });
+    if (finals.length === 1) {
+      item(s, 'Végdiszpozitor', c.planets[finals[0]].symbol + ' ' +
+        c.planets[finals[0]].name,
+        WD.dispositor.intro + ' ' +
+        WD.dispositor.single.replace(/%P%/g, c.planets[finals[0]].name));
+    } else if (finals.length > 1) {
+      item(s, 'Végdiszpozitorok',
+        finals.map(function (k) { return c.planets[k].name; }).join(', '),
+        WD.dispositor.intro + ' ' + WD.dispositor.multiple
+          .replace('%P%', finals.map(function (k) { return c.planets[k].name; }).join(', ')));
+    } else {
+      // korforgas: kovessuk a lancot a Naptol, amig ismetlodik
+      var seen = [], cur = 'sun';
+      while (cur && seen.indexOf(cur) < 0) { seen.push(cur); cur = disp[cur]; }
+      var loop = cur ? seen.slice(seen.indexOf(cur)) : seen;
+      item(s, 'Diszpozitor-körforgás',
+        loop.map(function (k) { return c.planets[k].name; }).join(' → '),
+        WD.dispositor.intro + ' ' + WD.dispositor.loop
+          .replace('%P%', loop.map(function (k) { return c.planets[k].name; }).join(', ')));
+    }
+
+    /* --- Jones-féle képletalak --- */
+    var lons = KEYS.map(function (k) { return c.planets[k].lon; })
+      .sort(function (a, b) { return a - b; });
+    var gaps = [], gi;
+    for (gi = 0; gi < lons.length; gi++) {
+      var nextL = lons[(gi + 1) % lons.length];
+      gaps.push({ size: HCORE.norm360(nextL - lons[gi]), after: gi });
+    }
+    var maxGap = gaps.reduce(function (m, g) { return g.size > m.size ? g : m; }, gaps[0]);
+    var arc = 360 - maxGap.size;
+
+    // vödör: kilenc egy félkörben, egy különálló a túloldalon
+    var bucketHandle = null;
+    KEYS.forEach(function (k) {
+      if (bucketHandle) return;
+      var others = KEYS.filter(function (x) { return x !== k; })
+        .map(function (x) { return c.planets[x].lon; })
+        .sort(function (a, b) { return a - b; });
+      var mg = 0;
+      for (var q = 0; q < others.length; q++) {
+        var g2 = HCORE.norm360(others[(q + 1) % others.length] - others[q]);
+        if (g2 > mg) mg = g2;
+      }
+      var minDist = 999;
+      others.forEach(function (ol) {
+        var dd = HCORE.angleDiff(c.planets[k].lon, ol);
+        if (dd < minDist) minDist = dd;
+      });
+      if (360 - mg <= 175 && minDist >= 55) bucketHandle = k;
+    });
+
+    var shape, shapeExtra = '';
+    if (bucketHandle) {
+      shape = WD.shape.bucket;
+      shapeExtra = c.planets[bucketHandle].name;
+    } else if (arc <= 125) shape = WD.shape.bundle;
+    else if (arc <= 185) shape = WD.shape.bowl;
+    else if (arc <= 245) {
+      shape = WD.shape.locomotive;
+      // a vezérbolygó: az üres harmad után zodiákus irányban első bolygó
+      var leadLon = lons[(maxGap.after + 1) % lons.length];
+      KEYS.forEach(function (k) {
+        if (Math.abs(HCORE.norm360(c.planets[k].lon - leadLon)) < 0.01) {
+          shapeExtra = c.planets[k].name;
+        }
+      });
+    } else {
+      var bigGaps = gaps.filter(function (g) { return g.size >= 55; }).length;
+      if (bigGaps === 2) shape = WD.shape.seesaw;
+      else if (bigGaps >= 3) shape = WD.shape.splay;
+      else shape = WD.shape.splash;
+    }
+    item(s, 'A képlet alakja (Jones)', shape.name,
+      WD.shape.intro + ' ' + shape.text.replace('%P%', shapeExtra || ''));
+
+    /* --- féltekehangsúly --- */
+    if (hasTime) {
+      var top = 0, east = 0;
+      KEYS.forEach(function (k) {
+        var h = c.planets[k].house;
+        if (h >= 7) top++;
+        if (h >= 10 || h <= 3) east++;
+      });
+      var hemi = [];
+      if (top >= 7) hemi.push(WD.hemispheres.south);
+      else if (top <= 3) hemi.push(WD.hemispheres.north);
+      if (east >= 7) hemi.push(WD.hemispheres.east);
+      else if (east <= 3) hemi.push(WD.hemispheres.west);
+      if (!hemi.length) hemi.push(WD.hemispheres.balanced);
+      item(s, 'Féltekehangsúly',
+        'fent ' + top + ' · lent ' + (10 - top) + ' · keleti ' + east +
+        ' · nyugati ' + (10 - east),
+        WD.hemispheres.intro + ' ' + hemi.join(' '));
+    }
+
+    /* --- esszenciális méltóságpontozás (a hét klasszikus bolygó) --- */
+    var TRIP = {
+      'Tűz': { day: 'Nap', night: 'Jupiter' },
+      'Föld': { day: 'Vénusz', night: 'Hold' },
+      'Levegő': { day: 'Szaturnusz', night: 'Merkúr' },
+      'Víz': { day: 'Vénusz', night: 'Mars' }
+    };
+    var CLASSICAL = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn'];
+    var CLASSICAL_HU = ['Nap', 'Hold', 'Merkúr', 'Vénusz', 'Mars', 'Jupiter', 'Szaturnusz'];
+    var sectKey = isDay === false ? 'night' : 'day';
+
+    var scored = CLASSICAL.map(function (k) {
+      var p = c.planets[k];
+      var row = dignityRow(p.sign.key) || {};
+      var sd2 = signData(p.sign.key);
+      var pts = 0, parts = [];
+      var domicile = row.domicileTraditional || row.domicile;
+      if (domicile === p.name) { pts += 5; parts.push('otthon (+5)'); }
+      if (row.exaltation === p.name && CLASSICAL_HU.indexOf(row.exaltation) >= 0) {
+        pts += 4; parts.push('erőben (+4)');
+      }
+      if (sd2 && TRIP[sd2.element] && TRIP[sd2.element][sectKey] === p.name) {
+        pts += 3; parts.push('háromság ura (+3)');
+      }
+      var terms = get(D(), 'degrees.terms.' + p.sign.key, []);
+      for (var t = 0; t < terms.length; t++) {
+        if (p.sign.degree >= terms[t].from && p.sign.degree < terms[t].to) {
+          if (terms[t].ruler === p.name) { pts += 2; parts.push('saját határ (+2)'); }
+          break;
+        }
+      }
+      var decans = get(D(), 'western.decans', []);
+      for (var dc = 0; dc < decans.length; dc++) {
+        if (decans[dc].sign === p.sign.name &&
+            p.sign.degree >= decans[dc].from && p.sign.degree < decans[dc].to) {
+          if (decans[dc].ruler === p.name) { pts += 1; parts.push('saját arc (+1)'); }
+          break;
+        }
+      }
+      if (row.detriment === p.name) { pts -= 5; parts.push('száműzetés (−5)'); }
+      if (row.fall === p.name && CLASSICAL_HU.indexOf(row.fall) >= 0) {
+        pts -= 4; parts.push('esés (−4)');
+      }
+      return { key: k, name: p.name, symbol: p.symbol, pts: pts, parts: parts,
+        sign: p.sign.name };
+    });
+
+    scored.sort(function (a, b) { return b.pts - a.pts; });
+    item(s, 'Méltóságpontok',
+      scored.map(function (x) {
+        return x.symbol + ' ' + (x.pts > 0 ? '+' : '') + x.pts;
+      }).join(' · '),
+      WD.dignityScore.intro);
+
+    var strong = scored[0], weak = scored[scored.length - 1];
+    item(s, 'A képlet bajnoka', strong.symbol + ' ' + strong.name + ' (' +
+      (strong.pts > 0 ? '+' : '') + strong.pts + ' pont, ' + strong.sign + ')',
+      (strong.parts.length ? strong.parts.join(', ') + ' — ' : '') +
+      strong.name + ' ' + WD.dignityScore.strong);
+    item(s, 'A leghalkabb bolygó', weak.symbol + ' ' + weak.name + ' (' +
+      (weak.pts > 0 ? '+' : '') + weak.pts + ' pont, ' + weak.sign + ')',
+      (weak.parts.length ? weak.parts.join(', ') + ' — ' : '') +
+      weak.name + ' ' + WD.dignityScore.weak +
+      (weak.pts === 0 && !weak.parts.length ? ' ' + WD.dignityScore.peregrine : ''));
+    s.notes.push(WD.dignityScore.note);
+
     out.sections.push(s);
   }
 

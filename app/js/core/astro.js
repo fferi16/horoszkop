@@ -339,10 +339,16 @@
             orb = Math.max(2, orb - 2);
           }
           if (delta <= orb) {
+            // közeledő vagy távolodó: kicsit előre léptetve csökken-e az eltérés
+            var applying = null;
+            if (a.speed != null && b.speed != null) {
+              var sepF = angleDiff(a.lon + a.speed * 0.1, b.lon + b.speed * 0.1);
+              applying = Math.abs(sepF - asp.angle) < delta;
+            }
             out.push({
               a: a.key, b: b.key, aName: a.name, bName: b.name,
               type: asp.key, name: asp.name, symbol: asp.symbol,
-              angle: asp.angle, orb: delta,
+              angle: asp.angle, orb: delta, applying: applying,
               exactness: Math.max(0, 1 - delta / orb)
             });
             break;
