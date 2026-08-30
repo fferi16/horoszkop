@@ -928,7 +928,14 @@
     });
 
     $('btnSave').addEventListener('click', saveCurrent);
-    $('btnPrint').addEventListener('click', function () { window.print(); });
+    // az asztali (Electron) változatban közvetlen PDF-mentés, nyomtatási
+    // párbeszéd nélkül; böngészőben marad a nyomtatás (ott azon át megy a PDF)
+    if (window.electronPDF && window.electronPDF.save) {
+      $('btnPrint').textContent = 'Mentés PDF-ként';
+      $('btnPrint').addEventListener('click', function () { window.electronPDF.save(); });
+    } else {
+      $('btnPrint').addEventListener('click', function () { window.print(); });
+    }
 
     // nyomtatáskor (gomb és Ctrl+P is) minden lenyíló rész nyitva kerüljön papírra
     window.addEventListener('beforeprint', openDetailsForPrint);
