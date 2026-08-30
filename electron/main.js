@@ -45,8 +45,16 @@ function createWindow() {
 
   // külső hivatkozás a rendszerböngészőben nyíljon, ne az alkalmazásban
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (/^https?:\/\//i.test(url)) shell.openExternal(url);
+    if (/^(https?:|mailto:)/i.test(url)) shell.openExternal(url);
     return { action: 'deny' };
+  });
+
+  // mailto: és külső linkek sima kattintásra is a rendszerben nyíljanak
+  win.webContents.on('will-navigate', (e, url) => {
+    if (/^(https?:|mailto:)/i.test(url) && !url.startsWith('file://')) {
+      e.preventDefault();
+      shell.openExternal(url);
+    }
   });
 
   win.on('closed', () => { win = null; });
@@ -232,7 +240,7 @@ function buildMenu() {
                 'népi rendszerek — és a modern kronobiológia alapján.\n' +
                 'Minden számítás helyben, a saját gépeden fut; ' +
                 'az adataid nem hagyják el a gépet.\n\n' +
-                'Powered by Pacsai Ferenc\n' +
+                'Powered by Pacsai Ferenc — pacsai.ferenc89@gmail.com\n' +
                 'A fejlesztés folyamatosan zajlik — új funkciók érkeznek.\n\n' +
                 'Nyílt forráskódú összetevők (MIT licenc): Astronomy Engine ' +
                 '(© Don Cross), Electron (© Electron contributors, GitHub Inc.), ' +
