@@ -2406,6 +2406,24 @@
     });
     item(s, 'Most retrográd', retro.length ? retro.join(', ') : 'egyik sem a belső bolygók közül', '');
 
+    // a nap tarot-lapja: a dátumból és a születési adatokból determinisztikus,
+    // így egész nap ugyanaz — nem "húzás", hanem napi hangoló lap
+    var TAR = get(D(), 'tarot.cards', null);
+    if (TAR) {
+      var ids = Object.keys(TAR);
+      var seedStr = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' +
+        now.getDate() + '|' + out.input.year + out.input.month + out.input.day;
+      var hsh = 0;
+      for (var ci = 0; ci < seedStr.length; ci++) {
+        hsh = ((hsh << 5) - hsh + seedStr.charCodeAt(ci)) | 0;
+      }
+      var dayCard = TAR[ids[Math.abs(hsh) % ids.length]];
+      item(s, 'A nap tarot-lapja', dayCard.name,
+        dayCard.up + ' (A lap a mai naphoz és a születési adataidhoz kötött — ' +
+        'egész nap ugyanaz, holnap új lap érkezik. Kirakásokhoz lent a ' +
+        'kártyavetőt használd.)');
+    }
+
     // mai jeles nap és névnap
     var tm = now.getMonth() + 1, td = now.getDate();
     var todayNames = C.nameDay(tm, td);
