@@ -17,6 +17,11 @@ try {
 
 let win = null;
 
+// Fejlesztői módban ne gyorsítótárazzon: mindig a friss forrás töltődjön be.
+if (!app.isPackaged) {
+  app.commandLine.appendSwitch('disable-http-cache');
+}
+
 /* ---------------- ablak ---------------- */
 
 function createWindow() {
