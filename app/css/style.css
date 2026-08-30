@@ -293,6 +293,10 @@ button:active{transform:translateY(1px)}
   width:24px; height:24px; border-radius:50%; object-fit:cover;
   vertical-align:middle;
 }
+.mode-tile .mt-icon .icon-img{
+  width:72px; height:72px; border-radius:50%; object-fit:cover; display:block;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent2) 45%,transparent);
+}
 
 /* ---- szekciók ---- */
 .sec-items{display:flex; flex-direction:column; gap:2px}
