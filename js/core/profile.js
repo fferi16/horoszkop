@@ -1489,6 +1489,46 @@
     item(s, 'Életenergia', String(pr.lifeEnergy),
       'A három kontúr összege — a rendszer szerint ez az általános energiaszinted.');
 
+    /* --- kiértékelés a rendszer saját skálája szerint --- */
+    var HDD = get(D(), 'hvdDeep', null);
+    if (HDD && pr.chakras && pr.chakras.length) {
+      var UPPER = ['szahaszrara', 'adzsna', 'visuddha'];
+      var LOWER = ['manipura', 'szvadhisthana', 'muladhara'];
+      var evalParts = [HDD.intro];
+      var excess = pr.chakras.filter(function (ch) { return ch.band.key === 'tulzott'; });
+      var deficit = pr.chakras.filter(function (ch) { return ch.band.key === 'gyenge'; });
+
+      if (!excess.length && !deficit.length) {
+        evalParts.push(HDD.allNormal);
+      } else {
+        excess.forEach(function (ch) {
+          if (HDD.excess[ch.key]) {
+            evalParts.push(ch.name + ' (' + ch.value + '%): ' + HDD.excess[ch.key] + '.');
+          }
+        });
+        deficit.forEach(function (ch) {
+          if (HDD.deficit[ch.key]) {
+            evalParts.push(ch.name + ' (' + ch.value + '%): ' + HDD.deficit[ch.key] + '.');
+          }
+        });
+      }
+
+      var avg = function (keys) {
+        var vals = pr.chakras.filter(function (ch) { return keys.indexOf(ch.key) >= 0; });
+        return vals.length
+          ? vals.reduce(function (a, ch) { return a + ch.value; }, 0) / vals.length : null;
+      };
+      var up = avg(UPPER), lo = avg(LOWER);
+      if (up != null && lo != null) {
+        if (up - lo >= 15) evalParts.push(HDD.upperTilt);
+        else if (lo - up >= 15) evalParts.push(HDD.lowerTilt);
+        else evalParts.push(HDD.balancedTilt);
+      }
+
+      item(s, 'Kiértékelés — a csakraszerkezeted összképe', '', evalParts.join(' '));
+      s.notes.push(HDD.disclaimer);
+    }
+
     s.hvd = pr;
     s.notes.push(HD.intro);
     s.notes.push(HD.sahasraraNote);
