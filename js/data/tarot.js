@@ -189,6 +189,9 @@ window.HDATA.tarot = {
         { name: 'Amit nem látsz', text: 'A rejtett tényező: szempont, amelyet a mérlegelésed eddig kihagyott.' },
         { name: 'Tanács', text: 'A kirakás iránymutatása — nem dönt helyetted, de megvilágítja a mérleget.' }] },
     { key: 'patko', name: 'Patkó-kirakás', cards: 7,
+      layout: { cols: 7, rows: 3, cells: [
+        { r: 3, c: 1 }, { r: 2, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 },
+        { r: 1, c: 5 }, { r: 2, c: 6 }, { r: 3, c: 7 }] },
       desc: 'Hét lapos áttekintés egy folyamatról: múlt, jelen, rejtett hatások, akadály, környezet, tanács, kimenetel.',
       positions: [
         { name: 'Múlt', text: 'A folyamat előzménye, gyökere.' },
@@ -199,7 +202,18 @@ window.HDATA.tarot = {
         { name: 'Tanács', text: 'A javasolt lépés vagy hozzáállás.' },
         { name: 'Kimenetel', text: 'Amerre a folyamat a jelen állás szerint tart.' }] },
     { key: 'kelta', name: 'Kelta kereszt', cards: 10,
-      desc: 'A leghíresebb nagy kirakás: tíz lap, amely a helyzet minden rétegét — tudatosat és tudattalant, múltat és kimenetelt — feltérképezi.',
+      layout: { cols: 4, rows: 4, cells: [
+        { r: 2, c: 2 },                 // 1. a helyzet (közép)
+        { r: 2, c: 2, cross: true },    // 2. a keresztező erő (ráfektetve)
+        { r: 3, c: 2 },                 // 3. a gyökér (alul)
+        { r: 2, c: 1 },                 // 4. a múlt (balra)
+        { r: 1, c: 2 },                 // 5. a korona (felül)
+        { r: 2, c: 3 },                 // 6. a közeljövő (jobbra)
+        { r: 4, c: 4 },                 // 7. önmagad (pálca alja)
+        { r: 3, c: 4 },                 // 8. a környezet
+        { r: 2, c: 4 },                 // 9. remények és félelmek
+        { r: 1, c: 4 }] },              // 10. a kimenetel (pálca teteje)
+      desc: 'A leghíresebb nagy kirakás: tíz lap, amely a helyzet minden rétegét — tudatosat és tudattalant, múltat és kimenetelt — feltérképezi. A bal oldali kereszt a helyzet, a jobb oldali pálca a fejlődés íve.',
       positions: [
         { name: '1. A helyzet', text: 'A kérdés magja: ahol most állsz.' },
         { name: '2. A keresztező erő', text: 'Ami keresztbe fekszik: a fő kihívás vagy épp a fő segítség — mindig a helyzettel kölcsönhatásban.' },

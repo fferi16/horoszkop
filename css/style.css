@@ -584,6 +584,37 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
 }
 .t-postext{font-size:.8rem; color:var(--muted); margin:7px 0 5px; font-style:italic}
 .t-meaning{font-size:.88rem; line-height:1.5; text-align:left}
+/* a kirakás térbeli táblája */
+.t-board{
+  display:grid; gap:12px; justify-content:center; align-items:center;
+  margin:16px 0 4px; padding:18px 10px; border:1px solid var(--line);
+  border-radius:13px;
+  background:
+    radial-gradient(ellipse 80% 120% at 50% -30%, color-mix(in srgb,var(--accent) 10%,transparent), transparent 70%),
+    var(--bg);
+  overflow-x:auto;
+}
+.t-mini{position:relative; text-align:center}
+.t-mini img{
+  width:100%; max-width:82px; border-radius:6px; display:block; margin:0 auto;
+  box-shadow:0 3px 10px rgba(0,0,0,.35); transition:transform .3s;
+}
+.t-mini img.t-rev{transform:rotate(180deg)}
+.t-mini img.t-crossimg{
+  position:absolute; left:50%; top:50%; width:82%; max-width:70px;
+  transform:translate(-50%,-50%) rotate(90deg); z-index:2;
+  box-shadow:0 5px 16px rgba(0,0,0,.5);
+}
+.t-mini img.t-crossimg.t-crossrev{transform:translate(-50%,-50%) rotate(270deg)}
+.t-mini.t-cross{position:relative; align-self:stretch; justify-self:stretch; z-index:2}
+.t-num{
+  position:absolute; right:-4px; top:-6px; z-index:3;
+  background:var(--accent2); color:#fff; font-size:.7rem; font-weight:700;
+  width:20px; height:20px; line-height:20px; border-radius:50%;
+  box-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.t-mini.t-cross .t-num{right:auto; left:-4px; top:auto; bottom:-6px}
+
 .t-manual{display:flex; flex-direction:column; gap:9px; margin:10px 0}
 .t-mrow{
   display:grid; grid-template-columns:200px 1fr auto; gap:10px; align-items:center;

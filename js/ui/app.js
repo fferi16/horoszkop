@@ -1177,11 +1177,36 @@
     });
   }
 
+  /** A kirakás valódi térbeli elrendezése (Kelta kereszt, Patkó). */
+  function renderTarotBoard(res) {
+    var lay = res.spread.layout;
+    if (!lay) return '';
+    var cells = res.rows.map(function (r, i) {
+      var c = lay.cells[i];
+      if (!c) return '';
+      var cls = 't-mini' + (c.cross ? ' t-cross' : '');
+      var imgCls = (c.cross ? 't-crossimg' : '') +
+        (r.reversed ? (c.cross ? ' t-crossrev' : ' t-rev') : '');
+      return '<div class="' + cls + '" style="grid-row:' + c.r +
+        ';grid-column:' + c.c + '" title="' + esc(r.position + ': ' + r.name +
+        (r.reversed ? ' (fordított)' : '')) + '">' +
+        '<img src="' + r.img + '" alt="' + esc(r.name) + '"' +
+        (imgCls ? ' class="' + imgCls.trim() + '"' : '') + '>' +
+        '<span class="t-num">' + (i + 1) + '</span></div>';
+    }).join('');
+    return '<div class="t-board" style="grid-template-columns:repeat(' + lay.cols +
+      ',minmax(64px,96px));grid-template-rows:repeat(' + lay.rows + ',auto)">' +
+      cells + '</div>' +
+      '<p style="text-align:center"><small>A számok a lapok sorrendjét jelölik — ' +
+      'a részletes olvasat lentebb, ugyanebben a sorrendben következik.</small></p>';
+  }
+
   function renderTarotResult(res, manual) {
     if (!res) return;
     var t = tarotData();
     var html = '<h3 class="sec-h3">' + esc(res.spread.name) +
       (manual ? ' — a saját kirakásod' : ' — a húzásod') + '</h3>' +
+      renderTarotBoard(res) +
       '<div class="t-grid">' + res.rows.map(function (r) {
         return '<div class="t-card' + (r.major ? ' t-major' : '') + '">' +
           '<div class="t-pos">' + esc(r.position) + '</div>' +
