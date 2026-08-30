@@ -305,6 +305,38 @@
         .replace('%R%', rows[2].name));
     }
 
+    // lappár-olvasatok (Lenormand kombinációs adatbázis)
+    var LP = deckKey === 'lenormand' &&
+      global.HDATA && global.HDATA.lenormandPairs;
+    if (LP) {
+      var pairLine = function (i, j) {
+        return '„' + rows[i].name + ' + ' + rows[j].name + '": ' +
+          LP.combine(rows[i].id, rows[j].id);
+      };
+      var pairs = [];
+      if (spread.key === 'harmas') pairs = [[0, 1], [1, 2]];
+      else if (spread.key === 'otos') pairs = [[1, 2], [2, 3], [0, 1], [3, 4]];
+      else if (spread.key === 'hetes') pairs = [[2, 3], [3, 4], [1, 2], [4, 5]];
+      else if (spread.key === 'kilences') pairs = [[1, 4], [3, 4], [4, 5], [4, 7]];
+      else if (spread.key === 'gt') {
+        var gi = -1;
+        rows.forEach(function (r, i2) {
+          if (gi < 0 && (r.id === 'l28' || r.id === 'l29')) gi = i2;
+        });
+        if (gi >= 0) {
+          var gr = Math.floor(gi / 9), gc = gi % 9;
+          if (gc > 0) pairs.push([gi, gi - 1]);
+          if (gc < 8) pairs.push([gi, gi + 1]);
+          if (gr > 0) pairs.push([gi, gi - 9]);
+          if (gr < 3) pairs.push([gi, gi + 9]);
+        }
+      }
+      if (pairs.length) {
+        syn.push('Lappár-olvasatok — ' +
+          pairs.map(function (p) { return pairLine(p[0], p[1]); }).join(' · '));
+      }
+    }
+
     // teljes paklis terítésnél a statisztikai olvasatok értelmetlenek
     var fullDeck = T >= 30;
 
