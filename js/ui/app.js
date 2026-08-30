@@ -1107,18 +1107,19 @@
     return { cols: cols, rows: Math.ceil(sp.cards / cols), cells: cells };
   }
 
-  /** Egy lap vizuális képe: kép (tarot) vagy szimbólum-lap (Lenormand, cigány). */
+  /** Egy lap vizuális képe: kártyakép vagy szimbólum-lap. */
   function cardFace(id, reversed, cross) {
     var d = deckData();
     var c = d.cards[id];
-    if (d.glyphCards) {
+    var base = HCORE.tarot.imgBase(tarotState.deck);
+    if (!base) {
       return '<div class="t-glyphcard' + (cross ? ' t-crossglyph' : '') + '">' +
         '<span class="t-glyph">' + c.glyph + '</span>' +
         '<span class="t-gname">' + esc(c.name) + '</span></div>';
     }
     var cls = (cross ? 't-crossimg' : '') +
       (reversed ? (cross ? ' t-crossrev' : ' t-rev') : '');
-    return '<img src="assets/tarot/' + id + '.jpg" alt="' + esc(c.name) + '"' +
+    return '<img src="' + base + id + '.jpg" alt="' + esc(c.name) + '"' +
       (cls ? ' class="' + cls.trim() + '"' : '') + '>';
   }
 
@@ -1205,7 +1206,7 @@
         var inner;
         if (pick) {
           inner = cardFace(pick.id, pick.reversed, cell.cross) +
-            (pick.reversed && !deckData().glyphCards
+            (pick.reversed && HCORE.tarot.imgBase(tarotState.deck)
               ? '<span class="t-revmark">ford.</span>' : '');
         } else {
           inner = '<div class="t-empty' + (cell.cross ? ' t-emptycross' : '') +
@@ -1251,9 +1252,10 @@
         : '') + '</div>' +
       '<div class="t-picker">' + Object.keys(d.cards).map(function (id) {
         var c = d.cards[id];
-        var face = d.glyphCards
+        var pbase = HCORE.tarot.imgBase(tarotState.deck);
+        var face = !pbase
           ? '<span class="t-glyph">' + c.glyph + '</span>'
-          : '<img src="assets/tarot/' + id + '.jpg" alt="" loading="lazy">';
+          : '<img src="' + pbase + id + '.jpg" alt="" loading="lazy">';
         return '<button type="button" class="t-pick' +
           (used[id] ? ' used' : '') +
           (current && current.id === id ? ' sel' : '') +
@@ -1293,12 +1295,11 @@
   function renderTarotBoard(res) {
     var lay = res.spread.layout;
     if (!lay) return '';
-    var d = deckData();
     var cells = res.rows.map(function (r, i) {
       var c = lay.cells[i];
       if (!c) return '';
       var face;
-      if (d.glyphCards) {
+      if (!r.img) {
         face = '<div class="t-glyphcard' + (c.cross ? ' t-crossglyph' : '') + '">' +
           '<span class="t-glyph">' + (r.glyph || '') + '</span>' +
           '<span class="t-gname">' + esc(r.name) + '</span></div>';
@@ -1327,7 +1328,7 @@
       (manual ? ' — a saját kirakásod' : ' — a húzásod') + '</h3>' +
       renderTarotBoard(res) +
       '<div class="t-grid">' + res.rows.map(function (r) {
-        var face = d.glyphCards
+        var face = !r.img
           ? '<div class="t-glyphbig">' + (r.glyph || '') + '</div>'
           : '<img src="' + r.img + '" alt="' + esc(r.name) + '"' +
             (r.reversed ? ' class="t-rev"' : '') + '>';

@@ -25,6 +25,14 @@
     return d ? d.reversals !== false : true;
   }
 
+  /** A pakli képmappája, vagy null, ha szimbólum-lapokkal jelenik meg. */
+  function imgBase(deckKey) {
+    var d = deckOf(deckKey);
+    if (!d) return null;
+    if (d.imgPath) return d.imgPath;
+    return d.glyphCards ? null : 'assets/tarot/';
+  }
+
   /** Kriptográfiai véletlen egész [0, n). */
   function rnd(n) {
     if (global.crypto && global.crypto.getRandomValues) {
@@ -221,7 +229,7 @@
         id: p.id,
         name: meta.card.name,
         reversed: !!p.reversed,
-        img: d.glyphCards ? null : 'assets/tarot/' + p.id + '.jpg',
+        img: imgBase(deckKey) ? imgBase(deckKey) + p.id + '.jpg' : null,
         glyph: meta.card.glyph || null,
         meaning: (p.reversed && meta.card.rev) ? meta.card.rev : meta.card.up,
         major: meta.major,
@@ -241,6 +249,7 @@
     deckOf: deckOf,
     deckIds: deckIds,
     hasReversals: hasReversals,
+    imgBase: imgBase,
     draw: draw,
     cardMeta: cardMeta,
     evaluate: evaluate
