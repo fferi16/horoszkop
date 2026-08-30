@@ -1082,6 +1082,49 @@
 
   /* ---------------- indítás ---------------- */
 
+  /* ---------------- adatmentés és betöltés ---------------- */
+
+  var BACKUP_KEYS = ['horoszkop.profilok', 'asztrolab.huzasnaplo', 'asztrolab.mode'];
+
+  function initBackup() {
+    var ex = $('btnExport'), im = $('btnImport'), file = $('importFile');
+    if (!ex) return;
+    ex.addEventListener('click', function () {
+      var data = { asztrolab: 1, exportalva: new Date().toISOString() };
+      BACKUP_KEYS.forEach(function (k) {
+        try { data[k] = localStorage.getItem(k); } catch (e) {}
+      });
+      var blob = new Blob([JSON.stringify(data, null, 2)],
+        { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'asztrolab-mentes-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    });
+    im.addEventListener('click', function () { file.click(); });
+    file.addEventListener('change', function () {
+      var f = file.files[0];
+      if (!f) return;
+      var r = new FileReader();
+      r.onload = function () {
+        try {
+          var data = JSON.parse(r.result);
+          if (!data.asztrolab) throw new Error('nem Asztroláb-mentés');
+          var n = 0;
+          BACKUP_KEYS.forEach(function (k) {
+            if (typeof data[k] === 'string') { localStorage.setItem(k, data[k]); n++; }
+          });
+          alert('Betöltve (' + n + ' adatkör). Az oldal újratöltődik.');
+          location.reload();
+        } catch (e) {
+          alert('Ez nem érvényes Asztroláb-mentésfájl.');
+        }
+      };
+      r.readAsText(f);
+    });
+  }
+
   /* ---------------- nézetválasztó: horoszkóp vagy kártyavetés ---------------- */
 
   var MODE_KEY = 'asztrolab.mode';
@@ -1217,11 +1260,16 @@
   var TLOG = 'asztrolab.huzasnaplo';
 
   function tarotLogSave(res, manual) {
+    if (tarotState.replaying) { tarotState.replaying = false; return; }
     try {
       var list = JSON.parse(localStorage.getItem(TLOG) || '[]');
       list.unshift({
         d: new Date().toISOString().slice(0, 16).replace('T', ' '),
         deck: tarotState.deck, spread: res.spread.name, manual: !!manual,
+        spreadKey: res.spread.key,
+        picks: res.rows.map(function (r) {
+          return { id: r.id, reversed: r.reversed };
+        }),
         cards: res.rows.map(function (r) {
           return r.name + (r.reversed ? ' ℞' : '');
         })
@@ -1241,9 +1289,11 @@
       return;
     }
     $('tarotResult').innerHTML = '<h3 class="sec-h3">Húzásnapló</h3>' +
-      '<div class="sec-items">' + list.map(function (e) {
+      '<div class="sec-items">' + list.map(function (e, i) {
         return '<div class="row"><div class="lbl">' + esc(e.d) + ' · ' +
-          esc(e.spread) + (e.manual ? ' · saját kirakás' : '') + '</div>' +
+          esc(e.spread) + (e.manual ? ' · saját kirakás' : '') +
+          (e.picks ? ' <button type="button" class="log-open" data-li="' + i +
+            '">↺ megnyitás</button>' : '') + '</div>' +
           '<div class="txt">' + esc(e.cards.join(' · ')) + '</div></div>';
       }).join('') + '</div>' +
       '<div class="actions"><button type="button" class="ghost" id="tarotLogClear">' +
@@ -1251,6 +1301,19 @@
     $('tarotLogClear').addEventListener('click', function () {
       localStorage.removeItem(TLOG);
       renderTarotLog();
+    });
+    [].forEach.call(document.querySelectorAll('.log-open'), function (b) {
+      b.addEventListener('click', function () {
+        var e = list[+b.dataset.li];
+        if (!e || !e.picks) return;
+        tarotState.deck = e.deck;
+        $('tarotDeck').value = e.deck;
+        $('tarotDeck').dispatchEvent(new Event('change'));
+        $('tarotSpread').value = e.spreadKey;
+        tarotState.replaying = true;
+        renderTarotResult(
+          HCORE.tarot.evaluate(e.deck, e.spreadKey, e.picks, tarotCtx()), e.manual);
+      });
     });
   }
 
@@ -1440,7 +1503,20 @@
         }).join('') + '</div>';
     }
     html += '<div class="notes"><p>' + esc(d.synthesis.note) + '</p></div>';
+    html += '<div class="actions"><button type="button" class="ghost" id="tarotPdf">' +
+      (window.electronPDF ? 'Mentés PDF-ként' : 'Nyomtatás / PDF') + '</button></div>';
     $('tarotResult').innerHTML = html;
+    // lapfelfedő animáció: a lapok sorban fordulnak fel
+    [].forEach.call($('tarotResult').querySelectorAll('.t-card, .t-board .t-mini'),
+      function (el, i) {
+        el.classList.add('t-deal');
+        el.style.animationDelay = Math.min(i * 90, 1800) + 'ms';
+      });
+    var pdfBtn = $('tarotPdf');
+    if (pdfBtn) pdfBtn.addEventListener('click', function () {
+      if (window.electronPDF && window.electronPDF.save) window.electronPDF.save();
+      else window.print();
+    });
     tarotLogSave(res, manual);
     $('tarotResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
@@ -1475,6 +1551,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     initMode();
+    initBackup();
     initPlace();
     initPartnerPlace();
     initSpecial();

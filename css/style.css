@@ -751,8 +751,17 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
 .t-pick.sel{border-color:var(--accent2); background:var(--accent-soft)}
 .t-pick.used{opacity:.3; cursor:not-allowed}
 @media print{
-  .tarot-box .actions,.t-manual{display:none !important}
+  .tarot-box .actions,.t-manual,.tarot-box .grid,#tarotSpreadDesc,
+  #tarotManualBox{display:none !important}
 }
+
+/* lapfelfedő animáció */
+@keyframes tDeal{
+  from{opacity:0; transform:perspective(700px) rotateY(85deg) scale(.92)}
+  to{opacity:1; transform:perspective(700px) rotateY(0) scale(1)}
+}
+.t-deal{animation:tDeal .45s ease-out both}
+@media (prefers-reduced-motion: reduce){ .t-deal{animation:none} }
 
 /* ---- ⚡ ---- */
 .logo{cursor:pointer}
