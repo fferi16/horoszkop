@@ -227,6 +227,36 @@
       syn.push(SY.gt.note);
     }
 
+    // cigány közeli-távoli nagyterítés: távolság a személyjelölőtől
+    if (spread.key === 'nagyterites' && SY.nagyterites) {
+      var cellOf = function (i) {
+        return i < 32 ? { r: Math.floor(i / 8), c: i % 8 }
+          : { r: 4, c: (i - 32) + 2 };
+      };
+      var sIdx = -1;
+      rows.forEach(function (r, i) {
+        if (sIdx < 0 && (r.id === 'g25' || r.id === 'g26')) sIdx = i;
+      });
+      if (sIdx >= 0) {
+        var sCell = cellOf(sIdx);
+        syn.push(SY.nagyterites.sigFound
+          .replace('%C%', rows[sIdx].name)
+          .replace('%P%', String(sIdx + 1))
+          .replace('%R%', String(sCell.r + 1)));
+        var near = [], far = [];
+        rows.forEach(function (r, i) {
+          if (i === sIdx) return;
+          var cc = cellOf(i);
+          var dist = Math.max(Math.abs(cc.r - sCell.r), Math.abs(cc.c - sCell.c));
+          if (dist <= 1) near.push(r.name);
+          else if (dist >= 4) far.push(r.name);
+        });
+        if (near.length) syn.push(SY.nagyterites.near.replace('%L%', near.join(', ')));
+        if (far.length) syn.push(SY.nagyterites.far.replace('%L%', far.join(', ')));
+        syn.push(SY.nagyterites.note);
+      }
+    }
+
     // Igen-Nem a kártyainzertek színével (Lenormand)
     if (spread.key === 'igennem' && SY.yesNo && deckKey === 'lenormand') {
       var score = 0, parts = [];
