@@ -1456,6 +1456,76 @@
     s.matrixLines = lineRows;
     s.matrix = pm;
 
+    /* --- teljes kiértékelés: a cellák és vonalak egymáshoz mérése --- */
+    var PDD = get(D(), 'psychoDeep', null);
+    if (PDD) {
+      var ev = [PDD.intro];
+
+      // súlypont: a legtöltöttebb cella
+      var maxN = 0, maxCell = null;
+      for (var c1 = 1; c1 <= 9; c1++) {
+        if (pm.counts[c1] > maxN) { maxN = pm.counts[c1]; maxCell = c1; }
+      }
+      if (maxCell && maxN >= 3) {
+        ev.push(PDD.dominant
+          .replace('%C%', PD.cells[maxCell].name.toLowerCase() + ' (' + maxCell + ')')
+          .replace('%N%', String(maxN)));
+      }
+
+      // üres cellák
+      var empties = [];
+      for (var c2 = 1; c2 <= 9; c2++) {
+        if (!pm.counts[c2]) empties.push(PD.cells[c2].name.toLowerCase() + ' (' + c2 + ')');
+      }
+      if (!empties.length) ev.push(PDD.noEmpty);
+      else if (empties.length >= 4) {
+        ev.push(PDD.manyEmpties.replace('%N%', String(empties.length)) + ' ' +
+          PDD.empties.replace('%LIST%', empties.join(', ')));
+      } else {
+        ev.push(PDD.empties.replace('%LIST%', empties.join(', ')));
+      }
+
+      // akarat (1) vs energia (2)
+      var w = pm.counts[1], e = pm.counts[2];
+      var we = (w - e >= 2) ? 'willDominant' : (e - w >= 2) ? 'energyDominant' : 'balanced';
+      ev.push(PDD.willEnergy[we]
+        .replace('%W%', String(w)).replace('%E%', String(e)));
+
+      // célratörés-sor vs család-sor
+      var gRow = pm.lines.celratores, fRow = pm.lines.csalad;
+      var rKey = (gRow - fRow >= 2) ? 'goalOverFamily'
+        : (fRow - gRow >= 2) ? 'familyOverGoal' : 'rowsBalanced';
+      ev.push(PDD.rows[rKey]
+        .replace('%A%', String(gRow)).replace('%B%', String(fRow)));
+
+      // szellemi átló vs temperamentum-átló
+      var spD = pm.lines.szellemiseg, flD = pm.lines.temperamentum;
+      var dKey = (spD - flD >= 2) ? 'spiritOverFlesh'
+        : (flD - spD >= 2) ? 'fleshOverSpirit' : 'diagBalanced';
+      ev.push(PDD.diagonals[dKey]
+        .replace('%A%', String(spD)).replace('%B%', String(flD)));
+
+      // a legerősebb oszlop
+      var cols = [['onertekeles', pm.lines.onertekeles],
+        ['anyagiak', pm.lines.anyagiak], ['tehetseg', pm.lines.tehetseg]];
+      cols.sort(function (a, b) { return b[1] - a[1]; });
+      if (cols[0][1] - cols[1][1] >= 2) {
+        var colNames = { onertekeles: 'önmeghatározás (1-2-3)',
+          anyagiak: 'anyagiak (4-5-6)', tehetseg: 'tehetség (7-8-9)' };
+        ev.push(PDD.columns.intro
+          .replace('%C%', colNames[cols[0][0]])
+          .replace('%N%', String(cols[0][1])) + PDD.columns[cols[0][0]]);
+      }
+
+      // a középső (5-ös, logika) cella különleges esetei
+      if (!pm.counts[5] && pm.counts[9] >= 2) ev.push(PDD.center.emptyCompensated);
+      else if (!pm.counts[5]) ev.push(PDD.center.empty);
+      else if (pm.counts[5] >= 3) ev.push(PDD.center.full);
+
+      item(s, 'Teljes kiértékelés — a mátrixod belső arányai', '', ev.join(' '));
+      s.notes.push(PDD.note);
+    }
+
     s.notes.push(PD.intro);
     s.notes.push(PD.disclaimer);
     out.sections.push(s);
