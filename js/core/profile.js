@@ -1241,30 +1241,40 @@
         return L.current;
       })[0] : null;
       if (luckNow) {
-        if (luckNow.tone === 'favorable' && relGood) {
-          sy.push('A mostani évtized (' + luckNow.name + ') kedvező elemű, és az ' +
-            'idei év is jó viszonyban áll a jegyeddel: kettős hátszélben vagy — ' +
-            'a nagyobb lépéseknek most van itt az ideje.');
-        } else if (luckNow.tone === 'favorable' && relBad) {
-          sy.push('A mostani évtized (' + luckNow.name + ') kedvező elemű, de az ' +
-            'idei év ütközik a jegyeddel: az irány jó, az idei tempót viszont ' +
-            'érdemes visszavenni — az évtized hosszabb, mint az év.');
-        } else if (luckNow.tone === 'unfavorable' && relGood) {
-          sy.push('A mostani évtized (' + luckNow.name + ') munkásabb elemű, az ' +
-            'idei év viszont támogat: a nagy terepen küzdesz, de az idei ' +
-            'lehetőségeket érdemes megragadni — ezek a könnyebb hónapok.');
-        } else if (luckNow.tone === 'unfavorable' && relBad) {
-          sy.push('A mostani évtized (' + luckNow.name + ') és az idei év is ' +
-            'terhelő: a hagyomány ilyenkor a megőrzést, rendezést, tanulást ' +
-            'ajánlja a terjeszkedés helyett — ami most lassúnak tűnik, az ' +
-            'később alapnak bizonyul.');
+        var toneName = {
+          favorable: 'kedvező elemű',
+          unfavorable: 'munkásabb, a Nap Uradat terhelő elemű',
+          neutral: 'semleges elem-időjárású'
+        }[luckNow.tone];
+        var yearClause = relGood
+          ? 'az idei ' + rel.animalHu + '-év a hármas szövetségesed'
+          : (relBad
+            ? (rel.relation === 'benming'
+              ? 'idén épp a saját jegyed éve (Ben Ming Nian) fut, amit a hagyomány hullámzónak tart'
+              : 'az idei ' + rel.animalHu + '-év ütközik a jegyeddel')
+            : 'az idei ' + rel.animalHu + '-év semleges viszonyban áll a jegyeddel');
+        var concl;
+        if (luckNow.tone === 'favorable') {
+          concl = relGood
+            ? 'kettős hátszélben vagy — a nagyobb lépéseknek most van itt az ideje.'
+            : (relBad
+              ? 'az évtized hátszele megmarad, de idén érdemes visszavenni a tempót — az évtized hosszabb, mint az év.'
+              : 'az évtized hátszele a meghatározó — használd ki.');
+        } else if (luckNow.tone === 'unfavorable') {
+          concl = relGood
+            ? 'a nagyobb terepen küzdesz, de az idei év könnyít — az idei lehetőségeket ragadd meg.'
+            : (relBad
+              ? 'a hagyomány ilyenkor a megőrzést, rendezést, tanulást ajánlja a terjeszkedés helyett — ami most lassúnak tűnik, később alapnak bizonyul.'
+              : 'az évtized kér türelmet — az idei év legalább nem nehezít rajta.');
         } else {
-          sy.push('A mostani évtized (' + luckNow.name + ') semleges elem-időjárást ' +
-            'ad, így az idei év viszonya (' + rel.animalHu + ' év) a hangadó: ' +
-            (relGood ? 'ez most támogat — élj vele.' :
-             (relBad ? 'az idei ütközés kér óvatosságot, nem az évtized.' :
-              'se hátszél, se ellenszél — az számít, mit teszel.')));
+          concl = relGood
+            ? 'így az idei támogató év a hangadó — élj vele.'
+            : (relBad
+              ? 'így az idei év feszültsége a hangadó — az óvatos tervezés éve.'
+              : 'se hátszél, se ellenszél — az számít, mit teszel.');
         }
+        sy.push('A mostani évtized (' + luckNow.name + ') ' + toneName +
+          ', és ' + yearClause + ': ' + concl);
       }
 
       item(s, 'Összkép — a képletelemeid egymás közt', '', sy.join(' '));
