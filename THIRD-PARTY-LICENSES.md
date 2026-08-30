@@ -120,6 +120,16 @@ A Lenormand-pakli képei (`app/assets/lenormand/`) a Bernhard Dondorf
 
 ---
 
+## GeoNames településadatok
+
+A magyar települések koordinátalistája (`app/js/data/geo-hu.js`) a
+[GeoNames](https://www.geonames.org) földrajzi adatbázisából származik,
+amely a [Creative Commons BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+licenc alatt érhető el. © GeoNames — az adatok változtatás nélkül,
+formátum-átalakítással kerültek beépítésre.
+
+---
+
 ## Rider–Waite tarot-kártyaképek
 
 A tarot modul kártyaképei (`app/assets/tarot/`) a
