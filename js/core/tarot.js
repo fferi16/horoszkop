@@ -111,14 +111,16 @@
           .replace('%DOM%', t.suits[k].domain));
       }
     });
-    if (T >= 7) {
-      Object.keys(suitCount).forEach(function (k) {
-        if (suitCount[k] === 0) {
-          syn.push(SY.suitMissing
-            .replace('%SUIT%', t.suits[k].name)
-            .replace('%DOM%', t.suits[k].domain));
-        }
+    // hiányzó szín: csak ha pontosan EGY szín hiányzik — az az igazi vakfolt
+    if (T >= 7 && minors >= 5) {
+      var missing = Object.keys(suitCount).filter(function (k) {
+        return suitCount[k] === 0;
       });
+      if (missing.length === 1) {
+        syn.push(SY.suitMissing
+          .replace('%SUIT%', t.suits[missing[0]].name)
+          .replace('%DOM%', t.suits[missing[0]].domain));
+      }
     }
 
     if (T >= 3) {
