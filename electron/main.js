@@ -6,8 +6,9 @@
 
 'use strict';
 
-const { app, BrowserWindow, Menu, dialog, shell } = require('electron');
+const { app, BrowserWindow, Menu, dialog, shell, ipcMain } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let autoUpdater = null;
 try {
@@ -27,6 +28,7 @@ function createWindow() {
     autoHideMenuBar: false,
     backgroundColor: '#f6f4ef',
     webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
       spellcheck: false
@@ -43,6 +45,60 @@ function createWindow() {
 
   win.on('closed', () => { win = null; });
 }
+
+/* ---------------- mentés PDF-ként ---------------- */
+
+/** A profil kirenderelése PDF-fájlba — nyomtatási párbeszéd nélkül. */
+async function exportPdf(filePath) {
+  // minden lenyíló rész nyitva kerüljön a PDF-be (a lap saját kezelőit hívjuk)
+  await win.webContents.executeJavaScript(
+    "window.dispatchEvent(new Event('beforeprint'))", true);
+  try {
+    const data = await win.webContents.printToPDF({
+      pageSize: 'A4',
+      printBackground: true
+    });
+    await fs.promises.writeFile(filePath, data);
+  } finally {
+    await win.webContents.executeJavaScript(
+      "window.dispatchEvent(new Event('afterprint'))", true);
+  }
+}
+
+async function savePdf() {
+  if (!win) return;
+  // a fájlnévbe bekerül a beírt név, ha van
+  let name = '';
+  try {
+    name = await win.webContents.executeJavaScript(
+      "(document.getElementById('fName') || {}).value || ''", true);
+  } catch (e) { /* nem baj */ }
+  name = String(name).trim()
+    .replace(/[^0-9A-Za-zÁÉÍÓÖŐÚÜŰáéíóöőúüű _-]/g, '')
+    .replace(/\s+/g, '-');
+  const fileName = name ? 'horoszkop-' + name + '.pdf' : 'horoszkop-profil.pdf';
+
+  const r = await dialog.showSaveDialog(win, {
+    title: 'Profil mentése PDF-ként',
+    defaultPath: path.join(app.getPath('documents'), fileName),
+    filters: [{ name: 'PDF', extensions: ['pdf'] }]
+  });
+  if (r.canceled || !r.filePath) return;
+
+  try {
+    await exportPdf(r.filePath);
+    shell.openPath(r.filePath);            // a kész PDF rögtön megnyílik
+  } catch (err) {
+    dialog.showMessageBox(win, {
+      type: 'error',
+      title: 'A mentés nem sikerült',
+      message: 'Nem sikerült elmenteni a PDF-et.',
+      detail: err && err.message ? err.message : String(err)
+    });
+  }
+}
+
+ipcMain.handle('save-pdf', () => savePdf());
 
 /* ---------------- frissítéskezelés ---------------- */
 
@@ -129,9 +185,9 @@ function buildMenu() {
       label: 'Fájl',
       submenu: [
         {
-          label: 'Nyomtatás / PDF…',
+          label: 'Mentés PDF-ként…',
           accelerator: 'CmdOrCtrl+P',
-          click: () => { if (win) win.webContents.executeJavaScript('window.print()', true); }
+          click: () => savePdf()
         },
         { type: 'separator' },
         { role: 'quit', label: 'Kilépés' }
