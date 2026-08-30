@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 400">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4ead0"/><stop offset=".55" stop-color="#eddfba"/>
+      <stop offset="1" stop-color="#e3d2a6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".38" r=".75">
+      <stop offset="0" stop-color="#fdf8ea" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#fdf8ea" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="257" height="397" rx="12" fill="url(#pg)" stroke="#9a7d4d" stroke-width="3"/>
+  <rect x="9" y="9" width="242" height="382" rx="7" fill="none" stroke="#b99a5f" stroke-width="1.4"/>
+  <ellipse cx="130" cy="150" rx="115" ry="130" fill="url(#glow)"/>
+  <g fill="#a98d58">
+    <path d="M20 16 q8 6 16 2 q-6 8 -2 16 q-8 -6 -16 -2 q6 -8 2 -16" opacity=".8"/>
+    <path d="M240 384 q-8 -6 -16 -2 q6 -8 2 -16 q8 6 16 2 q-6 8 -2 16" opacity=".8"/>
+  </g><path d="M28 272 q60 -14 102 0 q52 12 102 0 l0 40 q-104 14 -204 0 z" fill="#d9c48d" opacity=".65"/>
+    <path d="M96 258 q0 -34 20 -48 q-10 -10 -4 -22 q6 -10 18 -8 q4 -14 20 -12 q18 2 16 20 q16 6 12 24 q-4 16 -20 16 q6 16 4 30 z" fill="#7a5a8a" stroke="#43301d" stroke-width="2.4" opacity="0"/>
+    
+  <path d="M70 258 q0 -40 42 -40 q42 0 42 40 z" fill="#7a5a8a" stroke="#43301d" stroke-width="2.4"/>
+  
+  <circle cx="112" cy="196" r="22" fill="#e8c9a0" stroke="#43301d" stroke-width="2.4"/>
+  <path d="M90 194 q-2 -26 22 -26 q24 0 22 26 q-8 -14 -22 -14 q-14 0 -22 14" fill="#2e2417" stroke="#43301d" stroke-width="1.6"/>
+  
+  <circle cx="104" cy="193" r="1.9" fill="#43301d"/>
+  <circle cx="120" cy="193" r="1.9" fill="#43301d"/>
+  <path d="M106 205 q6 5 12 0" fill="none" stroke="#43301d" stroke-width="1.8" stroke-linecap="round"/>
+  
+    <path d="M136 214 q30 -24 44 -66" fill="none" stroke="#e8c9a0" stroke-width="7" stroke-linecap="round"/>
+    <path d="M136 214 q30 -24 44 -66" fill="none" stroke="#43301d" stroke-width="1.6" opacity=".5"/>
+    <path d="M190.0 103.0 L193.7 112.9 L204.3 113.4 L196.0 119.9 L198.8 130.1 L190.0 124.3 L181.2 130.1 L184.0 119.9 L175.7 113.4 L186.3 112.9 z" fill="#c9a227" stroke="#43301d" stroke-width="1.6"/> <path d="M160.0 80.0 L162.0 85.3 L167.6 85.5 L163.2 89.0 L164.7 94.5 L160.0 91.4 L155.3 94.5 L156.8 89.0 L152.4 85.5 L158.0 85.3 z" fill="#c9a227" stroke="#43301d" stroke-width="1.6"/> <path d="M206.0 77.0 L207.7 81.6 L212.7 81.8 L208.8 84.9 L210.1 89.7 L206.0 86.9 L201.9 89.7 L203.2 84.9 L199.3 81.8 L204.3 81.6 z" fill="#c9a227" stroke="#43301d" stroke-width="1.6"/>
+  <rect x="22" y="334 " width="216" height="42" rx="6" fill="#f7efdc" stroke="#b99a5f" stroke-width="1.6"/>
+  <path d="M22 355 h-9 l9 -12 M238 355 h9 l-9 -12" fill="none" stroke="#b99a5f" stroke-width="1.6"/>
+  <text x="130" y="362" text-anchor="middle" font-family="Palatino Linotype, Georgia, serif" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5d4a28">VÁGY</text></svg>

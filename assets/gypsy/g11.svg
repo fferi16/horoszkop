@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 400">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4ead0"/><stop offset=".55" stop-color="#eddfba"/>
+      <stop offset="1" stop-color="#e3d2a6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".38" r=".75">
+      <stop offset="0" stop-color="#fdf8ea" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#fdf8ea" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="257" height="397" rx="12" fill="url(#pg)" stroke="#9a7d4d" stroke-width="3"/>
+  <rect x="9" y="9" width="242" height="382" rx="7" fill="none" stroke="#b99a5f" stroke-width="1.4"/>
+  <ellipse cx="130" cy="150" rx="115" ry="130" fill="url(#glow)"/>
+  <g fill="#a98d58">
+    <path d="M20 16 q8 6 16 2 q-6 8 -2 16 q-8 -6 -16 -2 q6 -8 2 -16" opacity=".8"/>
+    <path d="M240 384 q-8 -6 -16 -2 q6 -8 2 -16 q8 6 16 2 q-6 8 -2 16" opacity=".8"/>
+  </g>
+    <path d="M70 118 q0 -30 30 -30 q28 0 28 30 q0 34 -28 46 q-30 -12 -30 -46 z" fill="#f7efdc" stroke="#43301d" stroke-width="2.6"/>
+    <path d="M132 132 q0 -30 30 -30 q28 0 28 30 q0 34 -28 46 q-30 -12 -30 -46 z" fill="#2e2417" stroke="#43301d" stroke-width="2.6"/>
+    <path d="M82 112 q8 -6 16 0 M104 112 q6 -4 12 0" stroke="#43301d" stroke-width="2" fill="none"/>
+    <path d="M86 140 q12 10 24 0" stroke="#43301d" stroke-width="2.2" fill="none"/>
+    <path d="M144 126 q8 -6 16 0 M166 126 q6 -4 12 0" stroke="#f7efdc" stroke-width="2" fill="none"/>
+    <path d="M148 158 q12 -10 24 0" stroke="#f7efdc" stroke-width="2.2" fill="none"/>
+    <path d="M96 196 q34 26 68 6" fill="none" stroke="#b99a5f" stroke-width="2.2" stroke-dasharray="4 5"/>
+  <rect x="22" y="334 " width="216" height="42" rx="6" fill="#f7efdc" stroke="#b99a5f" stroke-width="1.6"/>
+  <path d="M22 355 h-9 l9 -12 M238 355 h9 l-9 -12" fill="none" stroke="#b99a5f" stroke-width="1.6"/>
+  <text x="130" y="362" text-anchor="middle" font-family="Palatino Linotype, Georgia, serif" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5d4a28">HAMISSÁG</text></svg>

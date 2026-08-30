@@ -1119,7 +1119,8 @@
     }
     var cls = (cross ? 't-crossimg' : '') +
       (reversed ? (cross ? ' t-crossrev' : ' t-rev') : '');
-    return '<img src="' + base + id + '.jpg" alt="' + esc(c.name) + '"' +
+    return '<img src="' + base + id + HCORE.tarot.imgExt(tarotState.deck) +
+      '" alt="' + esc(c.name) + '"' +
       (cls ? ' class="' + cls.trim() + '"' : '') + '>';
   }
 
@@ -1256,7 +1257,8 @@
         var face = !pbase
           ? '<div class="t-glyphcard t-pickcard"><span class="t-glyph">' +
             c.glyph + '</span></div>'
-          : '<img src="' + pbase + id + '.jpg" alt="" loading="lazy">';
+          : '<img src="' + pbase + id + HCORE.tarot.imgExt(tarotState.deck) +
+            '" alt="" loading="lazy">';
         return '<button type="button" class="t-pick' +
           (used[id] ? ' used' : '') +
           (current && current.id === id ? ' sel' : '') +

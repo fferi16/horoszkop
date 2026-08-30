@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 400">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4ead0"/><stop offset=".55" stop-color="#eddfba"/>
+      <stop offset="1" stop-color="#e3d2a6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".38" r=".75">
+      <stop offset="0" stop-color="#fdf8ea" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#fdf8ea" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="257" height="397" rx="12" fill="url(#pg)" stroke="#9a7d4d" stroke-width="3"/>
+  <rect x="9" y="9" width="242" height="382" rx="7" fill="none" stroke="#b99a5f" stroke-width="1.4"/>
+  <ellipse cx="130" cy="150" rx="115" ry="130" fill="url(#glow)"/>
+  <g fill="#a98d58">
+    <path d="M20 16 q8 6 16 2 q-6 8 -2 16 q-8 -6 -16 -2 q6 -8 2 -16" opacity=".8"/>
+    <path d="M240 384 q-8 -6 -16 -2 q6 -8 2 -16 q8 6 16 2 q-6 8 -2 16" opacity=".8"/>
+  </g><path d="M28 266 q60 -14 102 0 q52 12 102 0 l0 40 q-104 14 -204 0 z" fill="#d9c48d" opacity=".65"/>
+    <path d="M87.5 108 a14 14 0 0 1 12 -20 a18 18 0 0 1 34 -6 a15 15 0 0 1 22 14 a12 12 0 0 1 -4 12 z" fill="#8d8578" stroke="#43301d" stroke-width="2"/>
+    <path d="M120 116 l-10 22 h12 l-8 24" fill="none" stroke="#c9a227" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    
+  <path d="M88 258 q0 -40 42 -40 q42 0 42 40 z" fill="#5c7a4a" stroke="#43301d" stroke-width="2.4"/>
+  
+  <circle cx="130" cy="196" r="22" fill="#e8c9a0" stroke="#43301d" stroke-width="2.4"/>
+  <path d="M108 194 q-2 -26 22 -26 q24 0 22 26 q-8 -14 -22 -14 q-14 0 -22 14" fill="#2e2417" stroke="#43301d" stroke-width="1.6"/>
+  
+  <circle cx="122" cy="193" r="1.9" fill="#43301d"/>
+  <circle cx="138" cy="193" r="1.9" fill="#43301d"/>
+  <path d="M124 205 q6 5 12 0" fill="none" stroke="#43301d" stroke-width="1.8" stroke-linecap="round"/>
+  
+    <path d="M118 202 q6 -5 12 0" fill="none" stroke="#43301d" stroke-width="1.8" stroke-linecap="round" transform="translate(0,-6)"/>
+  <rect x="22" y="334 " width="216" height="42" rx="6" fill="#f7efdc" stroke="#b99a5f" stroke-width="1.6"/>
+  <path d="M22 355 h-9 l9 -12 M238 355 h9 l-9 -12" fill="none" stroke="#b99a5f" stroke-width="1.6"/>
+  <text x="130" y="362" text-anchor="middle" font-family="Palatino Linotype, Georgia, serif" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5d4a28">BOSSZÚSÁG</text></svg>

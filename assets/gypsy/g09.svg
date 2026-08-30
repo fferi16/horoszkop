@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 400">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4ead0"/><stop offset=".55" stop-color="#eddfba"/>
+      <stop offset="1" stop-color="#e3d2a6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".38" r=".75">
+      <stop offset="0" stop-color="#fdf8ea" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#fdf8ea" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="257" height="397" rx="12" fill="url(#pg)" stroke="#9a7d4d" stroke-width="3"/>
+  <rect x="9" y="9" width="242" height="382" rx="7" fill="none" stroke="#b99a5f" stroke-width="1.4"/>
+  <ellipse cx="130" cy="150" rx="115" ry="130" fill="url(#glow)"/>
+  <g fill="#a98d58">
+    <path d="M20 16 q8 6 16 2 q-6 8 -2 16 q-8 -6 -16 -2 q6 -8 2 -16" opacity=".8"/>
+    <path d="M240 384 q-8 -6 -16 -2 q6 -8 2 -16 q8 6 16 2 q-6 8 -2 16" opacity=".8"/>
+  </g><path d="M28 266 q60 -14 102 0 q52 12 102 0 l0 40 q-104 14 -204 0 z" fill="#d9c48d" opacity=".65"/>
+    <path d="M76 178 h108 l-10 44 h-88 z" fill="#8a6a3f" stroke="#43301d" stroke-width="2.6"/>
+    <path d="M80 236 a34 34 0 0 0 100 0" fill="none" stroke="#43301d" stroke-width="3" stroke-linecap="round"/>
+    <path d="M84 186 q46 26 92 0 l-4 -14 q-42 20 -84 0 z" fill="#f7efdc" stroke="#43301d" stroke-width="2"/>
+    <circle cx="130" cy="158" r="19" fill="#e8c9a0" stroke="#43301d" stroke-width="2.4"/>
+    <path d="M116 150 q14 -12 28 0" fill="none" stroke="#43301d" stroke-width="1.8"/>
+    <circle cx="124" cy="158" r="1.8" fill="#43301d"/><circle cx="136" cy="158" r="1.8" fill="#43301d"/>
+    <path d="M126 166 q4 4 8 0" fill="none" stroke="#43301d" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M78.0 108.0 L80.0 113.3 L85.6 113.5 L81.2 117.0 L82.7 122.5 L78.0 119.4 L73.3 122.5 L74.8 117.0 L70.4 113.5 L76.0 113.3 z" fill="#c9a227" stroke="#43301d" stroke-width="1.6"/> <path d="M182.0 108.0 L184.0 113.3 L189.6 113.5 L185.2 117.0 L186.7 122.5 L182.0 119.4 L177.3 122.5 L178.8 117.0 L174.4 113.5 L180.0 113.3 z" fill="#c9a227" stroke="#43301d" stroke-width="1.6"/> <path d="M130.0 84.0 L132.5 90.6 L139.5 90.9 L134.0 95.3 L135.9 102.1 L130.0 98.2 L124.1 102.1 L126.0 95.3 L120.5 90.9 L127.5 90.6 z" fill="#c9a227" stroke="#43301d" stroke-width="1.6"/>
+  <rect x="22" y="334 " width="216" height="42" rx="6" fill="#f7efdc" stroke="#b99a5f" stroke-width="1.6"/>
+  <path d="M22 355 h-9 l9 -12 M238 355 h9 l-9 -12" fill="none" stroke="#b99a5f" stroke-width="1.6"/>
+  <text x="130" y="362" text-anchor="middle" font-family="Palatino Linotype, Georgia, serif" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5d4a28">GYERMEK</text></svg>
