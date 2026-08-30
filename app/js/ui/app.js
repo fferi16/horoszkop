@@ -1085,7 +1085,7 @@
   /* ---------------- kávégomb ---------------- */
 
   // A támogatási link (revolut.me). Ha üres, a gomb nem jelenik meg.
-  var COFFEE_URL = '';
+  var COFFEE_URL = 'https://revolut.me/ferencguwb';
 
   function initCoffee() {
     var b = $('coffeeBtn');
