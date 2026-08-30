@@ -750,6 +750,91 @@
       'az <em>utáni</em> előrehozza a belső órát. A hatás aszimmetrikus — késleltetni ' +
       'közel kétszer olyan könnyű, mint előrehozni.</small></p>';
 
+    /* ---- összegzett kiértékelés, levezetéssel ---- */
+    var CD = window.HDATA.chronoDeep && HDATA.chronoDeep.tool;
+    if (CD) {
+      var rows = [];
+
+      // besorolás: mért adatból, ha van; különben a kérdőívből
+      var cls, clsBasis;
+      if (mctq) {
+        var pct2 = CH.chronoPercentile(mctq.msfSc, age, gender);
+        if (pct2) {
+          cls = pct2.percentile <= 25 ? 'korai'
+            : (pct2.percentile >= 75 ? 'kesoi' : 'atlagos');
+          clsBasis = 'MSFsc ' + mctq.msfScText + ' · ' + pct2.percentile +
+            '. percentilis a korosztályodban';
+        } else {
+          cls = mctq.msfSc < 3 ? 'korai' : (mctq.msfSc > 5.5 ? 'kesoi' : 'atlagos');
+          clsBasis = 'MSFsc ' + mctq.msfScText;
+        }
+      } else {
+        cls = rmeq.broad === 'kozepes' ? 'atlagos' : rmeq.broad;
+        clsBasis = 'csak kérdőív (rMEQ ' + rmeq.score + '/25) — az alvásidőid ' +
+          'megadásával pontosabb lenne';
+      }
+      rows.push({ lbl: 'Kronotípus-besorolás (' + clsBasis + ')',
+        txt: CD.classes[cls] });
+
+      // preferencia vs. tényleges alvás
+      if (rmeq.complete && mctq) {
+        var rCls = rmeq.broad === 'kozepes' ? 'atlagos' : rmeq.broad;
+        var mCls = mctq.msfSc < 3 ? 'korai' : (mctq.msfSc > 5.5 ? 'kesoi' : 'atlagos');
+        var CLS_HU = { korai: 'korai', atlagos: 'köztes', kesoi: 'késői' };
+        rows.push({
+          lbl: 'Preferencia és valóság',
+          txt: rCls === mCls ? CD.consistent
+            : CD.inconsistent.replace('%A%', rmeq.category.toLowerCase())
+              .replace('%B%', CLS_HU[mCls] + ' tényleges alvásritmus')
+        });
+      }
+
+      if (mctq) {
+        var band = mctq.sjl >= 2 ? 'severe' : (mctq.sjl >= 1 ? 'moderate' : 'ok');
+        rows.push({ lbl: 'Szociális jetlag: ' +
+          mctq.sjl.toFixed(1).replace('.', ',') + ' óra', txt: CD.sjl[band] });
+        if (mctq.sleepDebt > 0.5) {
+          rows.push({ lbl: 'Alvásadósság',
+            txt: CD.debt.replace('%H%', mctq.sleepDebt.toFixed(1).replace('.', ',')) });
+        }
+      }
+
+      // születési évszak vs. mérés — a profil adataiból
+      if (state.profile && state.profile.input) {
+        var bm = state.profile.input.month;
+        var seas = (bm >= 3 && bm <= 5) ? 'tavasz' : (bm >= 6 && bm <= 8) ? 'nyár'
+          : (bm >= 9 && bm <= 11) ? 'ősz' : 'tél';
+        var dir = (seas === 'tavasz' || seas === 'nyár') ? 'későbbi' : 'korábbi';
+        var verdict = cls === 'atlagos' ? CD.season.neutral
+          : ((cls === 'kesoi' && dir === 'későbbi') ||
+             (cls === 'korai' && dir === 'korábbi'))
+            ? CD.season.match : CD.season.mismatch;
+        rows.push({
+          lbl: 'Születési évszak és a mérés',
+          txt: CD.season.intro.replace('%S%', seas).replace('%D%', dir) + ' ' + verdict
+        });
+      }
+
+      // a kitűzött cél realitása
+      var goalSel2 = box.querySelector('input[name="chronoGoal"]:checked');
+      var goal = goalSel2 ? goalSel2.value : 'stabilize';
+      var hardGoal = (goal === 'earlier' && cls === 'kesoi') ||
+        (goal === 'later' && cls === 'korai');
+      rows.push({
+        lbl: 'A célod realitása',
+        txt: (hardGoal ? CD.goal.hard : CD.goal.fits)
+          .replace('%G%', CD.goal.names[goal] || goal)
+      });
+
+      html += '<h3 class="sec-h3">' + esc(CD.heading) + '</h3><div class="sec-items">' +
+        rows.map(function (r) {
+          return '<div class="row"><div class="lbl">' + esc(r.lbl) + '</div>' +
+            '<div class="txt">' + esc(r.txt) + '</div></div>';
+        }).join('') + '</div>' +
+        '<details class="general"><summary>Hogyan olvasd a kiértékelést</summary>' +
+        '<p class="gen-line">' + esc(CD.howToRead) + '</p></details>';
+    }
+
     res.innerHTML = html;
     res.classList.add('show');
     res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
