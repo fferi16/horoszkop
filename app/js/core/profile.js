@@ -2420,8 +2420,8 @@
       var dayCard = TAR[ids[Math.abs(hsh) % ids.length]];
       item(s, 'A nap tarot-lapja', dayCard.name,
         dayCard.up + ' (A lap a mai naphoz és a születési adataidhoz kötött — ' +
-        'egész nap ugyanaz, holnap új lap érkezik. Kirakásokhoz lent a ' +
-        'kártyavetőt használd.)');
+        'egész nap ugyanaz, holnap új lap érkezik. Kirakásokhoz válts a ' +
+        'Kártyavetés nézetre.)');
     }
 
     // mai jeles nap és névnap
