@@ -896,7 +896,7 @@
 
   function renderSection(s, i) {
     var html = '<section class="card" id="sec-' + i + '" data-cat="' + esc(s.category) + '">' +
-      '<h2><span class="icon">' + s.icon + '</span>' + esc(s.title) + '</h2>';
+      '<h2>' + iconHtml(s.icon) + esc(s.title) + '</h2>';
 
     if (s.items.length) {
       html += '<div class="sec-items">' + s.items.map(function (it) {
@@ -1005,6 +1005,28 @@
 
   var THEME_KEY = 'horoszkop.tema';
 
+  /* szekcióikonok: emoji → képfájl (assets/sec/<nev>-d.webp / -l.webp) */
+  var SECTION_IMG = {
+    '♌': 'nyugati', '🏛': 'hazak', '☉': 'bolygok', '⚖': 'szerkezet',
+    '🌙': 'hold', '🕉': 'vedikus', '🐉': 'kinai', '🏯': 'keletazsiai',
+    '🔢': 'numerologia', '▦': 'pszichomatrix', '✦': 'sorsmatrix', '⚛': 'csakra',
+    '🃏': 'kartyak', '👼': 'angyal', '🌍': 'naptarak', '📅': 'szuletesnap',
+    '🇭🇺': 'nepi', '🔬': 'kronobiologia', '⏰': 'belsoora', '📈': 'bioritmus',
+    '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
+    '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes'
+  };
+
+  function iconSrc(slug, theme) {
+    return 'assets/sec/' + slug + '-' + (theme === 'dark' ? 'd' : 'l') + '.webp';
+  }
+
+  function iconHtml(emoji) {
+    var slug = SECTION_IMG[emoji];
+    if (!slug) return '<span class="icon">' + emoji + '</span>';
+    return '<img class="icon-img" data-icon-slug="' + slug + '" alt="' + emoji + '" src="' +
+      iconSrc(slug, currentTheme()) + '">';
+  }
+
   function currentTheme() {
     var t = document.documentElement.dataset.theme;
     if (t) return t;
@@ -1014,6 +1036,9 @@
 
   function applyTheme(t) {
     document.documentElement.dataset.theme = t;
+    [].forEach.call(document.querySelectorAll('img.icon-img'), function (im) {
+      im.src = iconSrc(im.dataset.iconSlug, t);
+    });
     var btn = $('themeToggle');
     if (btn) {
       btn.textContent = (t === 'dark') ? '☀' : '🌙';
@@ -1041,7 +1066,7 @@
     if (!panel) return;
     panel.innerHTML = p.sections.map(function (s, i) {
       return '<a href="#sec-' + i + '" data-toc="' + i + '">' +
-        '<span class="t-icon">' + s.icon + '</span>' + esc(s.title) + '</a>';
+        '<span class="t-icon">' + iconHtml(s.icon) + '</span>' + esc(s.title) + '</a>';
     }).join('');
   }
 
