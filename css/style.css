@@ -145,6 +145,28 @@ small{color:var(--muted); font-size:.82rem}
 .chips label:has(input:checked){background:var(--accent-soft); border-color:var(--accent)}
 .chips input{width:auto}
 
+/* ---- kirakásajánló ---- */
+.rec-lead{margin:4px 0 8px}
+.rec-chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px}
+.rec-chip{
+  background:var(--bg2, transparent); border:1px solid var(--line); color:var(--muted);
+  font-size:.87rem; padding:7px 14px; font-weight:500; border-radius:999px;
+}
+.rec-chip:hover{border-color:var(--accent); color:var(--ink)}
+.rec-chip.active{background:var(--accent); color:#fff; border-color:var(--accent)}
+.rec-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin-bottom:14px}
+.rec-list:empty{margin-bottom:0}
+.rec-item{
+  text-align:left; font-weight:400; padding:12px 14px; border-radius:11px;
+  background:transparent; border:1px solid var(--line); color:var(--ink);
+  display:flex; flex-direction:column; gap:6px;
+}
+.rec-item:hover{border-color:var(--accent); background:var(--accent-soft)}
+.rec-item.active{border-color:var(--accent); background:var(--accent-soft); box-shadow:0 0 0 1px var(--accent) inset}
+.rec-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap}
+.rec-deck{font-size:.76rem; color:var(--muted); white-space:nowrap}
+.rec-item small{color:var(--muted); line-height:1.45}
+
 .actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:22px}
 button{
   font:inherit; font-size:.95rem; font-weight:600; padding:11px 22px; border-radius:11px;

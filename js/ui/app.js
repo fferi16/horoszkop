@@ -1249,6 +1249,78 @@
     $('tarotManual').addEventListener('click', buildManualBoard);
     var logBtn = $('tarotLog');
     if (logBtn) logBtn.addEventListener('click', renderTarotLog);
+
+    initRecommend();
+  }
+
+  /* ---- kirakásajánló: téma alapján paklit + kirakást javasol ---- */
+
+  function initRecommend() {
+    var box = $('tarotRec');
+    if (!box || !window.HDATA || !HDATA.spreadRecommend) return;
+    var R = HDATA.spreadRecommend;
+    var deckNames = { tarot: 'Tarot', lenormand: 'Lenormand', gypsy: 'Cigánykártya' };
+
+    box.innerHTML =
+      '<p class="rec-lead"><small>Nem tudod, melyik kirakást válaszd? ' +
+      'Jelöld meg, miben kérsz útmutatást, és ajánlok:</small></p>' +
+      '<div class="rec-chips">' +
+      R.topics.map(function (t) {
+        return '<button type="button" class="rec-chip" data-t="' + t.key + '">' +
+          t.icon + ' ' + esc(t.label) + '</button>';
+      }).join('') +
+      '</div><div class="rec-list" id="tarotRecList"></div>';
+
+    function spreadOf(deckKey, spreadKey) {
+      var d = HCORE.tarot.deckOf(deckKey);
+      if (!d) return null;
+      for (var i = 0; i < d.spreads.length; i++) {
+        if (d.spreads[i].key === spreadKey) return d.spreads[i];
+      }
+      return null;
+    }
+
+    function pickRec(r) {
+      $('tarotDeck').value = r.deck;
+      $('tarotDeck').dispatchEvent(new Event('change'));
+      $('tarotSpread').value = r.spread;
+      $('tarotSpread').dispatchEvent(new Event('change'));
+      var list = box.querySelectorAll('.rec-item');
+      for (var i = 0; i < list.length; i++) {
+        list[i].classList.toggle('active',
+          list[i].getAttribute('data-deck') === r.deck &&
+          list[i].getAttribute('data-spread') === r.spread);
+      }
+      $('tarotDraw').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function showTopic(topicKey) {
+      var recs = R.recs[topicKey] || [];
+      $('tarotRecList').innerHTML = recs.map(function (r) {
+        var sp = spreadOf(r.deck, r.spread);
+        if (!sp) return '';
+        return '<button type="button" class="rec-item" data-deck="' + r.deck +
+          '" data-spread="' + esc(r.spread) + '">' +
+          '<span class="rec-head"><strong>' + esc(sp.name) + '</strong>' +
+          '<span class="rec-deck">' + deckNames[r.deck] + ' · ' + sp.cards +
+          ' lap</span></span>' +
+          '<small>' + esc(r.why) + '</small></button>';
+      }).join('');
+      var items = box.querySelectorAll('.rec-item');
+      recs.forEach(function (r, i) {
+        if (items[i]) items[i].addEventListener('click', function () { pickRec(r); });
+      });
+    }
+
+    var chips = box.querySelectorAll('.rec-chip');
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].addEventListener('click', function () {
+        for (var j = 0; j < chips.length; j++) {
+          chips[j].classList.toggle('active', chips[j] === this);
+        }
+        showTopic(this.getAttribute('data-t'));
+      });
+    }
   }
 
   /** Keresztkiértékelési kontextus a kiszámolt születési profilból. */
