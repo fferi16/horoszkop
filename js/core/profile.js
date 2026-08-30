@@ -87,13 +87,17 @@
     buildHungarian(out);
     buildChrono(out);
     buildConception(out);
+    buildPatterns(out);
+    buildStars(out);
     buildCurrent(out);
+    buildAnnual(out);
     buildTransits(out);
+    buildSynastry(out);
     buildSummary(out);
 
     // olyan szekció is megmarad, amelynek csak táblázata vagy grafikonja van
     out.sections = out.sections.filter(function (s) {
-      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits);
+      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry);
     });
     return out;
   }
@@ -1474,6 +1478,456 @@
         'tranzitok nem számolhatók, és a Holdat érintő dátumok is pontatlanabbak.');
     }
 
+    out.sections.push(s);
+  }
+
+  /* ================= fényszög-alakzatok ================= */
+
+  function buildPatterns(out) {
+    var PD = get(D(), 'patterns', null);
+    if (!PD) return;
+    var c = out.chart;
+    var s = section('alakzatok', 'Fényszög-alakzatok a képletedben', '△', 'nyugati');
+    var KEYS = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
+      'saturn', 'uranus', 'neptune', 'pluto'];
+
+    var has = {};
+    c.aspects.forEach(function (a) {
+      has[a.a + '|' + a.b + '|' + a.type] = true;
+      has[a.b + '|' + a.a + '|' + a.type] = true;
+    });
+    function asp(a, b, t) { return !!has[a + '|' + b + '|' + t]; }
+    function names(list) {
+      return list.map(function (k) {
+        return c.planets[k].symbol + ' ' + c.planets[k].name;
+      }).join(' · ');
+    }
+    function majority(list, field) {
+      var cnt = {};
+      list.forEach(function (k) {
+        var sd = signData(c.planets[k].sign.key);
+        if (sd && sd[field]) cnt[sd[field]] = (cnt[sd[field]] || 0) + 1;
+      });
+      var best = null, n = 0;
+      Object.keys(cnt).forEach(function (x) { if (cnt[x] > n) { n = cnt[x]; best = x; } });
+      return best;
+    }
+
+    var found = 0;
+
+    // stellium — három vagy több égitest ugyanabban a jegyben
+    var bySign = {};
+    KEYS.forEach(function (k) {
+      var sg = c.planets[k].sign.name;
+      (bySign[sg] = bySign[sg] || []).push(k);
+    });
+    Object.keys(bySign).forEach(function (sg) {
+      if (bySign[sg].length < 3) return;
+      found++;
+      item(s, PD.stellium.name + ' — ' + sg, names(bySign[sg]), PD.stellium.base);
+    });
+
+    // hármas és négyes alakzatok
+    var grandTrines = [], usedInKite = {};
+    var i, j, k, m;
+    for (i = 0; i < KEYS.length; i++)
+      for (j = i + 1; j < KEYS.length; j++)
+        for (k = j + 1; k < KEYS.length; k++) {
+          if (asp(KEYS[i], KEYS[j], 'trine') && asp(KEYS[j], KEYS[k], 'trine') &&
+              asp(KEYS[i], KEYS[k], 'trine')) {
+            grandTrines.push([KEYS[i], KEYS[j], KEYS[k]]);
+          }
+        }
+
+    // sárkány: nagy trigon + szembenálló negyedik, amely a másik két taggal szextil
+    grandTrines.forEach(function (gt) {
+      KEYS.forEach(function (mk) {
+        if (gt.indexOf(mk) >= 0) return;
+        gt.forEach(function (tail) {
+          var rest = gt.filter(function (x) { return x !== tail; });
+          if (asp(mk, tail, 'opposition') &&
+              asp(mk, rest[0], 'sextile') && asp(mk, rest[1], 'sextile')) {
+            found++;
+            usedInKite[gt.join()] = true;
+            item(s, PD.kite.name, names(gt.concat([mk])), PD.kite.base +
+              ' A húzóerőt itt ' + c.planets[mk].name + ' adja.');
+          }
+        });
+      });
+    });
+
+    grandTrines.forEach(function (gt) {
+      if (usedInKite[gt.join()]) return;
+      found++;
+      var el = majority(gt, 'element');
+      item(s, PD.grandTrine.name + (el ? ' (' + el.toLowerCase() + ')' : ''), names(gt),
+        PD.grandTrine.base + (el && PD.grandTrine.byElement[el]
+          ? ' ' + PD.grandTrine.byElement[el] : ''));
+    });
+
+    // nagy kereszt és T-kvadrát
+    var oppPairs = [];
+    for (i = 0; i < KEYS.length; i++)
+      for (j = i + 1; j < KEYS.length; j++)
+        if (asp(KEYS[i], KEYS[j], 'opposition')) oppPairs.push([KEYS[i], KEYS[j]]);
+
+    var inCross = {};
+    for (i = 0; i < oppPairs.length; i++)
+      for (j = i + 1; j < oppPairs.length; j++) {
+        var a1 = oppPairs[i][0], a2 = oppPairs[i][1];
+        var b1 = oppPairs[j][0], b2 = oppPairs[j][1];
+        if (asp(a1, b1, 'square') && asp(b1, a2, 'square') &&
+            asp(a2, b2, 'square') && asp(b2, a1, 'square')) {
+          found++;
+          var all = [a1, b1, a2, b2];
+          all.forEach(function (x) { inCross[x] = true; });
+          var qu = majority(all, 'quality');
+          item(s, PD.grandCross.name + (qu ? ' (' + qu.toLowerCase() + ')' : ''), names(all),
+            PD.grandCross.base + (qu && PD.grandCross.byQuality[qu]
+              ? ' ' + PD.grandCross.byQuality[qu] : ''));
+        }
+      }
+
+    oppPairs.forEach(function (op) {
+      if (inCross[op[0]] && inCross[op[1]]) return;   // a kereszt része
+      KEYS.forEach(function (apex) {
+        if (op.indexOf(apex) >= 0) return;
+        if (asp(op[0], apex, 'square') && asp(op[1], apex, 'square')) {
+          found++;
+          item(s, PD.tSquare.name, names(op.concat([apex])),
+            PD.tSquare.base + ' ' +
+            PD.tSquare.apex.replace('%P%', c.planets[apex].name));
+        }
+      });
+    });
+
+    // Yod: két kvinkunx egy csúcsra + szextil az alap között
+    for (i = 0; i < KEYS.length; i++)
+      for (j = i + 1; j < KEYS.length; j++)
+        KEYS.forEach(function (apex) {
+          if (apex === KEYS[i] || apex === KEYS[j]) return;
+          if (asp(KEYS[i], apex, 'quincunx') && asp(KEYS[j], apex, 'quincunx') &&
+              asp(KEYS[i], KEYS[j], 'sextile')) {
+            found++;
+            item(s, PD.yod.name, names([KEYS[i], KEYS[j], apex]),
+              PD.yod.base + ' ' + PD.yod.apex.replace('%P%', c.planets[apex].name));
+          }
+        });
+
+    if (!found) {
+      item(s, 'Nincs zárt alakzat a képletedben', '',
+        'Ez teljesen szokványos: az emberek jó részének képletében nincs szabályos ' +
+        'nagy alakzat. A fényszögeid ettől még ugyanúgy működnek — párosával, ' +
+        'a bolygókártyákon olvashatod őket.');
+    }
+    out.sections.push(s);
+  }
+
+  /* ================= éves égi kép: szolár és progressziók ================= */
+
+  function buildAnnual(out) {
+    var AD = get(D(), 'annual', null);
+    if (!AD || !HCORE.activeSolarReturn) return;
+    var s = section('eves', 'Éves égi képed — szolár és progressziók', '☀', 'nyugati');
+    var now = new Date();
+
+    /* --- szolárhoroszkóp --- */
+    var sr = HCORE.activeSolarReturn(out.chart.planets.sun.lon, out.utc, now);
+    var srChart = HCORE.chart({
+      date: sr.start, lat: out.place.lat, lon: out.place.lon,
+      system: out.input.houseSystem || 'placidus', withHouses: true
+    });
+    item(s, 'A mostani szolár éved',
+      fmtTransitDate(sr.start) + ' – ' + fmtTransitDate(sr.end), AD.solarIntro);
+    if (srChart.ascSign) {
+      item(s, 'A szolárképlet aszcendense',
+        srChart.ascSign.name + ' (' + srChart.ascSign.text + ')',
+        'Az év „fellépése", stílusa — ilyen hangnemben szólít meg az idei éved. ' +
+        get(D(), 'western.ascendantText.' + srChart.ascSign.key, ''));
+      var sunHouse = srChart.planets.sun.house;
+      if (sunHouse) {
+        var hMeta = get(D(), 'western.houses', [])[sunHouse - 1];
+        item(s, 'Az év fő hangsúlya: ' + sunHouse + '. ház' +
+          (hMeta ? ' — ' + hMeta.title : ''), '',
+          'A szolárképletben a Nap háza mutatja, mely életterület áll az év ' +
+          'középpontjában. ' +
+          (get(D(), 'western.planetInHouse.sun.' + sunHouse, '') ||
+           get(D(), 'westernExt.planetInHouse.sun.' + sunHouse, '')));
+      }
+      item(s, 'A szolár Hold', srChart.planets.moon.sign.name +
+        (srChart.planets.moon.house ? ' · ' + srChart.planets.moon.house + '. ház' : ''),
+        'Az év érzelmi alaphangja és igényei ebből a jegyből szólnak.');
+    }
+    s.notes.push(AD.solarNote);
+
+    /* --- szekunder progressziók --- */
+    var ageYears = (now - out.utc) / (365.2425 * 86400000);
+    var pDate = new Date(out.utc.getTime() + ageYears * 86400000);
+    var progSunLon = HCORE.eclipticLongitude('Sun', pDate);
+    var progMoonLon = HCORE.eclipticLongitude('Moon', pDate);
+    var progSun = HCORE.toSign(progSunLon);
+    var progMoon = HCORE.toSign(progMoonLon);
+    var natalSunSign = out.chart.planets.sun.sign;
+
+    item(s, 'Szekunder progressziók', '', AD.progIntro);
+    item(s, 'Progresszív Nap', progSun.text,
+      (progSun.index === natalSunSign.index
+        ? AD.progSunSame : AD.progSunShift).replace('%S%', progSun.name));
+
+    // a progresszív Hold jegyváltása: hátralévő fok / napi (=évi) mozgás
+    var moonSpeed = HCORE.dailyMotion('Moon', pDate);      // fok / progressziós év
+    var remain = 30 - progMoon.degree;
+    var yearsLeft = moonSpeed > 0 ? remain / moonSpeed : null;
+    var until = '';
+    if (yearsLeft != null && yearsLeft < 4) {
+      var d2 = new Date(now.getTime() + yearsLeft * 365.2425 * 86400000);
+      until = d2.getFullYear() + '. ' + HU_MONTHS[d2.getMonth()];
+    }
+    item(s, 'Progresszív Hold', progMoon.text,
+      AD.progMoon.replace('%S%', progMoon.name)
+        .replace('%T%', until || 'a következő jegyváltásig'));
+
+    var phase = HCORE.moonPhase(pDate);
+    item(s, 'Progressziós holdfázis', phase.symbol + ' ' + phase.name,
+      AD.phases[phase.key] || '');
+
+    out.sections.push(s);
+  }
+
+  /* ================= állócsillagok ================= */
+
+  function buildStars(out) {
+    var SD = get(D(), 'stars', null);
+    if (!SD || !SD.list) return;
+    var s = section('allocsillagok', 'Állócsillagok a képletedben', '✷', 'nyugati');
+    var c = out.chart;
+
+    var points = [];
+    ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn',
+      'uranus', 'neptune', 'pluto'].forEach(function (k) {
+      points.push({ name: c.planets[k].name, symbol: c.planets[k].symbol,
+        lon: c.planets[k].lon });
+    });
+    if (out.input.hasTime && c.houses) {
+      points.push({ name: 'Aszcendens', symbol: 'AC', lon: c.houses.asc });
+      points.push({ name: 'MC', symbol: 'MC', lon: c.houses.mc });
+    }
+
+    var years = out.utc.getFullYear() + out.utc.getMonth() / 12 - 2000;
+    var hits = 0;
+    SD.list.forEach(function (st) {
+      var lon = HCORE.norm360(st.lon2000 + SD.precessionPerYear * years);
+      points.forEach(function (pt) {
+        var d = HCORE.angleDiff(pt.lon, lon);
+        if (d <= (SD.orb || 1.5)) {
+          hits++;
+          item(s, st.name + ' ☌ ' + pt.symbol + ' ' + pt.name,
+            fmtDeg(d) + ' orbisz · ' + st.mag + ' magnitúdó',
+            st.text);
+        }
+      });
+    });
+
+    if (!hits) {
+      item(s, 'Nincs szoros együttállás', '',
+        'A képleted egyik fő pontja sem áll 1,5 fokon belül klasszikus ' +
+        'állócsillaggal — ez gyakori; ilyenkor ez az ősi réteg egyszerűen ' +
+        'nem hangsúlyos a képletedben.');
+    }
+    s.notes.push(SD.note);
+    out.sections.push(s);
+  }
+
+  /* ================= szinasztria ================= */
+
+  var SYN_ORDER = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter',
+    'saturn', 'uranus', 'neptune', 'pluto', 'asc'];
+  var SYN_W = { sun: 5, moon: 5, mercury: 3, venus: 4, mars: 4, jupiter: 2,
+    saturn: 3, uranus: 1, neptune: 1, pluto: 2, asc: 4 };
+  var POSS_YOUR = { sun: 'Napod', moon: 'Holdad', mercury: 'Merkúrod',
+    venus: 'Vénuszod', mars: 'Marsod', jupiter: 'Jupitered',
+    saturn: 'Szaturnuszod', uranus: 'Uránuszod', neptune: 'Neptunuszod',
+    pluto: 'Plútód', asc: 'Aszcendensed' };
+  var POSS_THEIR = { sun: 'Napja', moon: 'Holdja', mercury: 'Merkúrja',
+    venus: 'Vénusza', mars: 'Marsa', jupiter: 'Jupitere',
+    saturn: 'Szaturnusza', uranus: 'Uránusza', neptune: 'Neptunusza',
+    pluto: 'Plútója', asc: 'Aszcendense' };
+
+  var SYN_ASPECTS = [
+    { key: 'conjunction', name: 'együttállás', symbol: '☌', angle: 0, orb: 6, cls: 'conj' },
+    { key: 'opposition', name: 'szembenállás', symbol: '☍', angle: 180, orb: 5, cls: 'hard' },
+    { key: 'trine', name: 'trigon', symbol: '△', angle: 120, orb: 5, cls: 'harm' },
+    { key: 'square', name: 'kvadrát', symbol: '□', angle: 90, orb: 5, cls: 'hard' },
+    { key: 'sextile', name: 'szextil', symbol: '⚹', angle: 60, orb: 4, cls: 'harm' }
+  ];
+
+  function synPairKey(a, b) {
+    return SYN_ORDER.indexOf(a) <= SYN_ORDER.indexOf(b) ? a + '-' + b : b + '-' + a;
+  }
+
+  function synCategories(pairKey) {
+    var cats = [];
+    var p = pairKey.split('-');
+    function both(x, list) { return list.indexOf(x) >= 0; }
+    if (['sun-moon', 'moon-moon', 'moon-venus', 'moon-jupiter', 'venus-venus',
+      'sun-venus'].indexOf(pairKey) >= 0) cats.push('erzelem');
+    if (p[0] === 'mercury' || p[1] === 'mercury') cats.push('kommunikacio');
+    if (['venus-mars', 'mars-mars', 'sun-mars', 'venus-pluto', 'mars-pluto',
+      'moon-mars'].indexOf(pairKey) >= 0) cats.push('szenvedely');
+    if ((p.indexOf('saturn') >= 0 &&
+         (both(p[0], ['sun', 'moon', 'venus', 'mercury', 'saturn']) ||
+          both(p[1], ['sun', 'moon', 'venus', 'mercury', 'saturn']))) ||
+        (p.indexOf('jupiter') >= 0 &&
+         (both(p[0], ['sun', 'moon', 'venus', 'jupiter']) ||
+          both(p[1], ['sun', 'moon', 'venus', 'jupiter'])))) cats.push('stabilitas');
+    return cats;
+  }
+
+  function buildSynastry(out) {
+    var p = out.input.partner;
+    var SY = get(D(), 'synastry', null);
+    if (!p || !SY) return;
+
+    var tz = (p.place && p.place.tz) || 'Europe/Budapest';
+    var pu = HCORE.localToUTC(p.year, p.month, p.day,
+      p.hasTime ? p.hour : 12, p.hasTime ? p.minute : 0, tz);
+    var pc = HCORE.chart({
+      date: pu, lat: p.place.lat, lon: p.place.lon,
+      system: out.input.houseSystem || 'placidus', withHouses: !!p.hasTime
+    });
+    out.partnerChart = pc;
+
+    var youName = out.input.name || 'Te';
+    var pName = p.name || 'a párod';
+    var s = section('szinasztria', 'Szinasztria — ' + (p.name || 'kettőtök') +
+      ' és a te képleted', '♡', 'nyugati');
+
+    item(s, pName + ' képlete',
+      pc.planets.sun.sign.name + ' Nap · ' + pc.planets.moon.sign.name + ' Hold' +
+      (pc.ascSign ? ' · ' + pc.ascSign.name + ' aszcendens' : ''),
+      SY.intro);
+
+    /* --- pontlisták (ASC csak ott, ahol van idő) --- */
+    function pointsOf(chart, hasTime) {
+      var o = {};
+      SYN_ORDER.forEach(function (k) {
+        if (k === 'asc') {
+          if (hasTime && chart.houses) o.asc = { lon: chart.houses.asc };
+        } else o[k] = { lon: chart.planets[k].lon };
+      });
+      return o;
+    }
+    var A = pointsOf(out.chart, out.input.hasTime);
+    var B = pointsOf(pc, p.hasTime);
+
+    /* --- képletközi fényszögek --- */
+    var links = [];
+    Object.keys(A).forEach(function (ka) {
+      Object.keys(B).forEach(function (kb) {
+        if (ka === 'asc' && kb === 'asc') return;
+        var sep = HCORE.angleDiff(A[ka].lon, B[kb].lon);
+        for (var x = 0; x < SYN_ASPECTS.length; x++) {
+          var asp = SYN_ASPECTS[x];
+          var delta = Math.abs(sep - asp.angle);
+          if (delta <= asp.orb) {
+            links.push({
+              a: ka, b: kb, asp: asp, orb: delta,
+              exact: 1 - delta / asp.orb,
+              w: (SYN_W[ka] || 1) + (SYN_W[kb] || 1)
+            });
+            break;
+          }
+        }
+      });
+    });
+
+    /* --- összhang-pontszámok --- */
+    var scores = { erzelem: 0, kommunikacio: 0, szenvedely: 0, stabilitas: 0 };
+    var counts = { erzelem: 0, kommunikacio: 0, szenvedely: 0, stabilitas: 0 };
+    links.forEach(function (l) {
+      var key = synPairKey(l.a, l.b);
+      var mult = 0.5 + 0.5 * l.exact;
+      synCategories(key).forEach(function (cat) {
+        var v;
+        if (l.asp.cls === 'harm') v = 2;
+        else if (l.asp.cls === 'conj') {
+          v = (l.a === 'saturn' || l.b === 'saturn' ||
+               l.a === 'pluto' || l.b === 'pluto') ? 1 : 2;
+        } else v = (cat === 'szenvedely') ? 1 : -2;
+        scores[cat] += v * mult;
+        counts[cat]++;
+      });
+    });
+
+    var cats = [], sum = 0, nCat = 0;
+    Object.keys(scores).forEach(function (cat) {
+      var pct = Math.max(4, Math.min(96, Math.round(50 + scores[cat] * 9)));
+      var meta = SY.categories[cat] || { name: cat, text: '' };
+      cats.push({ key: cat, name: meta.name, percent: pct, text: meta.text,
+        empty: counts[cat] === 0 });
+      sum += pct; nCat++;
+    });
+    var overall = Math.round(sum / nCat);
+    var band = null;
+    (SY.overallBands || []).forEach(function (b) {
+      if (band === null && overall >= b.min) band = b.text;
+    });
+
+    /* --- a legfontosabb kapcsolódások szövege --- */
+    links.sort(function (x, y) {
+      return (y.w + y.exact * 3) - (x.w + x.exact * 3);
+    });
+    var shown = links.slice(0, 14).map(function (l) {
+      var key = synPairKey(l.a, l.b);
+      var pairText = get(SY, 'pairs.' + key + '.' + l.asp.cls, '');
+      var text;
+      if (pairText) text = pairText;
+      else {
+        text = 'A ' + (POSS_YOUR[l.a] || l.a) + ' (' +
+          (SY.planetTheme[l.a] || '') + ') és ' + pName + ' ' +
+          (POSS_THEIR[l.b] || l.b) + ' (' + (SY.planetTheme[l.b] || '') + ') ' +
+          (SY.generic[l.asp.cls] || '');
+      }
+      return {
+        label: 'A ' + (POSS_YOUR[l.a] || l.a) + ' ' + l.asp.symbol + ' ' +
+          pName + ' ' + (POSS_THEIR[l.b] || l.b),
+        aspName: l.asp.name, orb: fmtDeg(l.orb),
+        cls: l.asp.cls, exact: l.exact > 0.75, text: text
+      };
+    });
+
+    /* --- bolygók a másik házaiban --- */
+    var overlays = [];
+    var KEY4 = ['sun', 'moon', 'venus', 'mars'];
+    if (p.hasTime && pc.houses) {
+      KEY4.forEach(function (k) {
+        var h = HCORE.houseOf(out.chart.planets[k].lon, pc.houses.cusps);
+        overlays.push({
+          label: 'A ' + (POSS_YOUR[k] || k) + ' → ' + pName + ' ' + h + '. háza',
+          text: (SY.houseOverlay[h] || '')
+        });
+      });
+    }
+    if (out.input.hasTime && out.chart.houses) {
+      KEY4.forEach(function (k) {
+        var h = HCORE.houseOf(pc.planets[k].lon, out.chart.houses.cusps);
+        overlays.push({
+          label: pName + ' ' + (POSS_THEIR[k] || k) + ' → a te ' + h + '. házad',
+          text: (SY.houseOverlay[h] || '')
+        });
+      });
+    }
+
+    s.synastry = {
+      youName: youName, partnerName: pName,
+      overall: overall, overallText: band || '',
+      cats: cats, aspects: shown, overlays: overlays
+    };
+    if (!out.input.hasTime || !p.hasTime) {
+      s.notes.push('Ahol nincs pontos születési idő, ott az Aszcendens és a ' +
+        'házátfedések kimaradnak, és a Hold fényszögei is pontatlanabbak.');
+    }
+    s.notes.push(SY.note);
     out.sections.push(s);
   }
 

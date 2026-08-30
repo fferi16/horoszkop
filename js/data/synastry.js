@@ -126,25 +126,25 @@ window.HDATA.synastry = {
   },
 
   generic: {
-    harm: '%A% (%TA%) támogató fényszöget zár %B% bolygójával (%TB%): ezen a területen természetes az összhang — erősítitek egymást.',
-    hard: '%A% (%TA%) feszült fényszöget zár %B% bolygójával (%TB%): itt üt el egymástól a működésetek — ez a súrlódási felület egyben a közös fejlődés terepe.',
-    conj: '%A% (%TA%) együtt áll %B% bolygójával (%TB%): ez a két működés összeolvad köztetek — nagy erő, ha ugyanabba az irányba fordítjátok.'
+    harm: 'támogató fényszögben áll egymással: ezen a területen természetes köztetek az összhang — erősítitek egymást.',
+    hard: 'feszült fényszögben áll egymással: itt üt el a működésetek — ez a súrlódási felület egyben a közös fejlődés terepe.',
+    conj: 'együttállásban van: ez a két működés összeolvad köztetek — nagy erő, ha ugyanabba az irányba fordítjátok.'
   },
 
   /* ---------------- bolygó a másik házában ---------------- */
 
   houseOverlay: {
-    1: '%P% bolygója a(z) %N% 1. házába esik: erős, azonnali hatás — %N% a puszta jelenlététől is elevenebbnek érzi magát.',
-    2: '%P% bolygója a(z) %N% 2. házába esik: az anyagiak, az önértékelés és a biztonság témáit mozgatja meg — %N% mellette értékesebbnek (vagy épp megkérdőjelezettnek) érzi, amije van.',
-    3: '%P% bolygója a(z) %N% 3. házába esik: beszélgetős, pörgető kapcsolódás — %N% gondolkodását élénkíti, a hétköznapi kommunikációt színezi.',
-    4: '%P% bolygója a(z) %N% 4. házába esik: az otthon és a gyökerek húrját pendíti meg — %N% családias, mély bizalmat érezhet iránta.',
-    5: '%P% bolygója a(z) %N% 5. házába esik: játék, romantika, alkotókedv — %N% mellette könnyebben engedi el magát és mer örülni.',
-    6: '%P% bolygója a(z) %N% 6. házába esik: a hétköznapok, a munka és az egészség terepe — gyakorlati, segítő kapcsolódás, amely a rutinokban mutatkozik meg.',
-    7: '%P% bolygója a(z) %N% 7. házába esik: a társ-ház — %N% ösztönösen párkapcsolati szereplőként éli meg őt; a szinasztria egyik legerősebb köteléke.',
-    8: '%P% bolygója a(z) %N% 8. házába esik: mélyvíz — intimitás, közös erőforrások, átalakulás. Intenzív, nem felszínes kapcsolódás.',
-    9: '%P% bolygója a(z) %N% 9. házába esik: horizonttágítás — %N% mellette többet utazik, tanul, kérdez; a közös világnézet a fő szál.',
-    10: '%P% bolygója a(z) %N% 10. házába esik: a hivatás és a nyilvánosság tere — hat %N% céljaira és arra, ahogyan a világ előtt megjelenik.',
-    11: '%P% bolygója a(z) %N% 11. házába esik: barátság-szál — közösség, tervek, jövőkép; a szerelem mellé (vagy helyett) erős bajtársiasság.',
-    12: '%P% bolygója a(z) %N% 12. házába esik: a tudattalan tere — kimondatlan, sejtelmes hatás; mély spirituális kapcsolódás és félreértés egyaránt teremhet itt.'
+    1: 'Az én háza: erős, azonnali hatás — a ház gazdája a másik puszta jelenlététől is elevenebbnek érzi magát.',
+    2: 'Az anyagiak háza: az önértékelés és a biztonság témáit mozgatja meg — a ház gazdája mellette értékesebbnek (vagy épp megkérdőjelezettnek) érzi, amije van.',
+    3: 'A kommunikáció háza: beszélgetős, pörgető kapcsolódás — élénkíti a ház gazdájának gondolkodását, színezi a hétköznapi szóváltásokat.',
+    4: 'Az otthon háza: a gyökerek húrját pendíti meg — a ház gazdája családias, mély bizalmat érezhet a másik iránt.',
+    5: 'Az örömök háza: játék, romantika, alkotókedv — a ház gazdája a másik mellett könnyebben engedi el magát és mer örülni.',
+    6: 'A hétköznapok háza: a munka és az egészség terepe — gyakorlati, segítő kapcsolódás, amely a rutinokban mutatkozik meg.',
+    7: 'A társkapcsolat háza: a ház gazdája ösztönösen párkapcsolati szereplőként éli meg a másikat — a szinasztria egyik legerősebb köteléke.',
+    8: 'A mélység háza: intimitás, közös erőforrások, átalakulás — intenzív, nem felszínes kapcsolódás.',
+    9: 'A távlatok háza: horizonttágítás — a ház gazdája a másik mellett többet utazik, tanul, kérdez; a közös világnézet a fő szál.',
+    10: 'A hivatás háza: hat a ház gazdájának céljaira és arra, ahogyan a világ előtt megjelenik.',
+    11: 'A közösség háza: barátság-szál — tervek, jövőkép, bajtársiasság a szerelem mellé (vagy helyett).',
+    12: 'A tudattalan háza: kimondatlan, sejtelmes hatás — mély spirituális kapcsolódás és félreértés egyaránt teremhet itt.'
   }
 };
