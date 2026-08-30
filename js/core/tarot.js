@@ -145,6 +145,45 @@
     var SY = d.synthesis, syn = [];
     var T = rows.length;
 
+    // kereső-vetés: egy adott lapot keresünk a terítésben
+    if (spread.seeker && SY.seeker) {
+      var hit = -1;
+      rows.forEach(function (r, i) {
+        if (hit < 0 && spread.seeker.targets.indexOf(r.id) >= 0) hit = i;
+      });
+      var targetNames = spread.seeker.targets.map(function (id) {
+        return d.cards[id].name;
+      }).join(' / ');
+      if (hit >= 0) {
+        var half = hit < T / 2;
+        syn.push(SY.seeker.found
+          .replace('%C%', rows[hit].name)
+          .replace('%P%', String(hit + 1))
+          .replace('%H%', half ? SY.seeker.firstHalf : SY.seeker.secondHalf)
+          .replace('%HTXT%', half ? SY.seeker.firstHalfTime : SY.seeker.secondHalfTime));
+        if (hit > 0) {
+          syn.push(SY.seeker.before.replace('%LIST%',
+            rows.slice(Math.max(0, hit - 3), hit).map(function (r) {
+              return r.name;
+            }).join(' → ')));
+        }
+        if (hit < T - 1) {
+          syn.push(SY.seeker.after.replace('%LIST%',
+            rows.slice(hit + 1, hit + 3).map(function (r) {
+              return r.name;
+            }).join(', ')));
+        }
+        if (spread.key === 'rontasvizsgalat' && hit >= 2) {
+          syn.push(SY.seeker.enemyWho
+            .replace('%W%', rows[hit - 1].name)
+            .replace('%W2%', rows[hit - 2].name));
+        }
+      } else {
+        syn.push(SY.seeker.notFound.replace('%C%', targetNames));
+        if (spread.key === 'rontasvizsgalat') syn.push(SY.seeker.clean);
+      }
+    }
+
     // mondat-logika a hármas sornál (Lenormand)
     if (SY.lineCombo && T === 3 && spread.key === 'harmas') {
       syn.push(SY.lineCombo
@@ -220,9 +259,20 @@
     d.spreads.forEach(function (sp) { if (sp.key === spreadKey) spread = sp; });
     if (!spread) return null;
 
+    var seekerHit = -1;
+    if (spread.seeker) {
+      picks.forEach(function (p, i) {
+        if (seekerHit < 0 && spread.seeker.targets.indexOf(p.id) >= 0) seekerHit = i;
+      });
+    }
+
     var rows = picks.map(function (p, i) {
       var meta = cardMeta(deckKey, p.id);
-      var pos = spread.positions[i] || { name: (i + 1) + '. lap', text: '' };
+      var pos = spread.positions[i] ||
+        (spread.seeker
+          ? { name: (i + 1) + '. lap' + (i === seekerHit ? ' — A KERESETT LAP' : ''),
+              text: i === seekerHit ? 'Itt bukkant fel a keresett lap.' : '' }
+          : { name: (i + 1) + '. lap', text: '' });
       return {
         position: pos.name,
         positionText: pos.text,

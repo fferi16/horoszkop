@@ -188,6 +188,67 @@ window.HDATA.tarot = {
         { name: 'A „B" út', text: 'A második lehetőség természete: milyen energiát hoz az életedbe.' },
         { name: 'Amit nem látsz', text: 'A rejtett tényező: szempont, amelyet a mérlegelésed eddig kihagyott.' },
         { name: 'Tanács', text: 'A kirakás iránymutatása — nem dönt helyetted, de megvilágítja a mérleget.' }] },
+    { key: 'vakfolt', name: 'Vakfolt-kirakás', cards: 4,
+      layout: { cols: 2, rows: 2, cells: [
+        { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 2, c: 1 }, { r: 2, c: 2 }] },
+      desc: 'A Johari-ablak tarot-változata: mit tudsz magadról te, mit látnak mások — és mi a vakfoltod.',
+      positions: [
+        { name: 'A nyílt éned', text: 'Amit te is tudsz magadról, és mások is látnak: a közös valóság.' },
+        { name: 'A rejtett éned', text: 'Amit csak te tudsz: amit tudatosan vagy szemérmesen nem mutatsz meg.' },
+        { name: 'A vakfoltod', text: 'Amit mások látnak, de te nem — a kirakás kulcslapja: ezt hoztad ki tükörnek.' },
+        { name: 'A tudattalan', text: 'Amit (még) senki sem lát: a mélyben formálódó erő.' }] },
+    { key: 'csillag', name: 'Csillag-kirakás', cards: 7,
+      layout: { cols: 3, rows: 4, cells: [
+        { r: 4, c: 2 },      // 1. a probléma (alul)
+        { r: 3, c: 1 },      // 2. pozitív hatások
+        { r: 3, c: 3 },      // 3. negatív hatások
+        { r: 2, c: 1 },      // 4. múltbeli gyökér
+        { r: 2, c: 3 },      // 5. tanács
+        { r: 1, c: 2 },      // 6. kimenetel (a csillag csúcsa)
+        { r: 2, c: 2 }] },   // 7. összegzés (közép)
+      desc: 'Remény- és gyógyulás-kirakás: amikor egy nehéz helyzetben tisztánlátásra és irányra van szükség.',
+      positions: [
+        { name: 'A probléma', text: 'A jelenlegi helyzet magja — amiből felfelé indulunk.' },
+        { name: 'Pozitív hatások', text: 'Ami a helyzetet jó irányba tolja: erőforrásaid.' },
+        { name: 'Negatív hatások', text: 'Ami nehezíti: amivel számolnod kell.' },
+        { name: 'A gyökér', text: 'A múltbeli ok, amiből a helyzet táplálkozik.' },
+        { name: 'Tanács', text: 'A javasolt hozzáállás vagy lépés.' },
+        { name: 'Kimenetel', text: 'A csillag csúcsa: amerre a helyzet a jelen állás szerint tart.' },
+        { name: 'Összegzés', text: 'A közép: az egész kirakás egyetlen lapba sűrítve.' }] },
+    { key: 'evkor', name: 'Évkör (12 hónap)', cards: 12,
+      layout: { cols: 4, rows: 3, cells: [
+        { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 },
+        { r: 2, c: 1 }, { r: 2, c: 2 }, { r: 2, c: 3 }, { r: 2, c: 4 },
+        { r: 3, c: 1 }, { r: 3, c: 2 }, { r: 3, c: 3 }, { r: 3, c: 4 }] },
+      desc: 'Tizenkét lap a következő tizenkét hónapra: az első lap a mostani hónap, és sorban halad előre. Születésnapon vagy évkezdéskor a legszebb.',
+      positions: [
+        { name: '1. hónap', text: 'A mostani hónap témája.' },
+        { name: '2. hónap', text: '' }, { name: '3. hónap', text: '' },
+        { name: '4. hónap', text: '' }, { name: '5. hónap', text: '' },
+        { name: '6. hónap', text: 'Az év első felének fordulója.' },
+        { name: '7. hónap', text: '' }, { name: '8. hónap', text: '' },
+        { name: '9. hónap', text: '' }, { name: '10. hónap', text: '' },
+        { name: '11. hónap', text: '' },
+        { name: '12. hónap', text: 'A kör zárólapja: amivé az év érik.' }] },
+    { key: 'asztro', name: 'Asztrológiai kirakás (12 ház)', cards: 12,
+      layout: { cols: 4, rows: 3, cells: [
+        { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 },
+        { r: 2, c: 1 }, { r: 2, c: 2 }, { r: 2, c: 3 }, { r: 2, c: 4 },
+        { r: 3, c: 1 }, { r: 3, c: 2 }, { r: 3, c: 3 }, { r: 3, c: 4 }] },
+      desc: 'Nagy életleltár: a 12 asztrológiai ház mindegyikére egy lap — ugyanazok az életterületek, amelyeket a születési képleted házai is mutatnak, így közvetlenül összevetheted a profiloddal.',
+      positions: [
+        { name: '1. ház — az én', text: 'Önkép, fellépés, testi éned jelenlegi állapota.' },
+        { name: '2. ház — anyagiak', text: 'Pénz, birtoklás, önértékelés.' },
+        { name: '3. ház — kommunikáció', text: 'Beszéd, tanulás, testvérek, közeli környezet.' },
+        { name: '4. ház — otthon', text: 'Család, gyökerek, magánélet.' },
+        { name: '5. ház — örömök', text: 'Alkotás, szerelem, játék, gyermekek.' },
+        { name: '6. ház — hétköznapok', text: 'Munka, rutinok, egészség.' },
+        { name: '7. ház — társ', text: 'Párkapcsolat, társulások, nyílt viszonyok.' },
+        { name: '8. ház — mélység', text: 'Közös erőforrások, intimitás, átalakulás.' },
+        { name: '9. ház — távlatok', text: 'Utazás, tanulmányok, világnézet.' },
+        { name: '10. ház — hivatás', text: 'Karrier, társadalmi szerep, célok.' },
+        { name: '11. ház — közösség', text: 'Barátok, tervek, jövőkép.' },
+        { name: '12. ház — belső világ', text: 'Elvonulás, tudattalan, lezárások.' }] },
     { key: 'patko', name: 'Patkó-kirakás', cards: 7,
       layout: { cols: 7, rows: 3, cells: [
         { r: 3, c: 1 }, { r: 2, c: 2 }, { r: 1, c: 3 }, { r: 1, c: 4 },
