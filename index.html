@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horoszkóp – teljes születési profil</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <h1><span class="glyph">✶</span> Horoszkóp</h1>
+    <p class="tagline">Teljes születési profil — nyugati, kínai, koreai, védikus, kabbalisztikus és népi
+      rendszerek, kronobiológiával együtt. Minden számítás a saját gépeden fut.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ ŰRLAP ============ -->
+  <section class="card form-card" id="formCard">
+    <h2>Születési adatok</h2>
+    <form id="birthForm" autocomplete="off">
+      <div class="grid">
+        <label class="field">
+          <span>Név <em>(opcionális — a numerológiához)</em></span>
+          <input type="text" id="fName" placeholder="pl. Kovács Ágnes">
+        </label>
+
+        <label class="field">
+          <span>Nem <em>(a Kua-számhoz)</em></span>
+          <select id="fGender">
+            <option value="">nem adom meg</option>
+            <option value="no">nő</option>
+            <option value="ferfi">férfi</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Születési dátum <em>(kötelező)</em></span>
+          <input type="date" id="fDate" required min="1900-01-01" max="2050-12-31">
+        </label>
+
+        <label class="field">
+          <span>Születési idő</span>
+          <input type="time" id="fTime" value="12:00">
+          <label class="check"><input type="checkbox" id="fNoTime"> Nem tudom a pontos időt</label>
+        </label>
+
+        <label class="field place-field">
+          <span>Születési hely</span>
+          <input type="text" id="fPlace" placeholder="pl. Debrecen" value="Budapest">
+          <div class="suggestions" id="placeSuggest"></div>
+          <small id="placeInfo"></small>
+        </label>
+
+        <label class="field">
+          <span>Házrendszer</span>
+          <select id="fHouse">
+            <option value="placidus">Placidus (a legelterjedtebb)</option>
+            <option value="whole">Egész jegyes (hellenisztikus)</option>
+            <option value="equal">Egyenlő házak</option>
+          </select>
+        </label>
+      </div>
+
+      <details class="extra">
+        <summary>Népi hagyomány szerinti születési körülmények (opcionális)</summary>
+        <div id="specialBox" class="chips"></div>
+      </details>
+
+      <div class="actions">
+        <button type="submit" class="primary">Profil kiszámítása</button>
+        <button type="button" id="btnToday" class="ghost">Mai adatokkal</button>
+        <button type="button" id="btnSave" class="ghost" hidden>Mentés a böngészőbe</button>
+        <button type="button" id="btnPrint" class="ghost" hidden>Nyomtatás / PDF</button>
+      </div>
+      <div class="saved" id="savedList"></div>
+    </form>
+  </section>
+
+  <!-- ============ EREDMÉNY ============ -->
+  <div id="result" hidden>
+
+    <section class="card hero" id="hero"></section>
+
+    <nav class="filters" id="filters">
+      <button data-cat="all" class="active">Mind</button>
+      <button data-cat="osszegzes">Összegzés</button>
+      <button data-cat="nyugati">Nyugati</button>
+      <button data-cat="kelet">Keleti</button>
+      <button data-cat="szam">Számok</button>
+      <button data-cat="ezoterikus">Egyéb rendszerek</button>
+      <button data-cat="nepi">Népi</button>
+      <button data-cat="tudomany">Tudomány</button>
+    </nav>
+
+    <div id="sections"></div>
+
+    <section class="card disclaimer">
+      <h2>Fontos tudnivaló</h2>
+      <p id="disclaimerText"></p>
+    </section>
+  </div>
+
+</main>
+
+<footer class="wrap foot">
+  <p>Az adataid nem hagyják el a gépedet: minden számítás a böngésződben fut.
+     Csillagászati mag: <strong>Astronomy Engine</strong> (MIT licenc).</p>
+  <p>A program egyetlen születési adatsorból készít teljes önismereti profilt
+     több mint húsz hagyomány — nyugati, keleti, népi rendszerek — és a modern
+     kronobiológia alapján, szórakoztató és önismereti célra.</p>
+  <p class="powered">✶ Powered by <strong>Pacsai Ferenc</strong> ·
+     A fejlesztés folyamatosan zajlik — új funkciók érkeznek.</p>
+</footer>
+
+<!-- könyvtár -->
+<script src="js/lib/astronomy.browser.js"></script>
+<!-- adatmodulok -->
+<script src="js/data/geo.js"></script>
+<script src="js/data/western.js"></script>
+<script src="js/data/western-ext.js"></script>
+<script src="js/data/western-cusp.js"></script>
+<script src="js/data/transits.js"></script>
+<script src="js/data/degrees.js"></script>
+<script src="js/data/eastern.js"></script>
+<script src="js/data/eastern-ext.js"></script>
+<script src="js/data/exotic.js"></script>
+<script src="js/data/angels.js"></script>
+<script src="js/data/hungarian.js"></script>
+<script src="js/data/chrono.js"></script>
+<script src="js/data/numbers.js"></script>
+<script src="js/data/psycho.js"></script>
+<script src="js/data/matrix.js"></script>
+<script src="js/data/hvd.js"></script>
+<!-- számítási mag -->
+<script src="js/core/astro.js"></script>
+<script src="js/core/calendars.js"></script>
+<script src="js/core/chrono.js"></script>
+<script src="js/core/profile.js"></script>
+<!-- felület -->
+<script src="js/ui/wheel.js"></script>
+<script src="js/ui/charts.js"></script>
+<script src="js/ui/app.js"></script>
+</body>
+</html>
