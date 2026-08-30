@@ -17,7 +17,7 @@ szerint állít össze teljes profilt.
 
 ### 🌐 Webes változat — telepítés nélkül
 
-**https://fferi16.github.io/horoszkop/** — böngészőben, telefonon is fut,
+**https://asztrolab.hu** — böngészőben, telefonon is fut,
 minden számítás helyben, az eszközödön történik.
 
 **A webes változat frissítése** (a `main` ág `app/` mappáját teszi ki):
