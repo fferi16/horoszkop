@@ -288,6 +288,15 @@ svg.chart{width:100%; min-width:520px; height:auto; color:var(--ink)}
   border-bottom:1px dotted var(--accent2);
 }
 .foot .powered a:hover{color:var(--accent); border-bottom-style:solid}
+.coffee-btn{
+  display:inline-block; margin-top:6px; padding:9px 20px; border-radius:999px;
+  background:linear-gradient(140deg,var(--accent2),color-mix(in srgb,var(--accent2) 70%,#6b4c12));
+  color:#fff !important; font-weight:700; font-size:.9rem; text-decoration:none;
+  letter-spacing:.02em; box-shadow:0 4px 14px color-mix(in srgb,var(--accent2) 40%,transparent);
+  transition:transform .12s, filter .15s;
+}
+.coffee-btn:hover{transform:translateY(-2px); filter:brightness(1.08)}
+@media print{ .coffee-btn{display:none !important} }
 
 /* ---- nyomtatás ---- */
 @media print{
