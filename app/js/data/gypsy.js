@@ -156,6 +156,9 @@ window.HDATA.gypsy = {
       seeker: { targets: ['g06'], question: 'Van-e rajtam ártó szándék, „rontás"?' },
       desc: 'Kereső-vetés: 13 lap között az Ellenség lapot keressük. Ha nincs benne, megnyugodhatsz. Ha benne van, az előtte lévő lapok az okról és az ártó személyről mesélnek.',
       positions: [] },
+    { key: 'nagyterites', name: 'Közeli-távoli nagyterítés (36 lap)', cards: 36,
+      desc: 'A cigánykártya legalaposabb vetése: mind a 36 lap, négy sorban nyolc + négy lap az ötödikben. A személyjelölő laphoz KÖZELI lapok a szokásos jelentésükben, a TÁVOLIAK gyengébben vagy épp ellenkező értelemben olvasandók.',
+      positions: [] },
     { key: 'kilences', name: 'Kilences tabló (3×3)', cards: 9,
       layout: { cols: 3, rows: 3, cells: [
         { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 3 },
@@ -188,6 +191,12 @@ window.HDATA.gypsy = {
       szellem: 'gondolatok és tanulás', tarsasag: 'társaság és találkozások',
       valtozas: 'változás és mozgás', hivatal: 'hivatalos ügyek', test: 'egészség'
     },
+    nagyterites: {
+      sigFound: 'A személyjelölőd (%C%) a terítés %P%. helyén, a %R%. sorban fekszik — a nagyterítésben minden lap jelentése a tőle mért távolságtól függ.',
+      near: 'KÖZVETLEN KÖRNYEZETED (a szomszédos lapok — ezek hatnak most a legerősebben, teljes jelentésükben): %L%.',
+      far: 'TÁVOLI LAPOK (a terítés túlsó fele — a hagyomány szerint a jelentésük meggyengül vagy ellenkezőjére fordul): %L%. Például a távoli Szerelem viszonzatlan vonzalmat, a távoli Betegség elkerült betegséget jelezhet.',
+      note: 'A közeli-távoli módszer a cigánykártya „Grand Tableau-ja": nem napi kérdésre való, hanem az élet teljes állásának feltérképezésére. A részletes listában minden lap a saját jelentésével szerepel — a távoliakat fordítsd az ellenkezőjükre.'
+    },
     seeker: {
       found: 'A keresett lap (%C%) BENNE VAN a terítésben, a %P%. helyen: a hagyomány szerint a válasz IGEN — és mivel a lap a terítés %H%, az esemény az időszak %HTXT% várható.',
       notFound: 'A keresett lap (%C%) NINCS a 13 lap között: a hagyomány szerint a kérdezett dolog ebben az időtávban nem mutatkozik. Nem végleges nem — a hagyomány ilyenkor hosszabb időtávval (2, majd 3 év) ismétli a vetést, vagy a hozzáállás vizsgálatát ajánlja.',
@@ -201,3 +210,20 @@ window.HDATA.gypsy = {
     note: 'A cigánykártya a XIX–XX. századi közép-európai jóskártya-hagyomány: életképekben, érzelmekben mesél, fordított állás nélkül. A lapok jelenetei összefűzve adnak ki történetet — önismereti tükörként érdemes olvasni, nem jóslatként.'
   }
 };
+
+/* A közeli-távoli nagyterítés rácsának felépítése: 4 sor × 8 lap,
+   plusz 4 lap az 5. sor közepén. */
+(function () {
+  var G = window.HDATA.gypsy;
+  var nt = null;
+  G.spreads.forEach(function (sp) { if (sp.key === 'nagyterites') nt = sp; });
+  if (!nt) return;
+  var cells = [], positions = [];
+  for (var i = 0; i < 36; i++) {
+    if (i < 32) cells.push({ r: Math.floor(i / 8) + 1, c: (i % 8) + 1 });
+    else cells.push({ r: 5, c: (i - 32) + 3 });
+    positions.push({ name: (i + 1) + '. lap', text: '' });
+  }
+  nt.positions = positions;
+  nt.layout = { cols: 8, rows: 5, cells: cells };
+})();
