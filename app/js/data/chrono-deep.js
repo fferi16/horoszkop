@@ -10,6 +10,36 @@
 
 window.HDATA = window.HDATA || {};
 
+/* A ХВД-csakraanalízis kiértékelése — a rendszer belső logikája szerint:
+   a 40–60% a kívánatos sáv, a magas érték kezelendő TÖBBLET, az alacsony
+   táplálandó hiány. */
+window.HDATA.hvdDeep = {
+  intro: 'Összegzés a rendszer (Bekenyova-féle hronálvektor-diagnosztika) saját értelmezési skálája szerint: 40% alatt „gyenge potenciál", 40–60% a normál-ideális sáv, 60% felett „túlzott potenciál" — a magas érték tehát nem „jó pont", hanem kezelendő többlet, az alacsony pedig táplálandó terület:',
+  excess: {
+    muladhara: 'a túlzott gyökércsakra a könyv szerint tekintélyelvű, fáradhatatlan típust jelöl, aki rendszeres fizikai levezetés nélkül feszültté, agresszióra hajlamossá válik — a mozgás nála nem hobbi, hanem karbantartás',
+    szvadhisthana: 'a túlműködő szakrális csakra túlfűtött vágy- és élménykeresést jelez — a mérték és a jelenlét a kezelése',
+    manipura: 'a túlműködő napfonat túlpörgő akaratot, kontrolligényt jelez — a delegálás és az elengedés a kezelése',
+    anahata: 'a túlműködő szívcsakra önfeladó, határok nélküli adást jelez — az egészséges önzés a kezelése',
+    visuddha: 'a túlműködő torokcsakra túlbeszélést, a hallgatás nehézségét jelzi — a figyelő csend a kezelése',
+    adzsna: 'a túlműködő homlokcsakra túlgondolást, rágódást jelez — a cselekvés és a testbe térés a kezelése',
+    szahaszrara: 'a túlműködő koronacsakra elszakadást jelez a földi gyakorlattól — a hétköznapok megbecsülése a kezelése'
+  },
+  deficit: {
+    muladhara: 'a gyenge gyökércsakra a földelés, a testi-anyagi stabilitás hiányát jelzi — rendszeres testmozgás, kézzelfogható rutinok táplálják',
+    szvadhisthana: 'a gyenge szakrális csakra az örömképesség megkopását jelzi — játék, érzéki élmények, alkotás táplálja',
+    manipura: 'a gyenge napfonat a határhúzás és az önérvényesítés nehézségét jelzi — kis, kimondott nemek táplálják',
+    anahata: 'a gyenge szívcsakra a kapcsolódás óvatosságát jelzi — az adás-kapás apró, biztonságos gyakorlatai táplálják',
+    visuddha: 'a gyenge torokcsakra a kimondás nehézségét jelzi — a saját hang keresése, írás, éneklés táplálja',
+    adzsna: 'a gyenge homlokcsakra az intuíció elhanyagolását jelzi — csend, megérzés-napló, reflexió táplálja',
+    szahaszrara: 'a gyenge koronacsakra a tágabb értelem-kapcsolat hiányérzetét jelzi — természet, elmélyülés, rácsodálkozás táplálja'
+  },
+  upperTilt: 'A felső (szellemi) csakráid összességében erősebbek az alsóknál: a rendszer olvasatában „fentről lefelé" élsz — a gondolat és a jelentés az anyanyelved, a megvalósítás és a testi jelenlét a gyakorlófeladatod.',
+  lowerTilt: 'Az alsó (gyakorlati) csakráid összességében erősebbek a felsőknél: a rendszer olvasatában „lentről felfelé" élsz — a cselekvés és a kézzelfoghatóság az anyanyelved, a távlat és az elcsendesedés a gyakorlófeladatod.',
+  balancedTilt: 'A felső és alsó csakráid egyensúlyban vannak: a rendszer olvasatában a gondolat és a cselekvés között jó az átjárásod — ez a szerkezet legstabilabb mintázata.',
+  allNormal: 'Minden csakrád a normál sávban van: a rendszer szerint kiegyensúlyozott, karbantartást nem igénylő szerkezettel születtél — ritka mintázat.',
+  disclaimer: 'Ez az összegzés a ХВД-rendszer saját szabályait követi, tudományos érvényessége nincs — önismereti kérdéslistának érdemes olvasni, nem diagnózisnak.'
+};
+
 window.HDATA.chronoDeep = {
 
   /* ---------------- a születési fényprofil kiértékelése ---------------- */
