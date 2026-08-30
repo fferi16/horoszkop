@@ -102,6 +102,15 @@ SOFTWARE.
 
 ---
 
+## Dondorf Lenormand-kártyaképek
+
+A Lenormand-pakli képei (`app/assets/lenormand/`) a Bernhard Dondorf
+(Frankfurt) kiadó ~1880-as évekbeli „Wahrsage-Karten" paklijának szkennjei
+— a grafika kora miatt közkincs (public domain). A szkennek forrása a
+[phuture.me](https://phuture.me/dondorf-lenormand) paklikönyvtára.
+
+---
+
 ## Rider–Waite tarot-kártyaképek
 
 A tarot modul kártyaképei (`app/assets/tarot/`) a

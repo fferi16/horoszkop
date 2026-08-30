@@ -13,7 +13,7 @@ window.HDATA.lenormand = {
 
   name: 'Lenormand',
   reversals: false,
-  glyphCards: true,
+  imgPath: 'assets/lenormand/',   // antik Dondorf-pakli (~1880, közkincs)
 
   cards: {
     l01: { name: 'Lovas', glyph: '🐎', polarity: '0', insert: 'kőr 9',
