@@ -550,14 +550,14 @@
       '</small></p>';
   }
 
-  function renderDashaTable(rows) {
+  function renderDashaTable(rows, title, unit) {
     if (!rows || !rows.length) return '';
-    return '<h3 class="sec-h3">A fő-időszakok sora</h3>' +
+    return '<h3 class="sec-h3">' + esc(title || 'A fő-időszakok sora') + '</h3>' +
       '<div class="dasha-list">' + rows.map(function (r) {
         return '<div class="dasha-row' + (r.current ? ' now' : '') + '">' +
           '<span class="d-name">' + esc(r.name) + '</span>' +
           '<span class="d-span">' + r.from + ' – ' + r.to + '</span>' +
-          '<span class="d-len">' + r.years + ' év</span>' +
+          '<span class="d-len">' + esc(String(r.years)) + (unit || ' év') + '</span>' +
           (r.current ? '<span class="badge">most</span>' : '') + '</div>';
       }).join('') + '</div>';
   }
@@ -846,6 +846,8 @@
     if (s.planetDetails) html += renderPlanetDetails(s.planetDetails);
     if (s.baziBalance) html += renderBaziBalance(s.baziBalance);
     if (s.dashaTable) html += renderDashaTable(s.dashaTable);
+    if (s.luckPillars) html += renderDashaTable(s.luckPillars,
+      'A tízéves szerencseoszlopaid', '');
     if (s.matrix) html += renderPsychomatrix(s);
     if (s.matrixDM) html += renderDestinyMatrix(s);
     if (s.hvd) html += renderHvd(s);
