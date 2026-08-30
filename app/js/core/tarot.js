@@ -33,6 +33,12 @@
     return d.glyphCards ? null : 'assets/tarot/';
   }
 
+  /** A pakli képeinek kiterjesztése (alapértelmezés: .jpg). */
+  function imgExt(deckKey) {
+    var d = deckOf(deckKey);
+    return (d && d.imgExt) || '.jpg';
+  }
+
   /** Kriptográfiai véletlen egész [0, n). */
   function rnd(n) {
     if (global.crypto && global.crypto.getRandomValues) {
@@ -279,7 +285,7 @@
         id: p.id,
         name: meta.card.name,
         reversed: !!p.reversed,
-        img: imgBase(deckKey) ? imgBase(deckKey) + p.id + '.jpg' : null,
+        img: imgBase(deckKey) ? imgBase(deckKey) + p.id + imgExt(deckKey) : null,
         glyph: meta.card.glyph || null,
         meaning: (p.reversed && meta.card.rev) ? meta.card.rev : meta.card.up,
         major: meta.major,
@@ -300,6 +306,7 @@
     deckIds: deckIds,
     hasReversals: hasReversals,
     imgBase: imgBase,
+    imgExt: imgExt,
     draw: draw,
     cardMeta: cardMeta,
     evaluate: evaluate

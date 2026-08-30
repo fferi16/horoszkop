@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 400">
+  <defs>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4ead0"/><stop offset=".55" stop-color="#eddfba"/>
+      <stop offset="1" stop-color="#e3d2a6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".38" r=".75">
+      <stop offset="0" stop-color="#fdf8ea" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#fdf8ea" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="257" height="397" rx="12" fill="url(#pg)" stroke="#9a7d4d" stroke-width="3"/>
+  <rect x="9" y="9" width="242" height="382" rx="7" fill="none" stroke="#b99a5f" stroke-width="1.4"/>
+  <ellipse cx="130" cy="150" rx="115" ry="130" fill="url(#glow)"/>
+  <g fill="#a98d58">
+    <path d="M20 16 q8 6 16 2 q-6 8 -2 16 q-8 -6 -16 -2 q6 -8 2 -16" opacity=".8"/>
+    <path d="M240 384 q-8 -6 -16 -2 q6 -8 2 -16 q8 6 16 2 q-6 8 -2 16" opacity=".8"/>
+  </g><path d="M28 268 q60 -14 102 0 q52 12 102 0 l0 40 q-104 14 -204 0 z" fill="#d9c48d" opacity=".65"/>
+    <path d="M92 176 q-14 62 38 62 q52 0 38 -62 q-8 -22 -38 -22 q-30 0 -38 22 z" fill="#8a6a3f" stroke="#43301d" stroke-width="2.6"/>
+    <path d="M104 162 q26 -14 52 0 l6 -18 q-32 -14 -64 0 z" fill="#6d5230" stroke="#43301d" stroke-width="2.2"/>
+    <path d="M112 144 q-4 -14 8 -18 M148 144 q4 -14 -8 -18" fill="none" stroke="#43301d" stroke-width="2.4"/>
+    <circle cx="88" cy="250" r="12" fill="#c9a227" stroke="#43301d" stroke-width="2"/>
+  <circle cx="88" cy="250" r="7.4399999999999995" fill="none" stroke="#43301d" stroke-width="1.1" opacity=".7"/> <circle cx="176" cy="246" r="12" fill="#c9a227" stroke="#43301d" stroke-width="2"/>
+  <circle cx="176" cy="246" r="7.4399999999999995" fill="none" stroke="#43301d" stroke-width="1.1" opacity=".7"/> <circle cx="130" cy="206" r="16" fill="#c9a227" stroke="#43301d" stroke-width="2"/>
+  <circle cx="130" cy="206" r="9.92" fill="none" stroke="#43301d" stroke-width="1.1" opacity=".7"/>
+    <text x="130" y="213" text-anchor="middle" font-family="Georgia, serif" font-size="17" font-weight="700" fill="#43301d" opacity=".72">$</text>
+  <rect x="22" y="334 " width="216" height="42" rx="6" fill="#f7efdc" stroke="#b99a5f" stroke-width="1.6"/>
+  <path d="M22 355 h-9 l9 -12 M238 355 h9 l-9 -12" fill="none" stroke="#b99a5f" stroke-width="1.6"/>
+  <text x="130" y="362" text-anchor="middle" font-family="Palatino Linotype, Georgia, serif" font-size="20" font-weight="700" letter-spacing="1.5" fill="#5d4a28">PÉNZ</text></svg>
