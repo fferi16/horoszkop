@@ -55,6 +55,45 @@
     });
   }
 
+  /* ---------------- a partner helyválasztója ---------------- */
+
+  function initPartnerPlace() {
+    var box = $('pPlaceSuggest'), input = $('pPlace'), info = $('pPlaceInfo');
+    if (!input) return;
+    state.partnerPlace = HDATA.geo.find('Budapest');
+
+    input.addEventListener('input', function () {
+      var hits = HDATA.geo.search(input.value.trim(), 8);
+      if (!hits.length) { box.classList.remove('open'); return; }
+      box.innerHTML = hits.map(function (h, i) {
+        return '<div data-i="' + i + '">' + esc(h.name) +
+          '<span class="cty">' + esc(h.country) + '</span></div>';
+      }).join('');
+      box._hits = hits;
+      box.classList.add('open');
+    });
+
+    box.addEventListener('mousedown', function (e) {
+      var d = e.target.closest('div[data-i]');
+      if (!d) return;
+      e.preventDefault();
+      state.partnerPlace = box._hits[+d.dataset.i];
+      input.value = state.partnerPlace.name;
+      info.textContent = state.partnerPlace.lat.toFixed(3) + '° É, ' +
+        state.partnerPlace.lon.toFixed(3) + '° K';
+      box.classList.remove('open');
+    });
+
+    input.addEventListener('blur', function () {
+      setTimeout(function () { box.classList.remove('open'); }, 120);
+      var found = HDATA.geo.find(input.value);
+      if (found) {
+        state.partnerPlace = found;
+        info.textContent = found.lat.toFixed(3) + '° É, ' + found.lon.toFixed(3) + '° K';
+      }
+    });
+  }
+
   /* ---------------- népi jelölőnégyzetek ---------------- */
 
   function initSpecial() {
@@ -75,13 +114,27 @@
     var special = [].slice.call(document.querySelectorAll('#specialBox input:checked'))
       .map(function (c) { return c.value; });
 
+    // partner a szinasztriához (csak ha van dátum)
+    var partner = null;
+    var pd = $('pDate') && $('pDate').value;
+    if (pd) {
+      var pp = pd.split('-');
+      var pt = ($('pTime').value || '12:00').split(':');
+      partner = {
+        name: $('pName').value.trim(),
+        year: +pp[0], month: +pp[1], day: +pp[2],
+        hour: +pt[0], minute: +pt[1], hasTime: !$('pNoTime').checked,
+        place: state.partnerPlace || state.place
+      };
+    }
+
     return {
       name: $('fName').value.trim(),
       gender: $('fGender').value,
       year: +parts[0], month: +parts[1], day: +parts[2],
       hour: +tv[0], minute: +tv[1], hasTime: !noTime,
       place: state.place, houseSystem: $('fHouse').value,
-      special: special
+      special: special, partner: partner
     };
   }
 
@@ -722,6 +775,41 @@
     return html + '</div>';
   }
 
+  function renderSynastry(sy) {
+    var html = '<h3 class="sec-h3">Összhang-mutatók</h3>' +
+      '<div class="syn-overall"><div class="syn-num">' + sy.overall + '%</div>' +
+      '<div class="syn-band">' + esc(sy.overallText) + '</div></div>' +
+      '<div class="syn-bars">' + sy.cats.map(function (c) {
+        return '<div class="syn-row">' +
+          '<div class="syn-name">' + esc(c.name) + '</div>' +
+          '<div class="syn-track"><div class="syn-fill' + (c.empty ? ' empty' : '') +
+          '" style="width:' + c.percent + '%"></div></div>' +
+          '<div class="syn-val">' + (c.empty ? '–' : c.percent + '%') + '</div>' +
+          '<div class="syn-txt">' + esc(c.text) +
+          (c.empty ? ' (Ehhez a területhez most nincs számottevő fényszög köztetek.)' : '') +
+          '</div></div>';
+      }).join('') + '</div>';
+
+    if (sy.aspects.length) {
+      html += '<h3 class="sec-h3">A legfontosabb kapcsolódások</h3><div class="asp-list">' +
+        sy.aspects.map(function (a) {
+          return '<div class="asp-row"><span class="asp syn-' + a.cls +
+            (a.exact ? ' exact' : '') + '" title="' + esc(a.aspName) + '">' +
+            esc(a.label) + '<span class="orb">' + esc(a.orb) + '</span></span>' +
+            '<span class="asp-txt">' + esc(a.text) + '</span></div>';
+        }).join('') + '</div>';
+    }
+
+    if (sy.overlays.length) {
+      html += '<h3 class="sec-h3">Bolygók a másik házaiban</h3><div class="sec-items">' +
+        sy.overlays.map(function (o) {
+          return '<div class="row"><div class="lbl">' + esc(o.label) + '</div>' +
+            '<div class="txt">' + esc(o.text) + '</div></div>';
+        }).join('') + '</div>';
+    }
+    return html;
+  }
+
   function renderSection(s) {
     var html = '<section class="card" data-cat="' + esc(s.category) + '">' +
       '<h2><span class="icon">' + s.icon + '</span>' + esc(s.title) + '</h2>';
@@ -753,6 +841,7 @@
         }).join('') + '</div>';
     }
     if (s.transits) html += renderTransits(s.transits);
+    if (s.synastry) html += renderSynastry(s.synastry);
     if (s.houseDetails) html += renderHouseDetails(s.houseDetails);
     if (s.planetDetails) html += renderPlanetDetails(s.planetDetails);
     if (s.baziBalance) html += renderBaziBalance(s.baziBalance);
@@ -938,9 +1027,15 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     initPlace();
+    initPartnerPlace();
     initSpecial();
     renderSaved();
     initEgg();
+
+    var pNoTime = $('pNoTime');
+    if (pNoTime) pNoTime.addEventListener('change', function () {
+      $('pTime').disabled = this.checked;
+    });
 
     $('birthForm').addEventListener('submit', function (e) { e.preventDefault(); run(); });
 
