@@ -648,6 +648,12 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
   transform:translate(-50%,-50%) rotate(90deg); z-index:2;
 }
 .t-glyphbig{font-size:3rem; line-height:1.2}
+.t-glyphcard.t-glyphlg{max-width:112px; margin-bottom:4px}
+.t-glyphcard.t-glyphlg .t-glyph{font-size:2.5rem}
+.t-glyphcard.t-glyphlg .t-gname{font-size:.66rem}
+.t-glyphcard.t-pickcard{max-width:52px; gap:0; padding:4px 2px}
+.t-glyphcard.t-pickcard .t-glyph{font-size:1.35rem; filter:drop-shadow(0 1px 1px rgba(90,60,20,.3))}
+.t-glyphcard.t-pickcard::before,.t-glyphcard.t-pickcard::after{display:none}
 
 /* saját kirakás: kattintható helyek */
 .t-slot{cursor:pointer}

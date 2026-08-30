@@ -1254,7 +1254,8 @@
         var c = d.cards[id];
         var pbase = HCORE.tarot.imgBase(tarotState.deck);
         var face = !pbase
-          ? '<span class="t-glyph">' + c.glyph + '</span>'
+          ? '<div class="t-glyphcard t-pickcard"><span class="t-glyph">' +
+            c.glyph + '</span></div>'
           : '<img src="' + pbase + id + '.jpg" alt="" loading="lazy">';
         return '<button type="button" class="t-pick' +
           (used[id] ? ' used' : '') +
@@ -1329,7 +1330,9 @@
       renderTarotBoard(res) +
       '<div class="t-grid">' + res.rows.map(function (r) {
         var face = !r.img
-          ? '<div class="t-glyphbig">' + (r.glyph || '') + '</div>'
+          ? '<div class="t-glyphcard t-glyphlg"><span class="t-glyph">' +
+            (r.glyph || '') + '</span><span class="t-gname">' + esc(r.name) +
+            '</span></div>'
           : '<img src="' + r.img + '" alt="' + esc(r.name) + '"' +
             (r.reversed ? ' class="t-rev"' : '') + '>';
         return '<div class="t-card' + (r.major ? ' t-major' : '') + '">' +
