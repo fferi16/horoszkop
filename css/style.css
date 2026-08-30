@@ -523,6 +523,39 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
   .dasha-row .d-len{display:none}
 }
 
+/* ---- szinasztria ---- */
+.syn-overall{
+  display:flex; align-items:center; gap:18px; margin:6px 0 16px;
+  padding:16px 18px; border-radius:13px; background:var(--accent-soft);
+  border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));
+}
+.syn-num{
+  font-family:var(--serif); font-size:2.3rem; font-weight:700; color:var(--accent2);
+  min-width:92px; text-align:center; line-height:1;
+}
+.syn-band{font-size:.92rem; max-width:70ch}
+.syn-bars{display:flex; flex-direction:column; gap:14px; margin:8px 0 6px}
+.syn-row{
+  display:grid; grid-template-columns:170px 1fr 52px; align-items:center; gap:10px;
+  font-size:.9rem;
+}
+.syn-name{font-weight:600}
+.syn-track{height:11px; background:var(--line); border-radius:99px; overflow:hidden}
+.syn-fill{
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+}
+.syn-fill.empty{background:var(--muted); opacity:.35}
+.syn-val{text-align:right; font-variant-numeric:tabular-nums; font-weight:700}
+.syn-txt{grid-column:1/-1; font-size:.85rem; color:var(--muted); margin:-4px 0 0}
+.asp.syn-harm{border-color:var(--ok)}
+.asp.syn-hard{border-color:var(--warn)}
+.asp.syn-conj{border-color:var(--accent2)}
+@media (max-width:560px){
+  .syn-row{grid-template-columns:1fr 46px}
+  .syn-track{grid-column:1/-1; order:3}
+}
+
 /* ---- ⚡ ---- */
 .logo{cursor:pointer}
 .egg-toast{
