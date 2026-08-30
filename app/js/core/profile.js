@@ -1543,11 +1543,30 @@
     var s = section('hvd', 'Kronobiológiai pszichogenetika (csakraanalízis)',
       '\u269B', 'ezoterikus');
 
+    // egy marker helye a ciklusán belül, közérthetően
+    function markerPhase(n, len, name) {
+      var x = n / len;
+      var phase;
+      if (x < 0.05 || x > 0.95) phase = 'éppen ciklust váltott (nullponton állt)';
+      else if (x < 0.2) phase = 'felfutó szakaszának elején járt';
+      else if (x < 0.3) phase = 'a tetőpontja körül járt';
+      else if (x < 0.45) phase = 'a tetőpont utáni, ereszkedő szakaszában járt';
+      else if (x < 0.55) phase = 'éppen a váltópontján (nullátmenetén) haladt át';
+      else if (x < 0.7) phase = 'a mélyülő szakaszában járt';
+      else if (x < 0.8) phase = 'a mélypontja körül járt';
+      else phase = 'a mélypont utáni, visszakapaszkodó szakaszában járt';
+      return 'a ' + len + ' napos ' + name + ' ciklus a ' + n +
+        '. napjánál tartott, vagyis ' + phase;
+    }
     item(s, 'A három marker',
       'fizikai ' + pr.markers.fizikai + ' · érzelmi ' + pr.markers.erzelmi +
       ' · intellektuális ' + pr.markers.intellektualis,
-      'A 23, 28 és 33 napos ciklus állása a születésedkor. Ezek indexelik a ' +
-      'rendszer tábláit, és minden további érték ezekből következik.');
+      'A születésed pillanatában ' +
+      markerPhase(pr.markers.fizikai, 23, 'fizikai') + '; ' +
+      markerPhase(pr.markers.erzelmi, 28, 'érzelmi') + '; ' +
+      markerPhase(pr.markers.intellektualis, 33, 'intellektuális') + '. ' +
+      'A rendszer e három számmal indexeli a tábláit: az összes lenti kontúr- ' +
+      'és csakraérték ebből a három induló állásból következik.');
 
     pr.contours.forEach(function (c) {
       var meta = HD.contours[c.key];
@@ -1623,51 +1642,81 @@
       return get(D(), 'matrix.arcana.' + n, '') ||
         get(D(), 'numbers.tarotCards.' + n + '.text', '');
     }
+    // az arkánum jelentése az ADOTT pozícióban (feladat/pénz/kapcsolat/örökség)
+    function roleText(kind, n) {
+      return get(D(), 'matrixArcana.' + kind + '.' + n, '') || arcText(n);
+    }
 
     item(s, 'A fő feladatod (középpont)', arc(dm.E),
-      (MD.positions.E || '') + ' ' + arcText(dm.E));
+      (MD.positions.E || '') + ' Nálad itt a(z) ' + arc(dm.E) + ' áll — ' +
+      roleText('task', dm.E));
     item(s, 'Személyiség (nap)', arc(dm.A), (MD.positions.A || '') + ' ' + arcText(dm.A));
     item(s, 'Legmagasabb pont (hónap)', arc(dm.B), (MD.positions.B || '') + ' ' + arcText(dm.B));
     item(s, 'Talentum (év)', arc(dm.C), (MD.positions.C || '') + ' ' + arcText(dm.C));
-    item(s, 'Gyökerek', arc(dm.D), (MD.positions.D || '') + ' ' + arcText(dm.D));
-    item(s, 'Égi (személyes) életfeladat', arc(dm.L2), MD.positions.L2 || '');
-    item(s, 'Összegző életfeladat', arc(dm.L1), MD.positions.L1 || '');
+    item(s, 'Gyökerek', arc(dm.D), (MD.positions.D || '') + ' Nálad itt a(z) ' +
+      arc(dm.D) + ' áll — ' + roleText('ancestry', dm.D));
+    item(s, 'Égi (személyes) életfeladat', arc(dm.L2),
+      (MD.positions.L2 || '') + ' Nálad ez a(z) ' + arc(dm.L2) + ' — ' +
+      roleText('task', dm.L2));
+    item(s, 'Összegző életfeladat', arc(dm.L1),
+      (MD.positions.L1 || '') + ' Nálad ez a(z) ' + arc(dm.L1) + ' — ' +
+      roleText('task', dm.L1));
     item(s, 'Ég és föld vonala', arc(dm.skyTask) + ' · ' + arc(dm.earthTask),
-      MD.positions.skyEarth || '');
+      (MD.positions.skyEarth || '') +
+      ' Az ég vonalán nálad a(z) ' + arc(dm.skyTask) + ' áll — ' +
+      roleText('task', dm.skyTask) +
+      ' A föld vonalán a(z) ' + arc(dm.earthTask) + ' — ' +
+      roleText('task', dm.earthTask));
 
     // életfeladat-hármas
     item(s, 'Önkeresés (személyes feladat)',
       arc(dm.purpose.personal) + '  ←  ég ' + dm.purpose.sky + ' + föld ' + dm.purpose.earth,
-      (MD.purpose && MD.purpose.personal) || '');
+      ((MD.purpose && MD.purpose.personal) || '') +
+      ' A te személyes feladatod a(z) ' + arc(dm.purpose.personal) + ' — ' +
+      roleText('task', dm.purpose.personal));
     item(s, 'Szocializáció (társas feladat)',
       arc(dm.purpose.social) + '  ←  férfi ág ' + dm.maleLine.result +
       ' + női ág ' + dm.femaleLine.result,
-      (MD.purpose && MD.purpose.social) || '');
+      ((MD.purpose && MD.purpose.social) || '') +
+      ' A te társas feladatod a(z) ' + arc(dm.purpose.social) + ' — ' +
+      roleText('task', dm.purpose.social));
     item(s, 'Spirituális feladat',
-      arc(dm.purpose.spiritual), (MD.purpose && MD.purpose.spiritual) || '');
+      arc(dm.purpose.spiritual),
+      ((MD.purpose && MD.purpose.spiritual) || '') +
+      ' A te spirituális feladatod a(z) ' + arc(dm.purpose.spiritual) + ' — ' +
+      roleText('task', dm.purpose.spiritual));
 
     // pénz- és kapcsolati csatorna
     item(s, 'Pénzcsatorna \uD83D\uDCB0',
       arc(dm.moneyChannel.outer) + '  →  ' + arc(dm.moneyChannel.mid) +
       '  →  ' + arc(dm.moneyChannel.apex),
-      (MD.channels && MD.channels.money) || '');
+      ((MD.channels && MD.channels.money) || '') +
+      ' A csatornád csúcspontján a(z) ' + arc(dm.moneyChannel.apex) + ' áll — ' +
+      roleText('money', dm.moneyChannel.apex));
     item(s, 'Kapcsolati csatorna \u2665',
       arc(dm.loveChannel.outer) + '  →  ' + arc(dm.loveChannel.mid) +
       '  →  ' + arc(dm.loveChannel.apex),
-      (MD.channels && MD.channels.love) || '');
+      ((MD.channels && MD.channels.love) || '') +
+      ' A csatornád csúcspontján a(z) ' + arc(dm.loveChannel.apex) + ' áll — ' +
+      roleText('love', dm.loveChannel.apex));
 
     // generációs vonalak
     item(s, 'Férfi (apai) generációs vonal',
       dm.maleLine.a + ' · ' + dm.maleLine.b + '  →  ' + arc(dm.maleLine.result),
-      (MD.lines && MD.lines.male) || '');
+      ((MD.lines && MD.lines.male) || '') +
+      ' Az apai ág nálad a(z) ' + arc(dm.maleLine.result) + ' arkánumba fut — ' +
+      roleText('ancestry', dm.maleLine.result));
     item(s, 'Női (anyai) generációs vonal',
       dm.femaleLine.a + ' · ' + dm.femaleLine.b + '  →  ' + arc(dm.femaleLine.result),
-      (MD.lines && MD.lines.female) || '');
+      ((MD.lines && MD.lines.female) || '') +
+      ' Az anyai ág nálad a(z) ' + arc(dm.femaleLine.result) + ' arkánumba fut — ' +
+      roleText('ancestry', dm.femaleLine.result));
 
     // aktuális életkor-pont
     var ap = C.matrixAgePoint(dm.ageWheel, out.age.years);
     item(s, 'Az életkorod pontja (' + out.age.years + ' év)', arc(ap.arcana),
-      (MD.positions.age || '') + ' ' + arcText(ap.arcana));
+      (MD.positions.age || '') + ' A mostani szakaszod arkánuma a(z) ' +
+      arc(ap.arcana) + ' — ' + roleText('task', ap.arcana));
 
     /* --- teljes kiértékelés: a mátrixpontok egymás közti összefüggései --- */
     var MDD = get(D(), 'matrixDeep', null);
@@ -1755,7 +1804,7 @@
         evalRows.push(MDD.ageNext
           .replace('%AGE%', String(nextMajor.age))
           .replace('%ARC%', arc(nextMajor.arcana))
-          .replace('%TEXT%', arcText(nextMajor.arcana)));
+          .replace('%TEXT%', roleText('task', nextMajor.arcana)));
       }
 
       item(s, 'Teljes kiértékelés — a mátrixod összefüggései', '',
