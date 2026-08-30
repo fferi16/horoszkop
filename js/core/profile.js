@@ -1599,6 +1599,100 @@
     item(s, 'Az életkorod pontja (' + out.age.years + ' év)', arc(ap.arcana),
       (MD.positions.age || '') + ' ' + arcText(ap.arcana));
 
+    /* --- teljes kiértékelés: a mátrixpontok egymás közti összefüggései --- */
+    var MDD = get(D(), 'matrixDeep', null);
+    if (MDD) {
+      var evalRows = [];
+
+      // 1. ismétlődő arkánumok a kulcspontokon
+      var POINTS = [
+        ['személyiség', dm.A], ['legmagasabb pont', dm.B], ['talentum', dm.C],
+        ['gyökerek', dm.D], ['fő feladat', dm.E],
+        ['égi feladat', dm.L2], ['összegző feladat', dm.L1],
+        ['személyes életfeladat', dm.purpose.personal],
+        ['társas életfeladat', dm.purpose.social],
+        ['spirituális életfeladat', dm.purpose.spiritual],
+        ['apai vonal', dm.maleLine.result], ['anyai vonal', dm.femaleLine.result],
+        ['pénzcsatorna', dm.moneyChannel.mid], ['pénz-csúcs', dm.moneyChannel.apex],
+        ['kapcsolati csatorna', dm.loveChannel.mid],
+        ['életkor-pont', ap.arcana]
+      ];
+      var freq = {};
+      POINTS.forEach(function (p) {
+        (freq[p[1]] = freq[p[1]] || []).push(p[0]);
+      });
+      var repeats = Object.keys(freq).filter(function (n) {
+        return freq[n].length >= 3;
+      }).sort(function (a, b) { return freq[b].length - freq[a].length; });
+
+      if (repeats.length) {
+        repeats.slice(0, 2).forEach(function (n) {
+          evalRows.push(MDD.repeated
+            .replace('%ARC%', arc(+n))
+            .replace('%N%', String(freq[n].length))
+            .replace('%POS%', freq[n].join(', '))
+            .replace('%TEXT%', arcText(+n)));
+        });
+      } else {
+        evalRows.push(MDD.noRepeat);
+      }
+
+      // 2. a középpont kapcsolatai
+      if (dm.E === dm.A) evalRows.push(MDD.centerLinks.personality);
+      if (dm.E === dm.C) evalRows.push(MDD.centerLinks.talent);
+      if (dm.E === dm.D) evalRows.push(MDD.centerLinks.roots);
+      if (dm.E === dm.purpose.personal) evalRows.push(MDD.centerLinks.purpose);
+      if ([dm.moneyChannel.outer, dm.moneyChannel.mid, dm.moneyChannel.apex]
+        .indexOf(dm.E) >= 0) evalRows.push(MDD.centerLinks.money);
+      if ([dm.loveChannel.outer, dm.loveChannel.mid, dm.loveChannel.apex]
+        .indexOf(dm.E) >= 0) evalRows.push(MDD.centerLinks.love);
+
+      // 3. csatorna-átfedések
+      var moneySet = [dm.moneyChannel.outer, dm.moneyChannel.mid, dm.moneyChannel.apex];
+      var loveSet = [dm.loveChannel.outer, dm.loveChannel.mid, dm.loveChannel.apex];
+      if (moneySet.indexOf(dm.C) >= 0) evalRows.push(MDD.channelLinks.moneyTalent);
+      if (moneySet.indexOf(dm.D) >= 0) evalRows.push(MDD.channelLinks.moneyRoots);
+      if (loveSet.indexOf(dm.A) >= 0) evalRows.push(MDD.channelLinks.lovePersonality);
+      if (loveSet.indexOf(dm.D) >= 0) evalRows.push(MDD.channelLinks.loveRoots);
+      var sharedMid = moneySet.some(function (n) {
+        return n !== dm.moneyChannel.apex && loveSet.indexOf(n) >= 0;
+      });
+      if (sharedMid) evalRows.push(MDD.channelLinks.shared);
+
+      // 4. generációs minták
+      if (dm.maleLine.result === dm.femaleLine.result) {
+        evalRows.push(MDD.generational.same);
+      } else {
+        if (dm.D === dm.maleLine.result) evalRows.push(MDD.generational.rootsMale);
+        if (dm.D === dm.femaleLine.result) evalRows.push(MDD.generational.rootsFemale);
+      }
+
+      // 5. az életszakasz szerint aktív életfeladat
+      var stage = out.age.years < 40 ? 'personal'
+        : (out.age.years < 60 ? 'social' : 'spiritual');
+      var stageArc = dm.purpose[stage === 'personal' ? 'personal'
+        : (stage === 'social' ? 'social' : 'spiritual')];
+      evalRows.push(MDD.purposeStage[stage]
+        .replace('%AGE%', String(out.age.years))
+        .replace('%ARC%', arc(stageArc)));
+
+      // 6. a következő évtizedes fordulópont
+      var nextMajor = null;
+      dm.ageWheel.forEach(function (w) {
+        if (w.major && w.age > out.age.years && w.age <= 80 && !nextMajor) nextMajor = w;
+      });
+      if (nextMajor) {
+        evalRows.push(MDD.ageNext
+          .replace('%AGE%', String(nextMajor.age))
+          .replace('%ARC%', arc(nextMajor.arcana))
+          .replace('%TEXT%', arcText(nextMajor.arcana)));
+      }
+
+      item(s, 'Teljes kiértékelés — a mátrixod összefüggései', '',
+        MDD.intro + ' ' + evalRows.join(' '));
+      s.notes.push(MDD.note);
+    }
+
     s.matrixDM = dm;
     s.matrixAge = ap;
     s.matrixChakras = dm.chakras.map(function (c) {
