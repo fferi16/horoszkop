@@ -1721,7 +1721,8 @@
         var d = HCORE.angleDiff(pt.lon, lon);
         if (d <= (SD.orb || 1.5)) {
           hits++;
-          item(s, st.name + ' ☌ ' + pt.symbol + ' ' + pt.name,
+          item(s, st.name + ' ☌ ' +
+            (pt.symbol === pt.name ? pt.name : pt.symbol + ' ' + pt.name),
             fmtDeg(d) + ' orbisz · ' + st.mag + ' magnitúdó',
             st.text);
         }
