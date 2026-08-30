@@ -1817,6 +1817,20 @@
     item(s, 'Születési évszak', seasonHu.charAt(0).toUpperCase() + seasonHu.slice(1),
       get(D(), 'chrono.seasonText.' + seas, ''));
 
+    /* --- kiértékelés: a saját fényprofilod értelmezése, levezetéssel --- */
+    var CD = get(D(), 'chronoDeep.birth', null);
+    if (CD && light && light.dayLength != null) {
+      var evalTxt = [CD.intro];
+      if (light.dayLength >= 13.5) evalTxt.push(CD.photoLong);
+      else if (light.dayLength <= 10.5) evalTxt.push(CD.photoShort);
+      else evalTxt.push(CD.photoMid);
+      if (light.trend === 'hosszabbodó') evalTxt.push(CD.trendUp);
+      else if (light.trend === 'rövidülő') evalTxt.push(CD.trendDown);
+      evalTxt.push(CD.effectSize);
+      evalTxt.push(CD.closing);
+      item(s, 'Kiértékelés — a te fényprofilod', '', evalTxt.join(' '));
+    }
+
     s.notes.push('Fontos korlát: a születési évszak és a kronotípus közti összefüggés ' +
       'valószínűleg létezik, de a legjobb becslés szerint legfeljebb 15–18 perc ' +
       'csoportátlag-különbséget jelent — egyéni szinten ez a pénzfeldobás szintje. ' +
