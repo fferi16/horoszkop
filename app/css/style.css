@@ -556,6 +556,47 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
   .syn-track{grid-column:1/-1; order:3}
 }
 
+/* ---- tarot ---- */
+.tarot-box .grid{align-items:end}
+.t-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:16px; margin:12px 0 6px;
+}
+.t-card{
+  background:var(--bg); border:1px solid var(--line); border-radius:13px;
+  padding:14px; text-align:center;
+}
+.t-card.t-major{border-color:var(--accent2)}
+.t-pos{
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--accent2); font-weight:700; margin-bottom:8px; min-height:2em;
+}
+.t-card img{
+  width:110px; max-width:80%; border-radius:8px; box-shadow:0 4px 14px rgba(0,0,0,.3);
+  transition:transform .3s;
+}
+.t-card img.t-rev{transform:rotate(180deg)}
+.t-name{font-family:var(--serif); font-size:1.02rem; margin-top:10px; font-weight:600}
+.t-revmark{
+  display:inline-block; font-size:.68rem; padding:1px 8px; border-radius:999px;
+  background:var(--warn); color:#fff; text-transform:uppercase;
+  letter-spacing:.04em; vertical-align:middle;
+}
+.t-postext{font-size:.8rem; color:var(--muted); margin:7px 0 5px; font-style:italic}
+.t-meaning{font-size:.88rem; line-height:1.5; text-align:left}
+.t-manual{display:flex; flex-direction:column; gap:9px; margin:10px 0}
+.t-mrow{
+  display:grid; grid-template-columns:200px 1fr auto; gap:10px; align-items:center;
+}
+.t-mname{font-size:.85rem; font-weight:600; color:var(--muted)}
+.t-err{color:var(--warn); font-weight:600; font-size:.9rem}
+@media (max-width:640px){
+  .t-mrow{grid-template-columns:1fr; gap:4px}
+}
+@media print{
+  .tarot-box .actions,.t-manual{display:none !important}
+}
+
 /* ---- ⚡ ---- */
 .logo{cursor:pointer}
 .egg-toast{
