@@ -16,12 +16,14 @@
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#f4f2ea">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem('horoszkop.tema');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t;}catch(e){}</script>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <!-- Mágiaügyi Minisztérium által jóváhagyva. Muglik csak felelősséggel használják! -->
 
 <header class="topbar">
+  <button type="button" class="theme-toggle" id="themeToggle" aria-label="Téma váltása">🌙</button>
   <div class="wrap brand">
     <svg class="logo" id="logoMark" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Asztroláb embléma">
       <defs>

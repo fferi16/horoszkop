@@ -1001,6 +1001,39 @@
     });
   }
 
+  /* ---------------- témaváltó ---------------- */
+
+  var THEME_KEY = 'horoszkop.tema';
+
+  function currentTheme() {
+    var t = document.documentElement.dataset.theme;
+    if (t) return t;
+    return (window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    var btn = $('themeToggle');
+    if (btn) {
+      btn.textContent = (t === 'dark') ? '☀' : '🌙';
+      var label = (t === 'dark') ? 'Váltás világos módra' : 'Váltás sötét módra';
+      btn.setAttribute('aria-label', label);
+      btn.title = label;
+    }
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = (t === 'dark') ? '#0d0f1d' : '#f4f2ea';
+  }
+
+  function initTheme() {
+    applyTheme(currentTheme());
+    $('themeToggle').addEventListener('click', function () {
+      var next = (currentTheme() === 'dark') ? 'light' : 'dark';
+      applyTheme(next);
+      try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    });
+  }
+
   /* ---------------- tartalomjegyzék ---------------- */
 
   function buildToc(p) {
@@ -1652,6 +1685,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    initTheme();
     initMode();
     initCoffee();
     initBackup();
