@@ -1,8 +1,8 @@
-{
+﻿{
   "name": "horoszkop",
-  "productName": "Asztroláb",
-  "version": "1.11.0",
-  "description": "Teljes születési profil – nyugati, keleti, népi rendszerek és kronobiológia. Minden számítás helyben fut.",
+  "productName": "AsztrolĂˇb",
+  "version": "1.12.0",
+  "description": "Teljes szĂĽletĂ©si profil â€“ nyugati, keleti, nĂ©pi rendszerek Ă©s kronobiolĂłgia. Minden szĂˇmĂ­tĂˇs helyben fut.",
   "author": "Pacsai Ferenc",
   "license": "MIT",
   "main": "electron/main.js",
@@ -13,7 +13,7 @@
   },
   "build": {
     "appId": "hu.pacsai.horoszkop",
-    "productName": "Asztroláb",
+    "productName": "AsztrolĂˇb",
     "directories": {
       "output": "dist"
     },
