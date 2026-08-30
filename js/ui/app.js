@@ -1013,7 +1013,7 @@
     '🃏': 'kartyak', '👼': 'angyal', '🌍': 'naptarak', '📅': 'szuletesnap',
     '🇭🇺': 'nepi', '🔬': 'kronobiologia', '⏰': 'belsoora', '📈': 'bioritmus',
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
-    '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes'
+    '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria'
   };
 
   function iconSrc(slug, theme) {

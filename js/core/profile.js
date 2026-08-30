@@ -100,6 +100,13 @@
     out.sections = out.sections.filter(function (s) {
       return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry);
     });
+    // ha van páros elemzés, az kerüljön legelőre
+    for (var si = 1; si < out.sections.length; si++) {
+      if (out.sections[si].id === 'szinasztria') {
+        out.sections.unshift(out.sections.splice(si, 1)[0]);
+        break;
+      }
+    }
     return out;
   }
 
