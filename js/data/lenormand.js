@@ -108,6 +108,16 @@ window.HDATA.lenormand = {
         { name: 'A téma (közép)', text: 'A terítés magja: erről szól a kérdés.' },
         { name: 'Következő lépés', text: 'Ami közvetlenül ezután jön.' },
         { name: 'Kifutás', text: 'A folyamat távolabbi iránya.' }] },
+    { key: 'hetes', name: 'Hetes sor', cards: 7,
+      desc: 'Hosszú mondat: a középső (4.) lap a téma, a három-három szélső lap az odavezető út és a kifutás — a hét napjaira is olvasható.',
+      positions: [
+        { name: '1. lap', text: 'A történet legkorábbi szála.' },
+        { name: '2. lap', text: 'Az előzmények sűrűsödése.' },
+        { name: '3. lap', text: 'A közvetlen kiváltó.' },
+        { name: 'A téma (közép)', text: 'A mondat alanya: erről szól a terítés.' },
+        { name: '5. lap', text: 'Az első következmény.' },
+        { name: '6. lap', text: 'A folyamat kibontakozása.' },
+        { name: '7. lap', text: 'A kifutás: ahová a mondat tart.' }] },
     { key: 'kilences', name: 'Kilences tabló (3×3)', cards: 9,
       layout: { cols: 3, rows: 3, cells: [
         { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 3 },
