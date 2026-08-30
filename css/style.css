@@ -283,6 +283,11 @@ svg.chart{width:100%; min-width:520px; height:auto; color:var(--ink)}
 .foot p{margin:6px 0}
 .foot .powered{color:var(--accent2); font-size:.92rem; letter-spacing:.03em}
 .foot .powered strong{font-family:var(--serif); font-size:1.05em}
+.foot .powered a{
+  color:var(--accent2); text-decoration:none;
+  border-bottom:1px dotted var(--accent2);
+}
+.foot .powered a:hover{color:var(--accent); border-bottom-style:solid}
 
 /* ---- nyomtatás ---- */
 @media print{
