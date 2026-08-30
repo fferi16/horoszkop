@@ -102,6 +102,15 @@ SOFTWARE.
 
 ---
 
+## Cigánykártya-illusztrációk
+
+A cigánykártya képei (`app/assets/gypsy-ai/`) e projekt számára, helyben
+futtatott Stable Diffusion modellel (DreamShaper 8) generált saját
+illusztrációk, a hagyományos századfordulós jóskártya-ikonográfia nyomán —
+harmadik fél szerzői joga nem áll fenn rajtuk.
+
+---
+
 ## Dondorf Lenormand-kártyaképek
 
 A Lenormand-pakli képei (`app/assets/lenormand/`) a Bernhard Dondorf

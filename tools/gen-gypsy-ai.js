@@ -23,7 +23,7 @@ const NEG = 'text, letters, words, numbers, caption, watermark, signature, borde
    Remény = horgony; Tolvaj = ablakon mászó betörő). */
 const CARDS = {
   g01: 'a still life table with presents: an open book, golden candelabra, vase of red roses, framed portrait, draped red curtain, festive abundance of gifts',
-  g02: 'the radiant eye of god inside a ring of white clouds with long golden and red light rays, symmetrical, divine symbol of constancy',
+  g02: 'a large single all-seeing eye in a triangle surrounded by fluffy white clouds and long golden sun rays, centered divine emblem, providence symbol',
   g03: 'a pale person resting in an old wooden bed under a beige blanket, nightcap, concerned doctor standing beside with a small bottle',
   g04: 'a stern judge in black robe seated at a high wooden bench holding brass scales, law books and quill, courtroom',
   g05: 'a domestic quarrel scene, an annoyed woman with hands on hips scolding, broken plate on the floor, small dark cloud above',
@@ -37,7 +37,7 @@ const CARDS = {
   g13: 'a wedding couple at the altar, groom in black suit and bride in white veil holding hands, priest blessing, flowers',
   g14: 'a loyal dog lying at the feet of its seated master, looking up devotedly, fireplace glow, faithfulness',
   g15: 'a proud military officer in blue uniform with golden epaulettes and red cap, portrait, 1900s',
-  g16: 'a few copper and silver coins and a small open cloth purse on a plain wooden table, modest savings',
+  g16: 'a small pile of shiny gold and silver coins next to an open drawstring leather pouch on a rustic wooden table, closeup still life',
   g17: 'a well-dressed visitor with hat in hand greeting a hostess at the parlor door, welcoming warm interior',
   g18: 'a hand holding a sealed letter with red wax seal, quill pen and inkwell on the desk below',
   g19: 'a dignified elderly widow in black mourning dress and veil, kind wrinkled face, portrait',
