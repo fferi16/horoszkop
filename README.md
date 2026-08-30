@@ -1,4 +1,4 @@
-# Horoszkóp
+# Asztroláb
 
 **Powered by Pacsai Ferenc** · A fejlesztés folyamatosan zajlik · MIT licenc
 

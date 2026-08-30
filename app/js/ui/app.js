@@ -907,10 +907,40 @@
 
   /* ---------------- indítás ---------------- */
 
+  /* ---------------- ⚡ ---------------- */
+
+  function initEgg() {
+    console.log('%c⚡ Mágiaügyi Minisztérium által jóváhagyva. ' +
+      'Muglik csak felelősséggel használják!',
+      'color:#d8b95e;font-size:13px;font-family:serif');
+    var logo = document.getElementById('logoMark');
+    if (!logo) return;
+    var n = 0, t = null;
+    logo.addEventListener('click', function () {
+      clearTimeout(t);
+      t = setTimeout(function () { n = 0; }, 2500);
+      if (++n < 7) return;
+      n = 0;
+      var old = document.querySelector('.egg-toast');
+      if (old) old.remove();
+      var d = document.createElement('div');
+      d.className = 'egg-toast';
+      d.innerHTML = '⚡ <em>Mágiaügyi Minisztérium által jóváhagyva.</em><br>' +
+        'Muglik csak felelősséggel használják!';
+      document.body.appendChild(d);
+      setTimeout(function () { d.classList.add('show'); }, 20);
+      setTimeout(function () {
+        d.classList.remove('show');
+        setTimeout(function () { d.remove(); }, 400);
+      }, 6000);
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initPlace();
     initSpecial();
     renderSaved();
+    initEgg();
 
     $('birthForm').addEventListener('submit', function (e) { e.preventDefault(); run(); });
 

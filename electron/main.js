@@ -26,7 +26,8 @@ function createWindow() {
     minWidth: 720,
     minHeight: 560,
     autoHideMenuBar: false,
-    backgroundColor: '#f6f4ef',
+    backgroundColor: '#f4f2ea',
+    icon: path.join(__dirname, '..', 'app', 'assets', 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -220,7 +221,7 @@ function buildMenu() {
             dialog.showMessageBox(win, {
               type: 'info',
               title: 'Névjegy',
-              message: 'Horoszkóp ' + app.getVersion(),
+              message: 'Asztroláb ' + app.getVersion(),
               detail: 'A program egyetlen születési adatsorból készít teljes ' +
                 'önismereti profilt több mint húsz hagyomány — nyugati, keleti, ' +
                 'népi rendszerek — és a modern kronobiológia alapján.\n' +
