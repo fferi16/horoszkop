@@ -254,6 +254,16 @@ button:active{transform:translateY(1px)}
 .toc-panel .t-icon{flex:none; width:1.5em; text-align:center}
 #sections .card{scroll-margin-top:76px}
 
+/* ---- generált szekcióikonok ---- */
+.card h2 .icon-img{
+  width:46px; height:46px; border-radius:50%; object-fit:cover; flex:none;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent2) 45%,transparent);
+}
+.toc-panel .t-icon .icon-img{
+  width:24px; height:24px; border-radius:50%; object-fit:cover;
+  vertical-align:middle;
+}
+
 /* ---- szekciók ---- */
 .sec-items{display:flex; flex-direction:column; gap:2px}
 .row{padding:12px 0; border-bottom:1px solid var(--line)}
