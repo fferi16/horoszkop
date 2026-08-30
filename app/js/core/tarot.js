@@ -1,18 +1,28 @@
-/* Asztroláb – tarot motor
+/* Asztroláb – kártyavető motor (tarot, Lenormand, cigánykártya)
    Véletlen húzás (crypto-alapú), kirakás-kiértékelés és összkép-szintézis.
-   Az adatok a HDATA.tarot modulból jönnek. Sima script (nem ES modul). */
+   Az adatok a HDATA.tarot / HDATA.lenormand / HDATA.gypsy modulokból jönnek.
+   Sima script (nem ES modul). */
 
 (function (global) {
   'use strict';
 
   var HCORE = global.HCORE = global.HCORE || {};
 
-  function TD() { return (global.HDATA && global.HDATA.tarot) || null; }
+  function deckOf(deckKey) {
+    var H = global.HDATA || {};
+    if (deckKey === 'lenormand') return H.lenormand || null;
+    if (deckKey === 'gypsy') return H.gypsy || null;
+    return H.tarot || null;
+  }
 
-  /** A pakli kártyaazonosítói rögzített sorrendben. */
-  function deckIds() {
-    var t = TD();
-    return t ? Object.keys(t.cards) : [];
+  function deckIds(deckKey) {
+    var d = deckOf(deckKey);
+    return d ? Object.keys(d.cards) : [];
+  }
+
+  function hasReversals(deckKey) {
+    var d = deckOf(deckKey);
+    return d ? d.reversals !== false : true;
   }
 
   /** Kriptográfiai véletlen egész [0, n). */
@@ -25,26 +35,28 @@
     return Math.floor(Math.random() * n);
   }
 
-  /** n lap húzása visszatevés nélkül; kb. minden harmadik lap fordított. */
-  function draw(n) {
-    var pool = deckIds().slice();
+  /** n lap húzása visszatevés nélkül; tarot-nál kb. minden harmadik fordított. */
+  function draw(deckKey, n) {
+    var pool = deckIds(deckKey).slice();
+    var rev = hasReversals(deckKey);
     var picks = [];
     for (var i = 0; i < n && pool.length; i++) {
       var idx = rnd(pool.length);
-      picks.push({ id: pool[idx], reversed: rnd(3) === 0 });
+      picks.push({ id: pool[idx], reversed: rev && rnd(3) === 0 });
       pool.splice(idx, 1);
     }
     return picks;
   }
 
-  /** Egy lap metaadatai: szín, rang, udvari-e, ász-e. */
-  function cardMeta(id) {
-    var t = TD();
-    var c = t.cards[id];
-    var m = { id: id, card: c, major: !!c.major };
-    if (!c.major) {
+  /** Egy lap metaadatai. */
+  function cardMeta(deckKey, id) {
+    var d = deckOf(deckKey);
+    var c = d.cards[id];
+    var m = { id: id, card: c, major: !!c.major, polarity: c.polarity || null,
+      tag: c.tag || null };
+    if (deckKey === 'tarot' && !c.major) {
       m.suitKey = id.charAt(0);
-      m.suit = t.suits[m.suitKey];
+      m.suit = d.suits[m.suitKey];
       m.rank = parseInt(id.slice(1), 10);
       m.court = m.rank >= 11;
       m.ace = m.rank === 1;
@@ -52,40 +64,11 @@
     return m;
   }
 
-  /**
-   * Kirakás kiértékelése.
-   * spreadKey: a HDATA.tarot.spreads egyik kulcsa
-   * picks: [{ id, reversed }]
-   * Vissza: { spread, rows: [...], synthesis: [szövegek] }
-   */
-  function evaluate(spreadKey, picks) {
-    var t = TD();
-    if (!t) return null;
-    var spread = null;
-    t.spreads.forEach(function (sp) { if (sp.key === spreadKey) spread = sp; });
-    if (!spread) return null;
+  /* ---------------- szintézis: tarot ---------------- */
 
-    var rows = picks.map(function (p, i) {
-      var meta = cardMeta(p.id);
-      var pos = spread.positions[i] || { name: (i + 1) + '. lap', text: '' };
-      return {
-        position: pos.name,
-        positionText: pos.text,
-        id: p.id,
-        name: meta.card.name,
-        reversed: !!p.reversed,
-        img: 'assets/tarot/' + p.id + '.jpg',
-        meaning: p.reversed ? meta.card.rev : meta.card.up,
-        major: meta.major,
-        suitName: meta.suit ? meta.suit.name : null
-      };
-    });
-
-    /* --- összkép-szintézis --- */
-    var SY = t.synthesis;
-    var syn = [];
+  function tarotSynthesis(t, picks, metas) {
+    var SY = t.synthesis, syn = [];
     var T = picks.length;
-    var metas = picks.map(function (p) { return cardMeta(p.id); });
     var majors = metas.filter(function (m) { return m.major; }).length;
     var reversed = picks.filter(function (p) { return p.reversed; }).length;
     var courts = metas.filter(function (m) { return m.court; }).length;
@@ -94,12 +77,9 @@
     if (T >= 3) {
       if (majors >= Math.ceil(T / 2)) {
         syn.push(SY.majorsHigh.replace('%N%', String(majors)).replace('%T%', String(T)));
-      } else if (majors === 0) {
-        syn.push(SY.majorsLow);
-      }
+      } else if (majors === 0) syn.push(SY.majorsLow);
     }
 
-    // színek eloszlása
     var suitCount = { w: 0, c: 0, s: 0, p: 0 };
     metas.forEach(function (m) { if (m.suitKey) suitCount[m.suitKey]++; });
     var minors = T - majors;
@@ -111,7 +91,6 @@
           .replace('%DOM%', t.suits[k].domain));
       }
     });
-    // hiányzó szín: csak ha pontosan EGY szín hiányzik — az az igazi vakfolt
     if (T >= 7 && minors >= 5) {
       var missing = Object.keys(suitCount).filter(function (k) {
         return suitCount[k] === 0;
@@ -130,7 +109,6 @@
     if (T >= 4 && courts >= Math.ceil(T / 2)) syn.push(SY.courtsMany);
     if (aces >= 2) syn.push(SY.acesMany);
 
-    // azonos értékű lapok
     if (T >= 3) {
       var rankCount = {};
       metas.forEach(function (m) {
@@ -150,12 +128,119 @@
           .replace('%R%', rName));
       }
     }
+    return syn;
+  }
 
-    return { spread: spread, rows: rows, synthesis: syn };
+  /* ---------------- szintézis: Lenormand / cigánykártya ---------------- */
+
+  function glyphSynthesis(deckKey, d, spread, rows, metas) {
+    var SY = d.synthesis, syn = [];
+    var T = rows.length;
+
+    // mondat-logika a hármas sornál (Lenormand)
+    if (SY.lineCombo && T === 3 && spread.key === 'harmas') {
+      syn.push(SY.lineCombo
+        .replace('%C%', rows[1].name)
+        .replace('%L%', rows[0].name)
+        .replace('%R%', rows[2].name));
+    }
+
+    // hangulatmérleg a polaritásokból
+    if (T >= 3) {
+      var pos = metas.filter(function (m) { return m.polarity === '+'; }).length;
+      var neg = metas.filter(function (m) { return m.polarity === '-'; }).length;
+      if (pos >= Math.ceil(T / 2) && pos > neg) {
+        syn.push(SY.toneGood.replace('%N%', String(pos)).replace('%T%', String(T)));
+      } else if (neg >= Math.ceil(T / 2) && neg > pos) {
+        syn.push(SY.toneHard.replace('%N%', String(neg)).replace('%T%', String(T)));
+      } else {
+        syn.push(SY.toneMixed);
+      }
+    }
+
+    // személylapok
+    var personIds = deckKey === 'lenormand' ? ['l28', 'l29'] : ['g25', 'g26'];
+    metas.forEach(function (m) {
+      if (personIds.indexOf(m.id) >= 0 && SY.person) {
+        syn.push(SY.person.replace('%P%', m.card.name));
+      }
+    });
+
+    if (deckKey === 'lenormand') {
+      var ids = metas.map(function (m) { return m.id; });
+      if (ids.indexOf('l33') >= 0 && SY.keyCard) syn.push(SY.keyCard);
+      if (ids.indexOf('l31') >= 0 && SY.sunCard) syn.push(SY.sunCard);
+      var heavy = ['l08', 'l10', 'l21', 'l23', 'l36'].filter(function (h) {
+        return ids.indexOf(h) >= 0;
+      });
+      if (heavy.length >= 3 && SY.heavyCluster) {
+        syn.push(SY.heavyCluster.replace('%LIST%', heavy.map(function (h) {
+          return d.cards[h].name;
+        }).join(', ')));
+      }
+    }
+
+    // témadominancia (cigánykártya)
+    if (SY.themes && T >= 3) {
+      var tagCount = {};
+      metas.forEach(function (m) {
+        if (m.tag) tagCount[m.tag] = (tagCount[m.tag] || 0) + 1;
+      });
+      var best = null;
+      Object.keys(tagCount).forEach(function (k) {
+        if (!best || tagCount[k] > tagCount[best]) best = k;
+      });
+      if (best && tagCount[best] >= Math.max(2, Math.ceil(T / 3)) && SY.themes[best]) {
+        syn.push(SY.themeDominant
+          .replace('%THEME%', SY.themes[best])
+          .replace('%N%', String(tagCount[best])));
+      }
+    }
+    return syn;
+  }
+
+  /**
+   * Kirakás kiértékelése.
+   * deckKey: 'tarot' | 'lenormand' | 'gypsy'
+   * spreadKey: a pakli spreads-listájának kulcsa
+   * picks: [{ id, reversed }]
+   */
+  function evaluate(deckKey, spreadKey, picks) {
+    var d = deckOf(deckKey);
+    if (!d) return null;
+    var spread = null;
+    d.spreads.forEach(function (sp) { if (sp.key === spreadKey) spread = sp; });
+    if (!spread) return null;
+
+    var rows = picks.map(function (p, i) {
+      var meta = cardMeta(deckKey, p.id);
+      var pos = spread.positions[i] || { name: (i + 1) + '. lap', text: '' };
+      return {
+        position: pos.name,
+        positionText: pos.text,
+        id: p.id,
+        name: meta.card.name,
+        reversed: !!p.reversed,
+        img: d.glyphCards ? null : 'assets/tarot/' + p.id + '.jpg',
+        glyph: meta.card.glyph || null,
+        meaning: (p.reversed && meta.card.rev) ? meta.card.rev : meta.card.up,
+        major: meta.major,
+        polarity: meta.polarity
+      };
+    });
+
+    var metas = picks.map(function (p) { return cardMeta(deckKey, p.id); });
+    var syn = deckKey === 'tarot'
+      ? tarotSynthesis(d, picks, metas)
+      : glyphSynthesis(deckKey, d, spread, rows, metas);
+
+    return { deckKey: deckKey, spread: spread, rows: rows, synthesis: syn };
   }
 
   HCORE.tarot = {
+    deckOf: deckOf,
     deckIds: deckIds,
+    hasReversals: hasReversals,
     draw: draw,
     cardMeta: cardMeta,
     evaluate: evaluate
