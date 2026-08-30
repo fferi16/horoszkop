@@ -118,6 +118,15 @@ window.HDATA.lenormand = {
         { name: '5. lap', text: 'Az első következmény.' },
         { name: '6. lap', text: 'A folyamat kibontakozása.' },
         { name: '7. lap', text: 'A kifutás: ahová a mondat tart.' }] },
+    { key: 'igennem', name: 'Igen–Nem (3 lap)', cards: 3,
+      desc: 'Zárt (igen/nem) kérdésre: a három lap kártyainzertjének színe dönt — kőr=igen, káró=inkább igen, pikk=inkább nem, treff=nem. A lapok jelentése a „miért".',
+      positions: [
+        { name: '1. lap', text: 'Az első szavazat — és a helyzet egyik oldala.' },
+        { name: '2. lap', text: 'A második szavazat — a mérleg nyelve.' },
+        { name: '3. lap', text: 'A harmadik szavazat — és a kimenet színezete.' }] },
+    { key: 'gt', name: 'Grand Tableau (36 lap)', cards: 36,
+      desc: 'A Lenormand koronaterítése: mind a 36 lap 4×9-es tablóban. Minden pozíció egy „ház" saját alapjelentéssel; a kirakás a kérdező lapja (Úr/Hölgy) körül olvasandó. Nagy, mindenre kiterjedő élethelyzet-térkép — nem napi apróságokra való.',
+      positions: [] },
     { key: 'kilences', name: 'Kilences tabló (3×3)', cards: 9,
       layout: { cols: 3, rows: 3, cells: [
         { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 3 },
@@ -138,10 +147,28 @@ window.HDATA.lenormand = {
 
   synthesis: {
     intro: 'Összkép — a lapok együtt:',
+    gt: {
+      sigFound: 'A kérdező lapja (%C%) a tabló %P%. helyén fekszik (%R%. sor, %O%. oszlop) — a Grand Tableau-ban minden ehhez a ponthoz képest olvasandó: ami előtte (jobbra) fekszik, az a jövő; ami mögötte (balra), az a múlt.',
+      above: 'Ami a fejed felett lebeg (a felette fekvő lap): %L% — ez foglalkoztat, ez nyomaszt vagy inspirál most.',
+      below: 'Amin uralkodsz (az alatta fekvő lap): %L% — ez az, ami a kezedben van, amire biztosan támaszkodhatsz.',
+      before: 'Ami előtted áll (a következő lapok sorban): %L% — ez az út, amerre az események visznek.',
+      behind: 'Ami mögötted van (az előző lapok): %L% — ez már lezajlott, innen jössz.',
+      corner: 'A tabló négy sarka (%L%) adja a helyzet keretét: ezek a témák fogják közre az egész időszakot.',
+      fate: 'Az utolsó négy lap a „sors lapjai" (%L%): a hagyomány szerint ezek a következő 8–12 hét kulcstémái — amin a legkevésbé tudsz változtatni, de amire fel tudsz készülni.',
+      sigMissing: 'Meglepő: a kérdező lapja hiányzik — ez elvben nem fordulhat elő teljes tablónál; ellenőrizd a kirakást.',
+      note: 'A Grand Tableau-ban minden pozíció egy „ház", saját alapjelentéssel: az oda eső lap a ház témájával kombinálódik (pl. a Szív lap a 34. — Halak-házban: pénz jön a szívügyekből). A részletes listában minden lapnál a háza is szerepel.'
+    },
     lineCombo: 'A Lenormand mondat-logikája szerint: a téma a(z) %C%, amelyet balról a(z) %L% színez (ez az ok vagy előzmény), jobbról pedig a(z) %R% visz tovább (ez az irány) — a hármat egyetlen mondatként olvasd össze.',
     toneGood: 'A terítés összképe kedvező: a lapok többsége (%N%/%T%) jótékony — a helyzet erőtere támogat, a nehezebb lapok itt inkább figyelmeztetések, mint falak.',
     toneHard: 'A terítés összképe nehéz: a lapok többsége (%N%/%T%) kihívást hoz — a Lenormand ilyenkor nem ítéletet mond, hanem terepviszonyt: lassabban, óvatosabban, szövetségesekkel.',
     toneMixed: 'A terítés kevert képet ad: kedvező és nehéz lapok váltakoznak — a kimenet azon múlik, melyik lapok mellé állsz oda a figyelmeddel.',
+    yesNo: {
+      verdictYes: 'A kártyainzertek mérlege: %S%. A válasz a hagyomány szerint: IGEN.',
+      verdictLeanYes: 'A kártyainzertek mérlege: %S%. A válasz a hagyomány szerint: inkább igen — de nem felhőtlenül.',
+      verdictLeanNo: 'A kártyainzertek mérlege: %S%. A válasz a hagyomány szerint: inkább nem — kivéve, ha változtatsz a feltételeken.',
+      verdictNo: 'A kártyainzertek mérlege: %S%. A válasz a hagyomány szerint: NEM.',
+      how: 'A módszer: minden Lenormand-laphoz francia kártya tartozik — a kőr igen, a káró inkább igen, a pikk inkább nem, a treff nem. A három lap színeinek egyenlege adja a választ, a lapok jelentése pedig a „miért"-et.'
+    },
     person: 'A terítésben megjelent a(z) %P% lapja: a kérdés személyesen rólad (vagy a kérdés főszereplőjéről) szól — a mellette fekvő lapok a legfontosabbak az egész terítésben.',
     keyCard: 'A Kulcs is a lapok közt van: a hagyomány szerint ez a terítés „igen"-je — a megoldás elérhető, a zár nyílik.',
     sunCard: 'A Nap is a lapok közt van — a pakli legjobb lapja: amire a kérdés irányul, arra rásüt.',
@@ -149,3 +176,26 @@ window.HDATA.lenormand = {
     note: 'A Lenormand nem lélektani tükör, hanem tárgyszerű jelzőrendszer: hétköznapi dolgokról beszél hétköznapi nyelven, fordított állás nélkül. A lapok párban, láncban olvasandók — egy lap önmagában csak szó, a mondat a szomszédjaival együtt áll össze.'
   }
 };
+
+/* A Grand Tableau 36 ház-pozíciójának és 4×9-es rácsának felépítése
+   a lapjelentésekből (a házak módszere: az i. ház alapjelentése = az i. lap
+   alapjelentése). */
+(function () {
+  var L = window.HDATA.lenormand;
+  var gt = null;
+  L.spreads.forEach(function (sp) { if (sp.key === 'gt') gt = sp; });
+  if (!gt) return;
+  var cells = [];
+  var ids = Object.keys(L.cards);
+  gt.positions = ids.map(function (id, i) {
+    cells.push({ r: Math.floor(i / 9) + 1, c: (i % 9) + 1 });
+    var c = L.cards[id];
+    var domain = c.up.split(':')[0];
+    return {
+      name: (i + 1) + '. ház — ' + c.name,
+      text: 'A ház témája: ' + domain.toLowerCase() +
+        '. Az ide eső lap ezzel a területtel kombinálódik.'
+    };
+  });
+  gt.layout = { cols: 9, rows: 4, cells: cells };
+})();

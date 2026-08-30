@@ -190,6 +190,63 @@
       }
     }
 
+    // Grand Tableau: a kérdező lapja körüli olvasat
+    if (spread.key === 'gt' && SY.gt) {
+      var names2 = function (list) {
+        return list.map(function (r) { return r.name; }).join(', ');
+      };
+      var sigIdx = -1;
+      rows.forEach(function (r, i) {
+        if (sigIdx < 0 && (r.id === 'l28' || r.id === 'l29')) sigIdx = i;
+      });
+      if (sigIdx >= 0) {
+        var sr = Math.floor(sigIdx / 9), sc = sigIdx % 9;
+        syn.push(SY.gt.sigFound
+          .replace('%C%', rows[sigIdx].name)
+          .replace('%P%', String(sigIdx + 1))
+          .replace('%R%', String(sr + 1))
+          .replace('%O%', String(sc + 1)));
+        if (sr > 0) syn.push(SY.gt.above.replace('%L%', rows[(sr - 1) * 9 + sc].name +
+          ' — ' + rows[(sr - 1) * 9 + sc].meaning));
+        if (sr < 3) syn.push(SY.gt.below.replace('%L%', rows[(sr + 1) * 9 + sc].name +
+          ' — ' + rows[(sr + 1) * 9 + sc].meaning));
+        if (sc < 8) {
+          syn.push(SY.gt.before.replace('%L%',
+            names2(rows.slice(sigIdx + 1, Math.min(sigIdx + 4, (sr + 1) * 9)))));
+        }
+        if (sc > 0) {
+          syn.push(SY.gt.behind.replace('%L%',
+            names2(rows.slice(Math.max(sigIdx - 3, sr * 9), sigIdx))));
+        }
+      } else {
+        syn.push(SY.gt.sigMissing);
+      }
+      syn.push(SY.gt.corner.replace('%L%',
+        names2([rows[0], rows[8], rows[27], rows[35]])));
+      syn.push(SY.gt.fate.replace('%L%', names2(rows.slice(32))));
+      syn.push(SY.gt.note);
+    }
+
+    // Igen-Nem a kártyainzertek színével (Lenormand)
+    if (spread.key === 'igennem' && SY.yesNo && deckKey === 'lenormand') {
+      var score = 0, parts = [];
+      rows.forEach(function (r) {
+        var ins = (d.cards[r.id].insert || '');
+        var v = 0, lab = '?';
+        if (ins.indexOf('kőr') === 0) { v = 2; lab = 'kőr (igen)'; }
+        else if (ins.indexOf('káró') === 0) { v = 1; lab = 'káró (inkább igen)'; }
+        else if (ins.indexOf('pikk') === 0) { v = -1; lab = 'pikk (inkább nem)'; }
+        else if (ins.indexOf('treff') === 0) { v = -2; lab = 'treff (nem)'; }
+        score += v;
+        parts.push(r.name + ' → ' + lab);
+      });
+      var vt = score >= 3 ? SY.yesNo.verdictYes
+        : (score >= 1 ? SY.yesNo.verdictLeanYes
+          : (score <= -3 ? SY.yesNo.verdictNo : SY.yesNo.verdictLeanNo));
+      syn.push(vt.replace('%S%', parts.join(' · ')));
+      syn.push(SY.yesNo.how);
+    }
+
     // mondat-logika a hármas sornál (Lenormand)
     if (SY.lineCombo && T === 3 && spread.key === 'harmas') {
       syn.push(SY.lineCombo
@@ -198,8 +255,11 @@
         .replace('%R%', rows[2].name));
     }
 
+    // teljes paklis terítésnél a statisztikai olvasatok értelmetlenek
+    var fullDeck = T >= 30;
+
     // hangulatmérleg a polaritásokból
-    if (T >= 3) {
+    if (T >= 3 && !fullDeck) {
       var pos = metas.filter(function (m) { return m.polarity === '+'; }).length;
       var neg = metas.filter(function (m) { return m.polarity === '-'; }).length;
       if (pos >= Math.ceil(T / 2) && pos > neg) {
@@ -213,13 +273,13 @@
 
     // személylapok
     var personIds = deckKey === 'lenormand' ? ['l28', 'l29'] : ['g25', 'g26'];
-    metas.forEach(function (m) {
+    if (!fullDeck) metas.forEach(function (m) {
       if (personIds.indexOf(m.id) >= 0 && SY.person) {
         syn.push(SY.person.replace('%P%', m.card.name));
       }
     });
 
-    if (deckKey === 'lenormand') {
+    if (deckKey === 'lenormand' && !fullDeck) {
       var ids = metas.map(function (m) { return m.id; });
       if (ids.indexOf('l33') >= 0 && SY.keyCard) syn.push(SY.keyCard);
       if (ids.indexOf('l31') >= 0 && SY.sunCard) syn.push(SY.sunCard);
@@ -234,7 +294,7 @@
     }
 
     // témadominancia (cigánykártya)
-    if (SY.themes && T >= 3) {
+    if (SY.themes && T >= 3 && !fullDeck) {
       var tagCount = {};
       metas.forEach(function (m) {
         if (m.tag) tagCount[m.tag] = (tagCount[m.tag] || 0) + 1;
