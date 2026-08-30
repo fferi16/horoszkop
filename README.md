@@ -1,6 +1,6 @@
 # Horoszkóp
 
-**Powered by Pacsai Ferenc** · A fejlesztés folyamatosan zajlik.
+**Powered by Pacsai Ferenc** · A fejlesztés folyamatosan zajlik · MIT licenc
 
 A program egyetlen születési adatsorból készít teljes önismereti profilt több mint
 húsz hagyomány — nyugati, keleti, népi rendszerek — és a modern kronobiológia
@@ -211,3 +211,23 @@ alján állandó figyelmeztetés jelzi, hogy az asztrológiai és jóslási rend
 tudományosan igazolt módszerek — kulturális örökségként és önismereti tükörként
 érdemes rájuk nézni. A kronobiológiai szakasz az egyetlen, amely lektorált szakirodalomra
 épül; a bioritmus-modul pedig kifejezetten cáfolt elméletet mutat be, ezt ki is mondja.
+
+---
+
+## Licencek
+
+A projekt saját kódja **MIT licencű** ([LICENSE](LICENSE)),
+© 2026 Pacsai Ferenc.
+
+Felhasznált nyílt forráskódú összetevők (mind MIT licencűek — a teljes
+licencszövegek a [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md) fájlban):
+
+| Összetevő | Szerepe | Szerzői jog |
+|---|---|---|
+| [Astronomy Engine](https://github.com/cosinekitty/astronomy) | csillagászati számítási mag | © 2019–2025 Don Cross |
+| [Electron](https://www.electronjs.org/) | asztali keretprogram | © Electron contributors, GitHub Inc. |
+| [electron-updater](https://github.com/electron-userland/electron-builder) | automatikus frissítés | © 2015 Loopline Systems |
+| [electron-builder](https://github.com/electron-userland/electron-builder) | telepítő készítése (csak fejlesztéskor) | © 2015 Loopline Systems |
+
+A telepített alkalmazás emellett tartalmazza az Electron és a Chromium teljes
+licencgyűjteményét is (`LICENSE.electron.txt`, `LICENSES.chromium.html`).

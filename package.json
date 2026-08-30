@@ -20,7 +20,9 @@
     "files": [
       "electron/**",
       "app/**",
-      "!app/server.js"
+      "!app/server.js",
+      "LICENSE",
+      "THIRD-PARTY-LICENSES.md"
     ],
     "win": {
       "target": [

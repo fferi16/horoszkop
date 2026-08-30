@@ -172,7 +172,11 @@ function buildMenu() {
                 'az adataid nem hagyják el a gépet.\n\n' +
                 'Powered by Pacsai Ferenc\n' +
                 'A fejlesztés folyamatosan zajlik — új funkciók érkeznek.\n\n' +
-                'Csillagászati mag: Astronomy Engine (MIT licenc).'
+                'Nyílt forráskódú összetevők (MIT licenc): Astronomy Engine ' +
+                '(© Don Cross), Electron (© Electron contributors, GitHub Inc.), ' +
+                'electron-updater (© Loopline Systems).\n' +
+                'A teljes licencszövegek az alkalmazással települő ' +
+                'THIRD-PARTY-LICENSES.md fájlban olvashatók.'
             });
           }
         }
