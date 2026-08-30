@@ -15,6 +15,17 @@ szerint állít össze teljes profilt.
 
 ## 1. A számoló program
 
+### 🌐 Webes változat — telepítés nélkül
+
+**https://fferi16.github.io/horoszkop/** — böngészőben, telefonon is fut,
+minden számítás helyben, az eszközödön történik.
+
+**A webes változat frissítése** (a `main` ág `app/` mappáját teszi ki):
+
+```bash
+git subtree push --prefix app origin gh-pages
+```
+
 ### Asztali alkalmazásként (keretprogram)
 
 A webes alkalmazást egy Electron-keretprogram csomagolja telepíthető, frissíthető
