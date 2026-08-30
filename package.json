@@ -1,0 +1,49 @@
+{
+  "name": "horoszkop",
+  "productName": "Horoszkóp",
+  "version": "1.0.0",
+  "description": "Teljes születési profil – nyugati, keleti, népi rendszerek és kronobiológia. Minden számítás helyben fut.",
+  "author": "Pacsai Ferenc",
+  "license": "MIT",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "web": "node app/server.js",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "hu.pacsai.horoszkop",
+    "productName": "Horoszkóp",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**",
+      "app/**",
+      "!app/server.js"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "fferi16",
+      "repo": "horoszkop"
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9"
+  }
+}
