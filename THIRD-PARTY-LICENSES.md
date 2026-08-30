@@ -102,6 +102,16 @@ SOFTWARE.
 
 ---
 
+## Rider–Waite tarot-kártyaképek
+
+A tarot modul kártyaképei (`app/assets/tarot/`) a
+[metabismuth/tarot-json](https://github.com/metabismuth/tarot-json)
+gyűjteményből származnak (MIT licenc). Maguk a kártyagrafikák Pamela
+Colman Smith 1909-ben publikált művei (Rider–Waite–Smith pakli), amelyek
+közkincsnek (public domain) számítanak.
+
+---
+
 Az `electron-builder` (MIT, Copyright (c) 2015 Loopline Systems) csak
 fejlesztéskor, a telepítő elkészítéséhez használt eszköz — a kész
 alkalmazásba nem kerül bele.
