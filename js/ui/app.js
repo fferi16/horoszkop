@@ -779,13 +779,12 @@
       // preferencia vs. tényleges alvás
       if (rmeq.complete && mctq) {
         var rCls = rmeq.broad === 'kozepes' ? 'atlagos' : rmeq.broad;
-        var mCls = mctq.msfSc < 3 ? 'korai' : (mctq.msfSc > 5.5 ? 'kesoi' : 'atlagos');
         var CLS_HU = { korai: 'korai', atlagos: 'köztes', kesoi: 'késői' };
         rows.push({
           lbl: 'Preferencia és valóság',
-          txt: rCls === mCls ? CD.consistent
+          txt: rCls === cls ? CD.consistent
             : CD.inconsistent.replace('%A%', rmeq.category.toLowerCase())
-              .replace('%B%', CLS_HU[mCls] + ' tényleges alvásritmus')
+              .replace('%B%', CLS_HU[cls] + ' tényleges alvásritmus')
         });
       }
 
