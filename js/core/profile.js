@@ -556,6 +556,7 @@
       var ascSd = signData(c.ascSign.key);
       var rulerKey = ascSd && HU_PLANET_KEY[ascSd.ruler];
       if (rulerKey && c.planets[rulerKey]) {
+        out.chartRulerKey = rulerKey;
         var rp = c.planets[rulerKey];
         item(s, 'A képlet ura', rp.symbol + ' ' + rp.name + ' — ' +
           rp.sign.text + (rp.house ? ' · ' + rp.house + '. ház' : ''),
@@ -1730,6 +1731,7 @@
     var s = section('sorsmatrix', 'Sorsmátrix (Destiny Matrix)', '\u2726', 'szam');
     var i = out.input;
     var dm = C.destinyMatrix(i.year, i.month, i.day);
+    out.destinyMatrix = dm;
     var MD = get(D(), 'matrix', null);
     if (!MD) return;
 
@@ -1946,6 +1948,62 @@
     item(s, 'Sorskártya (Destiny Card)', dc.name,
       (dcd && dcd.text) ? dcd.text : (dc.text || get(D(), 'numbers.destinyIntro', '')));
 
+    /* --- teljes kiértékelés: a kártyarétegek összeolvasása --- */
+    var CDK = get(D(), 'cardsDeep', null);
+    if (CDK) {
+      function dsum(n) {
+        return String(n).split('').reduce(function (a, b) { return a + (+b); }, 0);
+      }
+      function arcName(n) {
+        var t = get(D(), 'numbers.tarotCards.' + n, null);
+        return t ? (n + '. ' + t.name) : String(n);
+      }
+      var ev = [CDK.intro];
+
+      // Greer-féle kártya-csillagkép: személyiség- és lélek-kártya
+      var baseSum = i.month + i.day + dsum(i.year);
+      var pers = baseSum > 22 ? dsum(baseSum) : baseSum;
+      if (pers === 0) pers = 22;
+      var soul = pers > 9 ? dsum(pers) : pers;
+      if (pers !== soul) {
+        ev.push(CDK.constellationPair
+          .replace('%SUM%', String(baseSum))
+          .replace(/%P%/g, arcName(pers))
+          .replace(/%S%/g, arcName(soul)));
+      } else {
+        ev.push(CDK.constellationSingle.replace('%SUM%', String(baseSum)));
+      }
+
+      // szerkezeti kapcsolat az életút-számmal
+      var lp2 = C.lifePath(i.year, i.month, i.day);
+      var tcRoot = tc; while (tcRoot > 9) tcRoot = dsum(tcRoot);
+      var lpRoot = lp2 === 11 ? 2 : (lp2 === 22 ? 4 : (lp2 === 33 ? 6 : lp2));
+      if (tcRoot === lpRoot) {
+        ev.push(CDK.lifePathLink
+          .replace('%TC%', String(tc)).replace('%LP%', String(lp2)));
+      }
+
+      // egybeesés a Sorsmátrixszal
+      if (out.destinyMatrix) {
+        if (out.destinyMatrix.E === tc) ev.push(CDK.matrixCenter);
+        else if (out.destinyMatrix.purpose.personal === tc) ev.push(CDK.matrixPurpose);
+      }
+
+      // a sorskártya színe és a napjegy eleme
+      if (dc.joker) {
+        ev.push(CDK.joker);
+      } else if (CDK.suits[dc.suit]) {
+        ev.push(CDK.suitLine
+          .replace('%SUIT%', dc.suit).replace('%DOM%', CDK.suits[dc.suit]));
+        var sm = CDK.suitElementMatch[dc.suit];
+        var sunSd = signData(out.chart.planets.sun.sign.key);
+        if (sm && sunSd && sunSd.element === sm.element) ev.push(sm.text);
+      }
+
+      item(s, 'Teljes kiértékelés — a kártyáid összeolvasva', '', ev.join(' '));
+      s.notes.push(CDK.note);
+    }
+
     out.sections.push(s);
   }
 
@@ -1983,6 +2041,52 @@
         }
       }
     }
+    /* --- kiértékelés: az angyali rétegek összeolvasása a képlettel --- */
+    var ADK = get(D(), 'angelsDeep', null);
+    if (ADK && ga) {
+      var ev2 = [ADK.intro];
+      var gk = ga.planet && HU_PLANET_KEY[ga.planet];
+
+      // hol áll az őrangyal bolygója a saját képletben
+      if (gk && out.chart.planets[gk]) {
+        var gp = out.chart.planets[gk];
+        ev2.push(ADK.planetInChart
+          .replace('%P%', ga.planet)
+          .replace('%SIGN%', gp.sign.name)
+          .replace('%HOUSE%', gp.house
+            ? ADK.houseSuffix.replace('%H%', String(gp.house)) : ''));
+      }
+
+      var sunSd2 = signData(out.chart.planets.sun.sign.key);
+      var matches = 0;
+      if (gk && out.chartRulerKey && gk === out.chartRulerKey) {
+        ev2.push(ADK.planetChartRuler.replace('%P%', ga.planet));
+        matches++;
+      } else if (sunSd2 && ga.planet && ga.planet === sunSd2.ruler) {
+        ev2.push(ADK.planetSunRuler.replace('%P%', ga.planet));
+        matches++;
+      }
+      if (wa && wa.planet) {
+        if (sunSd2 && wa.planet === sunSd2.ruler) {
+          ev2.push(ADK.weekdaySunRuler.replace('%P%', wa.planet));
+          matches++;
+        }
+        if (ga.planet && wa.planet === ga.planet) {
+          ev2.push(ADK.doublePlanet.replace('%P%', wa.planet));
+          matches++;
+        }
+      }
+      if (!matches) {
+        ev2.push(ADK.spread
+          .replace('%A%', ga.name || '')
+          .replace('%Q%', ga.quality || '')
+          .replace('%AR%', (arch && arch.name) ? arch.name : 'a jegyedhez tartozó arkangyal')
+          .replace('%P%', (wa && wa.planet) ? wa.planet : '—'));
+      }
+      item(s, 'Kiértékelés — az angyali képed összeolvasva', '', ev2.join(' '));
+      s.notes.push(ADK.note);
+    }
+
     if (get(D(), 'angels.intro', '')) s.notes.push(get(D(), 'angels.intro', ''));
     out.sections.push(s);
   }
