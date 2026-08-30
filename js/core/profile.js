@@ -777,7 +777,10 @@
       fmtDeg(ay) + '-kal eltolódnak.');
 
     item(s, 'Hold-jegy (Rashi)', moonSign.name + ' (' + moonSign.text + ')',
-      'A védikus hagyományban ez a legfontosabb jegy — nem a napjegy.');
+      'A védikus hagyományban ez a legfontosabb jegy — nem a napjegy. ' +
+      (get(D(), 'western.planetInSign.moon.' + moonSign.key, '')
+        ? 'A ' + moonSign.name + ' Hold nálad: ' +
+          get(D(), 'western.planetInSign.moon.' + moonSign.key, '') : ''));
     var tropSun = out.chart.planets.sun.sign.name;
     item(s, 'Nap-jegy (sziderikus)', sunSign.name + ' (' + sunSign.text + ')',
       sunSign.name === tropSun
@@ -788,7 +791,10 @@
         : ('A nyugati rendszerben ' + tropSun + ' vagy, itt viszont ' + sunSign.name +
            '. Ez nem ellentmondás: a két zodiákus más kiindulópontot használ, és a ' +
            'precesszió miatt mára nagyjából ' + fmtDeg(ay) + '-kal eltolódtak egymáshoz ' +
-           'képest. Aki a jegyhatár közelében születik, ezért kap két különböző jegyet.'));
+           'képest. Aki a jegyhatár közelében születik, ezért kap két különböző jegyet. ' +
+           (get(D(), 'western.planetInSign.sun.' + sunSign.key, '')
+             ? 'A sziderikus olvasat szerint tehát ez is benned él: ' +
+               get(D(), 'western.planetInSign.sun.' + sunSign.key, '') : '')));
 
     var nk = C.nakshatra(sidMoon);
     if (nk.data) {
@@ -827,6 +833,32 @@
         'a rögzített sorrendben. Ezért kezdődik a te ciklusod a ' +
         vd.firstLord.name + ' szakaszának közepén.');
 
+      /* --- al-időszak (antardasa) a mahadasán belül --- */
+      var YEAR_MS = 365.2425 * 86400000;
+      var mahaIdx = -1;
+      C.DASHA.forEach(function (d, di2) { if (d.key === vd.current.key) mahaIdx = di2; });
+      if (mahaIdx >= 0) {
+        var t = vd.current.from.getTime(), nowMs = Date.now(), sub = null;
+        for (var ai = 0; ai < 9; ai++) {
+          var ad = C.DASHA[(mahaIdx + ai) % 9];
+          var len = vd.current.years * ad.years / 120 * YEAR_MS;
+          if (nowMs >= t && nowMs < t + len) {
+            sub = { lord: ad, from: new Date(t), to: new Date(t + len) };
+            break;
+          }
+          t += len;
+        }
+        if (sub) {
+          var subMeta = get(D(), 'easternExt.dasha.' + sub.lord.key, null);
+          item(s, 'Al-időszak (antardasa)',
+            vd.current.name + ' / ' + sub.lord.name + ' — ' +
+            fmtTransitDate(sub.from) + ' – ' + fmtTransitDate(sub.to),
+            get(D(), 'easternDeep.antardashaIntro', '') +
+            (subMeta ? ' Az al-időszak ura most a ' + sub.lord.name + ': ' +
+              subMeta.text : ''));
+        }
+      }
+
       s.dashaTable = vd.periods.slice(0, 9).map(function (x) {
         return {
           name: x.name, years: x.years,
@@ -838,6 +870,94 @@
       if (di) s.notes.push(di);
       var dn = get(D(), 'easternExt.dashaNote', '');
       if (dn) s.notes.push(dn);
+    }
+
+    /* --- a kilenc graha sziderikus táblázata --- */
+    var EDv = get(D(), 'easternDeep', null);
+    if (EDv) {
+      var rows = [];
+      ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn'].forEach(function (k) {
+        var p = out.chart.planets[k];
+        var sid = HCORE.toSign(HCORE.toSidereal(p.lon, utc));
+        rows.push({ planet: p.name, symbol: p.symbol, sign: sid.name,
+          deg: sid.text, retro: p.retrograde, house: null, speed: p.speed });
+      });
+      var rahuSid = HCORE.toSign(HCORE.toSidereal(out.chart.planets.northNode.lon, utc));
+      var ketuSid = HCORE.toSign(HCORE.toSidereal(out.chart.planets.southNode.lon, utc));
+      rows.push({ planet: 'Ráhu', symbol: '☊', sign: rahuSid.name, deg: rahuSid.text,
+        retro: true, house: null, speed: -0.053 });
+      rows.push({ planet: 'Ketu', symbol: '☋', sign: ketuSid.name, deg: ketuSid.text,
+        retro: true, house: null, speed: -0.053 });
+      s.table = { type: 'planets', rows: rows };
+      item(s, 'A kilenc graha', '', EDv.grahaIntro);
+
+      /* --- klasszikus jógák a sziderikus képletben --- */
+      function sidIdx(k) {
+        return HCORE.toSign(HCORE.toSidereal(out.chart.planets[k].lon, utc)).index;
+      }
+      var mIdx = sidIdx('moon');
+      var yogaHits = [];
+      var jupDist = ((sidIdx('jupiter') - mIdx) % 12 + 12) % 12;
+      if ([0, 3, 6, 9].indexOf(jupDist) >= 0) yogaHits.push(EDv.yogas.gajakesari);
+      if (sidIdx('sun') === sidIdx('mercury')) yogaHits.push(EDv.yogas.budhaAditya);
+      var marsDist = ((sidIdx('mars') - mIdx) % 12 + 12) % 12;
+      if (marsDist === 0 || marsDist === 6) yogaHits.push(EDv.yogas.chandraMangala);
+      var lonely = ['mercury', 'venus', 'mars', 'jupiter', 'saturn'].every(function (k) {
+        var dd = ((sidIdx(k) - mIdx) % 12 + 12) % 12;
+        return dd !== 0 && dd !== 1 && dd !== 11;
+      });
+      if (lonely) yogaHits.push(EDv.yogas.kemadruma);
+
+      if (yogaHits.length) {
+        yogaHits.forEach(function (y) {
+          item(s, y.name, '', y.text);
+        });
+        s.notes.push(EDv.yogas.intro);
+      } else {
+        item(s, 'Klasszikus jógák', '', EDv.yogas.intro + ' ' + EDv.yogas.none);
+      }
+
+      /* --- összkép: a saját védikus adataid összefüggései --- */
+      if (vd && vd.current) {
+        var vsy = [];
+        var nakRuler = nk.data && nk.data.ruler;
+        var rashiSd = signData(moonSign.key);
+        var rashiRuler = rashiSd && rashiSd.ruler;
+
+        if (nakRuler && vd.current.name === nakRuler) {
+          vsy.push('A mostani mahadasa ura (' + vd.current.name + ') éppen a ' +
+            'holdházad ura is: „hazai pályás" életszakaszban jársz — a ' +
+            'születési képleted alapígéretei most aktiválódnak a ' +
+            'legközvetlenebbül.');
+        } else if (rashiRuler && vd.current.name === rashiRuler) {
+          vsy.push('A mostani mahadasa ura (' + vd.current.name + ') egyben a ' +
+            'holdjegyed (Rashi) ura: az időszak az érzelmi alaptermészetedet ' +
+            'szólítja meg — ismerős terepen mélyülsz, nem idegenen tanulsz.');
+        } else if (nakRuler) {
+          vsy.push('A mostani ' + vd.current.name + '-mahadasa más urat hoz, mint ' +
+            'a holdházadé (' + nakRuler + '): olyan minőséget gyakorolsz most, ' +
+            'amely nem az alapfelszerelésed — az ilyen időszak tágít, még ha ' +
+            'idegenebbül is érződik.');
+        }
+
+        if (yogaHits.length) {
+          var yNames = yogaHits.map(function (y) { return y.name; }).join(', ');
+          var hasKema = yogaHits.some(function (y) {
+            return y === EDv.yogas.kemadruma;
+          });
+          if (hasKema && yogaHits.length > 1) {
+            vsy.push('A képletedben a ' + yNames + ' együtt áll fenn: a ' +
+              'Kemadruma magány-hajlamát a többi jóga a hagyomány szerint ' +
+              'érdemben enyhíti — a belső hullámzásod mögött valódi tartalék van.');
+          } else if (!hasKema) {
+            vsy.push('Mindehhez a ' + yNames + ' ad többleterőt: a mostani ' +
+              'időszak témáihoz nem üres kézzel érkezel.');
+          }
+        }
+        if (vsy.length) {
+          item(s, 'Összkép — a védikus képed összefüggései', '', vsy.join(' '));
+        }
+      }
     }
 
     out.sections.push(s);
@@ -963,6 +1083,193 @@
     item(s, 'A mostani év (' + rel.year + ' — ' + rel.animalHu + ') viszonya',
       relMeta ? relMeta.name : rel.relation, relMeta ? relMeta.text : '');
 
+    /* --- ágkapcsolatok a saját pillérek közt --- */
+    var ED = get(D(), 'easternDeep', null);
+    if (ED && ED.branchRelations) {
+      var BR = ED.branchRelations;
+      var pl = [['year', bz.year], ['month', bz.month], ['day', bz.day]];
+      if (i.hasTime) pl.push(['hour', bz.hour]);
+      var bIdx = function (p) { return C.BRANCH_ANIMAL.indexOf(p.animal); };
+      var LIUHE = { '0-1': 1, '2-11': 1, '3-10': 1, '4-9': 1, '5-8': 1, '6-7': 1 };
+      var SANHE = [[8, 0, 4], [2, 6, 10], [5, 9, 1], [11, 3, 7]];
+      var rels = [];
+      for (var bi = 0; bi < pl.length; bi++) {
+        for (var bj = bi + 1; bj < pl.length; bj++) {
+          var x = bIdx(pl[bi][1]), y = bIdx(pl[bj][1]);
+          var lo = Math.min(x, y), hi = Math.max(x, y);
+          var names2 = BR.pillarNames[pl[bi][0]] + ' ↔ ' + BR.pillarNames[pl[bj][0]];
+          var animals2 = pl[bi][1].animalHu + ' – ' + pl[bj][1].animalHu;
+          if (LIUHE[lo + '-' + hi]) {
+            rels.push({ l: 'Hat-harmónia: ' + animals2, n: names2, t: BR.liuhe });
+          } else if ((x + 6) % 12 === y) {
+            rels.push({ l: 'Ütközés: ' + animals2, n: names2, t: BR.chong });
+          } else if (x !== y && SANHE.some(function (g) {
+            return g.indexOf(x) >= 0 && g.indexOf(y) >= 0;
+          })) {
+            rels.push({ l: 'Hármas harmónia: ' + animals2, n: names2, t: BR.sanhe });
+          }
+        }
+      }
+      if (rels.length) {
+        rels.forEach(function (r) {
+          item(s, r.l, r.n, r.t);
+        });
+        s.notes.push(BR.intro);
+      } else {
+        item(s, 'Ágkapcsolatok a pilléreid közt', '', BR.intro + ' ' + BR.none);
+      }
+    }
+
+    /* --- Da Yun: tízéves szerencseoszlopok --- */
+    if (ED && ED.dayun) {
+      if (!i.gender) {
+        item(s, 'Nagy szerencseoszlopok (Da Yun)', '', ED.dayun.noGender);
+      } else {
+        var forward = (bz.year.yinYang === 'Yang') === (i.gender === 'ferfi');
+        // a legközelebbi jié (szoláris hónapkezdet): a Nap hossza ≡ 15 (mod 30)
+        var curLon = out.chart.planets.sun.lon;
+        var offset = HCORE.norm360(curLon - 15) % 30;      // ennyivel a jié után
+        var degs = forward ? (30 - offset) : offset;
+        var days = degs / 0.9856;
+        // finomítás egy iterációval a valódi napsebességgel
+        var probe = new Date(out.utc.getTime() + (forward ? 1 : -1) * days * 86400000);
+        var probeLon = HCORE.eclipticLongitude('Sun', probe);
+        var missDeg = HCORE.norm360(probeLon - 15) % 30;
+        if (missDeg > 15) missDeg -= 30;
+        days += (forward ? -1 : 1) * missDeg / 0.9856;
+        var startAge = Math.max(0.2, days / 3);
+
+        var STEM_ELEM2 = ['fa', 'fa', 'tuz', 'tuz', 'fold', 'fold', 'fem', 'fem', 'viz', 'viz'];
+        var BRANCH_ELEM = ['viz', 'fold', 'fa', 'fa', 'fold', 'tuz',
+          'tuz', 'fold', 'fem', 'fem', 'fold', 'viz'];
+        var CONTROLS = { fa: 'fold', fold: 'viz', viz: 'tuz', tuz: 'fem', fem: 'fa' };
+        var burdening = bal.strength === 'weak'
+          ? CONTROLS[bal.dayMaster]                          // ami a gyenge Nap Urat töri
+          : bal.dayMaster;                                   // ami az erőset tovább duzzasztja
+        var msIdx = C.STEMS.indexOf(bz.month.stem);
+        var mbIdx = C.BRANCH_ANIMAL.indexOf(bz.month.animal);
+        var ageNow = out.age.years;
+        var luck = [];
+        for (var n = 1; n <= 8; n++) {
+          var st = ((msIdx + (forward ? n : -n)) % 10 + 10) % 10;
+          var br = ((mbIdx + (forward ? n : -n)) % 12 + 12) % 12;
+          var aFrom = startAge + (n - 1) * 10;
+          var els = [STEM_ELEM2[st], BRANCH_ELEM[br]];
+          var tone = els.indexOf(bal.favorable) >= 0 ? 'favorable'
+            : (els.indexOf(burdening) >= 0 ? 'unfavorable' : 'neutral');
+          luck.push({
+            name: C.ELEM_HU[STEM_ELEM2[st]] + ' ' + C.ANIMAL_HU[br],
+            from: Math.round(i.year + aFrom),
+            to: Math.round(i.year + aFrom + 10),
+            years: Math.round(aFrom) + '–' + Math.round(aFrom + 10) + ' év',
+            current: ageNow >= aFrom && ageNow < aFrom + 10,
+            tone: tone
+          });
+        }
+        s.luckPillars = luck;
+        var curLuck = luck.filter(function (L) { return L.current; })[0];
+        item(s, 'Nagy szerencseoszlopok (Da Yun)',
+          'első váltás ' + startAge.toFixed(1).replace('.', ',') + ' évesen · ' +
+          (forward ? 'előre haladó' : 'visszafelé haladó') + ' sor',
+          ED.dayun.intro + ' ' + (forward ? ED.dayun.forward : ED.dayun.backward) +
+          (curLuck ? ' A mostani évtizeded a ' + curLuck.name + ' oszlop — ' +
+            ED.dayun[curLuck.tone] : ''));
+        s.notes.push(ED.dayun.note);
+      }
+    }
+
+    /* --- összkép: a saját képletelemeid viszonyaiból levont következtetés --- */
+    (function () {
+      var GEN = { fa: 'tuz', tuz: 'fold', fold: 'fem', fem: 'viz', viz: 'fa' };
+      var CTRL = { fa: 'fold', fold: 'viz', viz: 'tuz', tuz: 'fem', fem: 'fa' };
+      var dm = bal.dayMaster, strong = bal.strongest;
+      var sy = [];
+
+      if (strong === dm) {
+        sy.push('A képleted túlsúlyos eleme ugyanaz, mint a Nap Urad (' +
+          C.ELEM_HU[dm] + '): önerős, magabiztos szerkezet — a fő kérdésed nem az, ' +
+          'honnan szerezz erőt, hanem hogy mibe öntsd, mielőtt önjáróvá válik.');
+      } else if (GEN[strong] === dm) {
+        sy.push('A túlsúlyos ' + C.ELEM_HU[strong] + ' elem a termelési körben épp ' +
+          'a Nap Uradat (' + C.ELEM_HU[dm] + ') táplálja: mély, folyamatosan ' +
+          'utántöltődő tartalékon állsz — a kitartás a természetes erőforrásod.');
+      } else if (CTRL[strong] === dm) {
+        sy.push('A túlsúlyos ' + C.ELEM_HU[strong] + ' elem a vezérlési körben ' +
+          'a Nap Uraddal (' + C.ELEM_HU[dm] + ') szemben áll: a képleted ' +
+          'alapfeszültsége, hogy a legerősebb belső anyagod épp azt nyomja, aki ' +
+          'vagy. Ez edz — de figyeld, mikor válik túlterheléssé.');
+      } else if (GEN[dm] === strong) {
+        sy.push('A Nap Urad (' + C.ELEM_HU[dm] + ') a termelési körben épp a ' +
+          'túlsúlyos ' + C.ELEM_HU[strong] + ' elemet táplálja: az energiád ' +
+          'természetes iránya a kiadás — sokat adsz ki magadból, ezért a ' +
+          'feltöltődést tudatosan kell beépítened.');
+      } else {
+        sy.push('A Nap Urad (' + C.ELEM_HU[dm] + ') és a túlsúlyos ' +
+          C.ELEM_HU[strong] + ' elem a vezérlési körben úgy áll, hogy te vagy ' +
+          'az irányító oldalon: sok belső anyagot tudsz megfegyelmezni és ' +
+          'formába önteni — vezetői mintázat.');
+      }
+
+      // az állataid egymáshoz képest: év (külső) vs titkos (ösztönös)
+      if (i.hasTime) {
+        var yA = C.BRANCH_ANIMAL.indexOf(bz.year.animal);
+        var hA = C.BRANCH_ANIMAL.indexOf(bz.hour.animal);
+        var SANHE2 = [[8, 0, 4], [2, 6, 10], [5, 9, 1], [11, 3, 7]];
+        if (yA === hA) {
+          sy.push('Az év- és az óra-állatod ugyanaz (' + bz.year.animalHu +
+            '): amit a világ lát belőled, és ami ösztönösen vagy, nálad ' +
+            'ritka mértékben egybeesik — kifelé is hiteles vagy.');
+        } else if ((yA + 6) % 12 === hA) {
+          sy.push('Az év-állatod (' + bz.year.animalHu + ') és a titkos állatod (' +
+            bz.hour.animalHu + ') ütköző pár: a külső szereped és a legbelső ' +
+            'ösztöneid két irányba húznak — a környezeted gyakran mást lát, ' +
+            'mint amit belül élsz. A kettő összebékítése életfeladat.');
+        } else if (SANHE2.some(function (g) {
+          return g.indexOf(yA) >= 0 && g.indexOf(hA) >= 0;
+        })) {
+          sy.push('Az év-állatod (' + bz.year.animalHu + ') és a titkos állatod (' +
+            bz.hour.animalHu + ') ugyanahhoz a hármas szövetséghez tartozik: a ' +
+            'külső szereped és az ösztöneid egy irányba húznak — amit elkezdesz, ' +
+            'azt belülről is fedezed.');
+        }
+      }
+
+      // a mostani helyzet: évviszony + évtized együtt
+      var relGood = rel.relation === 'trigon';
+      var relBad = rel.relation === 'utkozes' || rel.relation === 'benming';
+      var luckNow = s.luckPillars ? s.luckPillars.filter(function (L) {
+        return L.current;
+      })[0] : null;
+      if (luckNow) {
+        if (luckNow.tone === 'favorable' && relGood) {
+          sy.push('A mostani évtized (' + luckNow.name + ') kedvező elemű, és az ' +
+            'idei év is jó viszonyban áll a jegyeddel: kettős hátszélben vagy — ' +
+            'a nagyobb lépéseknek most van itt az ideje.');
+        } else if (luckNow.tone === 'favorable' && relBad) {
+          sy.push('A mostani évtized (' + luckNow.name + ') kedvező elemű, de az ' +
+            'idei év ütközik a jegyeddel: az irány jó, az idei tempót viszont ' +
+            'érdemes visszavenni — az évtized hosszabb, mint az év.');
+        } else if (luckNow.tone === 'unfavorable' && relGood) {
+          sy.push('A mostani évtized (' + luckNow.name + ') munkásabb elemű, az ' +
+            'idei év viszont támogat: a nagy terepen küzdesz, de az idei ' +
+            'lehetőségeket érdemes megragadni — ezek a könnyebb hónapok.');
+        } else if (luckNow.tone === 'unfavorable' && relBad) {
+          sy.push('A mostani évtized (' + luckNow.name + ') és az idei év is ' +
+            'terhelő: a hagyomány ilyenkor a megőrzést, rendezést, tanulást ' +
+            'ajánlja a terjeszkedés helyett — ami most lassúnak tűnik, az ' +
+            'később alapnak bizonyul.');
+        } else {
+          sy.push('A mostani évtized (' + luckNow.name + ') semleges elem-időjárást ' +
+            'ad, így az idei év viszonya (' + rel.animalHu + ' év) a hangadó: ' +
+            (relGood ? 'ez most támogat — élj vele.' :
+             (relBad ? 'az idei ütközés kér óvatosságot, nem az évtized.' :
+              'se hátszél, se ellenszél — az számít, mit teszel.')));
+        }
+      }
+
+      item(s, 'Összkép — a képletelemeid egymás közt', '', sy.join(' '));
+    })();
+
     if (bz.newYear) {
       s.notes.push('A ' + i.year + '-es kínai újév: ' + bz.newYear[0] + '. hó ' +
         bz.newYear[1] + '. — az állatjegy ehhez a határhoz igazodik, nem január 1-jéhez.');
@@ -1011,6 +1318,46 @@
       var map = vn.animalMap || {};
       var vName = map[bz.year.animal] || bz.year.animalHu;
       item(s, 'Vietnami zodiákus', vName, vn.intro || '');
+    }
+
+    /* --- kilenc csillag ki (japán honmeisei) --- */
+    var NSK = get(D(), 'easternDeep.nineStarKi', null);
+    if (NSK) {
+      var ky = out.input.year;
+      if (out.input.month < 2 || (out.input.month === 2 && out.input.day < 4)) ky--;
+      var ds = ky;
+      while (ds > 9) {
+        ds = String(ds).split('').reduce(function (a, b) { return a + (+b); }, 0);
+      }
+      var star = 11 - ds;
+      if (star > 9) star -= 9;
+      var sMeta = NSK.stars[star];
+      if (sMeta) {
+        // keresztkapcsolat a Ba Zi-vel: milyen elemet hoz a csillagod
+        var STAR_ELEM = { 1: 'viz', 2: 'fold', 3: 'fa', 4: 'fa', 5: 'fold',
+          6: 'fem', 7: 'fem', 8: 'fold', 9: 'tuz' };
+        var cross = '';
+        var balK = out.baziBalance;
+        if (balK) {
+          var se = STAR_ELEM[star];
+          if (se === balK.favorable) {
+            cross = ' Figyelemre méltó összefüggés: a japán csillagod épp azt az ' +
+              'elemet (' + C.ELEM_HU[se] + ') hozza, amelyre a Ba Zi elemmérleged ' +
+              'szerint a legnagyobb szükséged van — a két rendszer itt ugyanazt ' +
+              'az irányt jelöli ki neked.';
+          } else if (se === balK.dayMaster) {
+            cross = ' A japán csillagod ugyanazt az elemet (' + C.ELEM_HU[se] +
+              ') képviseli, mint a Ba Zi Nap Urad: a két rendszer egybehangzóan ' +
+              'ezt az elemet teszi a személyiséged magjává.';
+          } else if (balK.missing && balK.missing.indexOf(se) >= 0) {
+            cross = ' Érdekes összefüggés: a japán csillagod épp azt az elemet (' +
+              C.ELEM_HU[se] + ') hozza, amely a Ba Zi képletedből teljesen ' +
+              'hiányzik — a japán olvasat mintha pótolná, amit a kínai hiányol.';
+          }
+        }
+        item(s, 'Kilenc csillag ki — honmeisei', sMeta.name,
+          NSK.intro + ' ' + sMeta.text + cross);
+      }
     }
 
     var tb = get(D(), 'eastern.tibetan', null);
