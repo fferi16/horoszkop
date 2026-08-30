@@ -136,6 +136,27 @@
     </form>
   </section>
 
+  <!-- ============ TAROT ============ -->
+  <section class="card tarot-box" id="tarotBox">
+    <h2><span class="icon">🃏</span>Tarot — kártyahúzás és kirakások</h2>
+    <div class="grid">
+      <label class="field">
+        <span>Kirakási mód</span>
+        <select id="tarotSpread"></select>
+      </label>
+      <div class="field">
+        <span>&nbsp;</span>
+        <div class="actions" style="margin-top:0">
+          <button type="button" class="primary" id="tarotDraw">✨ Kártyahúzás</button>
+          <button type="button" class="ghost" id="tarotManual">Saját kirakás megadása</button>
+        </div>
+      </div>
+    </div>
+    <p id="tarotSpreadDesc"><small></small></p>
+    <div id="tarotManualBox" hidden></div>
+    <div id="tarotResult"></div>
+  </section>
+
   <!-- ============ EREDMÉNY ============ -->
   <div id="result" hidden>
 
@@ -195,6 +216,7 @@
 <script src="js/data/matrix-arcana.js"></script>
 <script src="js/data/numbers-deep.js"></script>
 <script src="js/data/esoteric-deep.js"></script>
+<script src="js/data/tarot.js"></script>
 <script src="js/data/degrees.js"></script>
 <script src="js/data/eastern.js"></script>
 <script src="js/data/eastern-ext.js"></script>
@@ -210,6 +232,7 @@
 <script src="js/core/astro.js"></script>
 <script src="js/core/calendars.js"></script>
 <script src="js/core/chrono.js"></script>
+<script src="js/core/tarot.js"></script>
 <script src="js/core/profile.js"></script>
 <!-- felület -->
 <script src="js/ui/wheel.js"></script>

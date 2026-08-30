@@ -1082,6 +1082,129 @@
 
   /* ---------------- indítás ---------------- */
 
+  /* ---------------- tarot ---------------- */
+
+  function tarotData() { return (window.HDATA && HDATA.tarot) || null; }
+
+  function currentSpread() {
+    var t = tarotData();
+    var key = $('tarotSpread').value;
+    var sp = null;
+    t.spreads.forEach(function (x) { if (x.key === key) sp = x; });
+    return sp;
+  }
+
+  function initTarot() {
+    var t = tarotData();
+    if (!t || !$('tarotSpread')) return;
+
+    $('tarotSpread').innerHTML = t.spreads.map(function (sp) {
+      return '<option value="' + esc(sp.key) + '">' + esc(sp.name) +
+        ' (' + sp.cards + ' lap)</option>';
+    }).join('');
+
+    function showDesc() {
+      var sp = currentSpread();
+      $('tarotSpreadDesc').innerHTML = '<small>' + esc(sp ? sp.desc : '') + '</small>';
+      $('tarotResult').innerHTML = '';
+      $('tarotManualBox').hidden = true;
+    }
+    showDesc();
+    $('tarotSpread').addEventListener('change', showDesc);
+
+    $('tarotDraw').addEventListener('click', function () {
+      var sp = currentSpread();
+      if (!sp) return;
+      $('tarotManualBox').hidden = true;
+      var picks = HCORE.tarot.draw(sp.cards);
+      renderTarotResult(HCORE.tarot.evaluate(sp.key, picks), false);
+    });
+
+    $('tarotManual').addEventListener('click', function () {
+      buildManualBox();
+    });
+  }
+
+  function cardOptions() {
+    var t = tarotData();
+    var groups = { m: ['Nagy Arkánum', []], w: ['Botok', []], c: ['Kelyhek', []],
+      s: ['Kardok', []], p: ['Érmék', []] };
+    Object.keys(t.cards).forEach(function (id) {
+      groups[id.charAt(0)][1].push('<option value="' + id + '">' +
+        esc(t.cards[id].name) + '</option>');
+    });
+    return '<option value="">— válassz lapot —</option>' +
+      ['m', 'w', 'c', 's', 'p'].map(function (k) {
+        return '<optgroup label="' + groups[k][0] + '">' +
+          groups[k][1].join('') + '</optgroup>';
+      }).join('');
+  }
+
+  function buildManualBox() {
+    var sp = currentSpread();
+    if (!sp) return;
+    var box = $('tarotManualBox');
+    var opts = cardOptions();
+    box.innerHTML = '<p><small>Add meg, melyik pozícióba melyik lapot raktad ki ' +
+      '(és jelöld, ha fejjel lefelé érkezett) — a rendszer kiértékeli a saját ' +
+      'kirakásodat.</small></p>' +
+      '<div class="t-manual">' + sp.positions.map(function (p, i) {
+        return '<div class="t-mrow"><div class="t-mname">' + esc(p.name) + '</div>' +
+          '<select data-ti="' + i + '">' + opts + '</select>' +
+          '<label class="check"><input type="checkbox" data-tr="' + i + '"> fordított</label>' +
+          '</div>';
+      }).join('') + '</div>' +
+      '<div class="actions"><button type="button" class="primary" id="tarotEval">' +
+      'Kirakás kiértékelése</button></div>' +
+      '<p class="t-err" id="tarotErr" hidden></p>';
+    box.hidden = false;
+    $('tarotResult').innerHTML = '';
+
+    $('tarotEval').addEventListener('click', function () {
+      var picks = [], seen = {}, err = null;
+      for (var i = 0; i < sp.positions.length; i++) {
+        var sel = box.querySelector('select[data-ti="' + i + '"]');
+        var rev = box.querySelector('input[data-tr="' + i + '"]');
+        if (!sel.value) { err = 'Minden pozícióhoz válassz lapot!'; break; }
+        if (seen[sel.value]) { err = 'Ugyanaz a lap kétszer nem szerepelhet a kirakásban.'; break; }
+        seen[sel.value] = true;
+        picks.push({ id: sel.value, reversed: rev.checked });
+      }
+      var errEl = $('tarotErr');
+      if (err) { errEl.textContent = err; errEl.hidden = false; return; }
+      errEl.hidden = true;
+      renderTarotResult(HCORE.tarot.evaluate(sp.key, picks), true);
+    });
+  }
+
+  function renderTarotResult(res, manual) {
+    if (!res) return;
+    var t = tarotData();
+    var html = '<h3 class="sec-h3">' + esc(res.spread.name) +
+      (manual ? ' — a saját kirakásod' : ' — a húzásod') + '</h3>' +
+      '<div class="t-grid">' + res.rows.map(function (r) {
+        return '<div class="t-card' + (r.major ? ' t-major' : '') + '">' +
+          '<div class="t-pos">' + esc(r.position) + '</div>' +
+          '<img src="' + r.img + '" alt="' + esc(r.name) + '"' +
+          (r.reversed ? ' class="t-rev"' : '') + '>' +
+          '<div class="t-name">' + esc(r.name) +
+          (r.reversed ? ' <span class="t-revmark">fordított</span>' : '') + '</div>' +
+          '<div class="t-postext">' + esc(r.positionText) + '</div>' +
+          '<div class="t-meaning">' + esc(r.meaning) + '</div>' +
+          '</div>';
+      }).join('') + '</div>';
+
+    if (res.synthesis.length) {
+      html += '<h3 class="sec-h3">' + esc(t.synthesis.intro) + '</h3>' +
+        '<div class="sec-items">' + res.synthesis.map(function (x) {
+          return '<div class="row"><div class="txt">' + esc(x) + '</div></div>';
+        }).join('') + '</div>';
+    }
+    html += '<div class="notes"><p>' + esc(t.synthesis.note) + '</p></div>';
+    $('tarotResult').innerHTML = html;
+    $('tarotResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   /* ---------------- ⚡ ---------------- */
 
   function initEgg() {
@@ -1117,6 +1240,7 @@
     initSpecial();
     renderSaved();
     initEgg();
+    initTarot();
 
     var pNoTime = $('pNoTime');
     if (pNoTime) pNoTime.addEventListener('change', function () {
