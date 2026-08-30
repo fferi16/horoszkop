@@ -894,8 +894,8 @@
     return html;
   }
 
-  function renderSection(s) {
-    var html = '<section class="card" data-cat="' + esc(s.category) + '">' +
+  function renderSection(s, i) {
+    var html = '<section class="card" id="sec-' + i + '" data-cat="' + esc(s.category) + '">' +
       '<h2><span class="icon">' + s.icon + '</span>' + esc(s.title) + '</h2>';
 
     if (s.items.length) {
@@ -953,6 +953,7 @@
     state.profile = p;
     renderHero(p);
     $('sections').innerHTML = p.sections.map(renderSection).join('');
+    buildToc(p);
     $('disclaimerText').textContent =
       'Ez a profil többféle kulturális és ezoterikus hagyomány számításait fűzi össze. ' +
       'Az asztrológiai, numerológiai és jóslási rendszerek nem tudományosan igazolt ' +
@@ -998,6 +999,25 @@
       d.open = false;
       d.removeAttribute('data-print-opened');
     });
+  }
+
+  /* ---------------- tartalomjegyzék ---------------- */
+
+  function buildToc(p) {
+    var panel = $('tocPanel');
+    if (!panel) return;
+    panel.innerHTML = p.sections.map(function (s, i) {
+      return '<a href="#sec-' + i + '" data-toc="' + i + '">' +
+        '<span class="t-icon">' + s.icon + '</span>' + esc(s.title) + '</a>';
+    }).join('');
+  }
+
+  function toggleToc(open) {
+    var panel = $('tocPanel'), btn = $('tocBtn');
+    if (!panel || !btn) return;
+    var show = (open != null) ? open : panel.hidden;
+    panel.hidden = !show;
+    btn.setAttribute('aria-expanded', show ? 'true' : 'false');
   }
 
   /* ---------------- szűrés ---------------- */
@@ -1677,7 +1697,32 @@
     window.addEventListener('afterprint', restoreDetailsAfterPrint);
 
     $('filters').addEventListener('click', function (e) {
-      if (e.target.dataset.cat) applyFilter(e.target.dataset.cat);
+      if (e.target.dataset.cat) { applyFilter(e.target.dataset.cat); toggleToc(false); }
+    });
+
+    $('tocBtn').addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleToc();
+    });
+
+    $('tocPanel').addEventListener('click', function (e) {
+      var link = e.target.closest ? e.target.closest('a[data-toc]') : null;
+      if (!link) return;
+      e.preventDefault();
+      var sec = $('sec-' + link.dataset.toc);
+      if (!sec) return;
+      // ha a szűrő épp eltakarja a célszekciót, visszaváltunk „Mind"-re
+      if (state.filter !== 'all' && sec.dataset.cat !== state.filter) applyFilter('all');
+      toggleToc(false);
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.addEventListener('click', function (e) {
+      var panel = $('tocPanel');
+      if (panel && !panel.hidden && !$('filters').contains(e.target)) toggleToc(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') toggleToc(false);
     });
 
     $('savedList').addEventListener('click', function (e) {

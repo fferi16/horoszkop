@@ -218,6 +218,27 @@ button:active{transform:translateY(1px)}
 .filters button:hover{border-color:var(--accent); color:var(--ink)}
 .filters button.active{background:var(--accent); color:#fff; border-color:var(--accent)}
 
+/* ---- tartalomjegyzék ---- */
+.filters .toc-btn{
+  border-color:var(--accent2); color:var(--ink); font-weight:600;
+}
+.filters .toc-btn[aria-expanded="true"]{background:var(--accent2); color:#1a1830; border-color:var(--accent2)}
+.toc-panel{
+  position:absolute; top:100%; left:0; right:0; z-index:40;
+  background:var(--bg2); border:1px solid var(--line); border-radius:14px;
+  padding:12px; margin-top:2px; box-shadow:0 18px 44px rgba(0,0,0,.5);
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:2px 14px; max-height:min(62vh,560px); overflow:auto;
+}
+.toc-panel[hidden]{display:none}
+.toc-panel a{
+  display:flex; gap:9px; align-items:baseline; padding:7px 9px;
+  border-radius:8px; color:var(--muted); font-size:.9rem; text-decoration:none;
+}
+.toc-panel a:hover{background:var(--accent-soft); color:var(--ink)}
+.toc-panel .t-icon{flex:none; width:1.5em; text-align:center}
+#sections .card{scroll-margin-top:76px}
+
 /* ---- szekciók ---- */
 .sec-items{display:flex; flex-direction:column; gap:2px}
 .row{padding:12px 0; border-bottom:1px solid var(--line)}
