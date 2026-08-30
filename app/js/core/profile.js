@@ -1414,6 +1414,105 @@
     item(s, 'Személyes éved (' + new Date().getFullYear() + ')', String(py),
       get(D(), 'numbers.personalYear.' + py, ''));
 
+    /* --- teljes kiértékelés: a számok egymás közti viszonyai --- */
+    var ND = get(D(), 'numbersDeep', null);
+    if (ND) {
+      var nn2 = (i.name && i.name.trim()) ? C.nameNumbers(i.name) : null;
+
+      function baseNum(n) { return n === 11 ? 2 : (n === 22 ? 4 : (n === 33 ? 6 : n)); }
+      function groupKey(n) {
+        var b = baseNum(n);
+        if (b === 1 || b === 5 || b === 7) return 'mental';
+        if (b === 2 || b === 4 || b === 8) return 'practical';
+        return 'creative';
+      }
+      var ev = [ND.intro];
+
+      // életút vs sorsszám
+      if (nn2) {
+        var gL = groupKey(lp), gDst = groupKey(nn2.destiny);
+        if (lp === nn2.destiny) ev.push(ND.pathDestiny.same);
+        else if (gL === gDst) {
+          ev.push(ND.pathDestiny.sameGroup
+            .replace('%G%', ND.groups[gL].name)
+            .replace('%T%', ND.groups[gL].trait));
+        } else {
+          ev.push(ND.pathDestiny.diff
+            .replace('%A%', String(lp)).replace('%B%', String(nn2.destiny))
+            .replace('%TA%', ND.groups[gL].trait)
+            .replace('%TB%', ND.groups[gDst].trait));
+        }
+
+        // lélek vs személyiség
+        if (nn2.soul === nn2.personality) ev.push(ND.soulPersonality.same);
+        else if (groupKey(nn2.soul) === groupKey(nn2.personality)) {
+          ev.push(ND.soulPersonality.sameGroup
+            .replace('%A%', String(nn2.soul)).replace('%B%', String(nn2.personality)));
+        } else {
+          ev.push(ND.soulPersonality.diff
+            .replace('%A%', String(nn2.soul)).replace('%B%', String(nn2.personality))
+            .replace('%TA%', ND.groups[groupKey(nn2.soul)].trait)
+            .replace('%TB%', ND.groups[groupKey(nn2.personality)].trait));
+        }
+
+        // lélek vs életút
+        if (nn2.soul === lp) ev.push(ND.soulPath.same);
+        else if (groupKey(nn2.soul) === groupKey(lp)) ev.push(ND.soulPath.sameGroup);
+        else {
+          ev.push(ND.soulPath.diff
+            .replace('%A%', String(nn2.soul)).replace('%B%', String(lp))
+            .replace('%TA%', ND.groups[groupKey(nn2.soul)].trait)
+            .replace('%TB%', ND.groups[groupKey(lp)].trait));
+        }
+      }
+
+      // születésnap-szám mint hozott szerszám
+      var bdReduced = i.day;
+      while (bdReduced > 9 && bdReduced !== 11 && bdReduced !== 22) {
+        bdReduced = String(bdReduced).split('')
+          .reduce(function (a, b) { return a + (+b); }, 0);
+      }
+      if (baseNum(bdReduced) === baseNum(lp)) ev.push(ND.birthdaySame);
+
+      // mesterszámok
+      var allNums = [lp].concat(nn2 ? [nn2.destiny, nn2.soul, nn2.personality] : []);
+      [11, 22, 33].forEach(function (mn) {
+        if (allNums.indexOf(mn) >= 0 && ND.masters[mn]) ev.push(ND.masters[mn]);
+      });
+
+      // karmikus adósság-nap
+      if (ND.karmicDay[i.day]) ev.push(ND.karmicDay[i.day]);
+
+      // személyes év a ciklusban
+      var phase = ND.yearPhases[py === 11 ? 2 : (py === 22 ? 4 : py)];
+      if (phase) {
+        ev.push(ND.yearCycle
+          .replace('%P%', String(py === 11 ? 2 : (py === 22 ? 4 : py)))
+          .replace('%PH%', phase) +
+          (py === lp ? ' ' + ND.yearEqualsPath : ''));
+      }
+
+      item(s, 'Teljes kiértékelés — a számaid egymás közt', '', ev.join(' '));
+
+      // érettségi szám (életút + sorsszám) — csak névvel számolható
+      if (nn2) {
+        var mat = lp + nn2.destiny;
+        while (mat > 9 && mat !== 11 && mat !== 22 && mat !== 33) {
+          mat = String(mat).split('')
+            .reduce(function (a, b) { return a + (+b); }, 0);
+        }
+        if (ND.maturity[mat]) {
+          item(s, 'Érettségi szám', String(mat),
+            ND.maturityIntro + ' ' + ND.maturity[mat]);
+        }
+      } else {
+        s.notes.push('A név megadásával a kiértékelés teljesebb lenne: az életút és ' +
+          'a sorsszám viszonya, a lélek–személyiség dinamika és az érettségi szám ' +
+          'is kiszámíthatóvá válik.');
+      }
+      s.notes.push(ND.note);
+    }
+
     out.sections.push(s);
   }
 
