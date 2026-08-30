@@ -238,8 +238,9 @@ function buildMenu() {
               detail: 'A program egyetlen születési adatsorból készít teljes ' +
                 'önismereti profilt több mint húsz hagyomány — nyugati, keleti, ' +
                 'népi rendszerek — és a modern kronobiológia alapján.\n' +
-                'Minden számítás helyben, a saját gépeden fut; ' +
-                'az adataid nem hagyják el a gépet.\n\n' +
+                'Ingyenes, regisztráció nélkül használható; nem gyűjt és nem ' +
+                'küld tovább adatot. Minden számítás helyben, a saját gépeden ' +
+                'fut; az adataid nem hagyják el a gépet.\n\n' +
                 'Powered by Pacsai Ferenc — pacsai.ferenc89@gmail.com\n' +
                 'A fejlesztés folyamatosan zajlik — új funkciók érkeznek.\n\n' +
                 'Nyílt forráskódú összetevők (MIT licenc): Astronomy Engine ' +
