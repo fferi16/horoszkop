@@ -632,6 +632,34 @@
   HCORE.findTransits = findTransits;
   HCORE.TRANSIT_BODIES = TRANSIT_BODIES;
 
+  /* ---------- szolárhoroszkóp ----------
+     A Nap visszatérésének pillanata a natál hosszúságra, Newton-iterációval
+     (a Nap ~0,9856°/nap sebességével osztjuk a hibát). */
+
+  function solarReturnDate(natalSunLon, aroundDate) {
+    var t = new Date(aroundDate.getTime());
+    for (var i = 0; i < 8; i++) {
+      var d = wrap180(A.SunPosition(t).elon - natalSunLon);
+      if (Math.abs(d) < 1e-6) break;
+      t = new Date(t.getTime() - d / 0.9856 * 86400000);
+    }
+    return t;
+  }
+
+  /** Az érvényben lévő szolár év: kezdete (<= now) és a következő fordulat. */
+  function activeSolarReturn(natalSunLon, birthDate, now) {
+    var guess = new Date(now.getTime());
+    guess.setUTCMonth(birthDate.getUTCMonth(), birthDate.getUTCDate());
+    var sr = solarReturnDate(natalSunLon, guess);
+    if (sr > now) sr = solarReturnDate(natalSunLon,
+      new Date(guess.getTime() - 365.2425 * 86400000));
+    var next = solarReturnDate(natalSunLon,
+      new Date(sr.getTime() + 365.2425 * 86400000));
+    return { start: sr, end: next };
+  }
+  HCORE.solarReturnDate = solarReturnDate;
+  HCORE.activeSolarReturn = activeSolarReturn;
+
   HCORE.chart = chart;
   HCORE.eclipticLongitude = eclipticLongitude;
   HCORE.dailyMotion = dailyMotion;
