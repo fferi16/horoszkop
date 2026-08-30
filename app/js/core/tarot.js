@@ -80,9 +80,29 @@
 
   /* ---------------- szintézis: tarot ---------------- */
 
-  function tarotSynthesis(t, picks, metas) {
+  function tarotSynthesis(t, picks, metas, spread, rows, ctx) {
     var SY = t.synthesis, syn = [];
     var T = picks.length;
+
+    // Igen-Nem: az állások szavaznak
+    if (spread && spread.key === 'igennem' && SY.yesNo) {
+      var rev = picks.filter(function (p) { return p.reversed; }).length;
+      syn.push(rev === 0 ? SY.yesNo.strongYes
+        : rev === 1 ? SY.yesNo.leanYes
+          : rev === 2 ? SY.yesNo.leanNo : SY.yesNo.strongNo);
+      syn.push(SY.yesNo.how);
+    }
+
+    // Asztrologiai kirakas: osszevetes a szuletesi keplet hangsulyos hazaival
+    if (spread && spread.key === 'asztro' && SY.astroCross && ctx &&
+        ctx.emphHouses && ctx.emphHouses.length && rows) {
+      var hh = ctx.emphHouses.slice(0, 4);
+      syn.push(SY.astroCross
+        .replace('%H%', hh.map(function (h) { return h + '. ház'; }).join(', '))
+        .replace('%C%', hh.map(function (h) {
+          return rows[h - 1] ? rows[h - 1].name : '';
+        }).filter(Boolean).join(', ')));
+    }
     var majors = metas.filter(function (m) { return m.major; }).length;
     var reversed = picks.filter(function (p) { return p.reversed; }).length;
     var courts = metas.filter(function (m) { return m.court; }).length;
@@ -348,7 +368,7 @@
    * spreadKey: a pakli spreads-listájának kulcsa
    * picks: [{ id, reversed }]
    */
-  function evaluate(deckKey, spreadKey, picks) {
+  function evaluate(deckKey, spreadKey, picks, ctx) {
     var d = deckOf(deckKey);
     if (!d) return null;
     var spread = null;
@@ -385,7 +405,7 @@
 
     var metas = picks.map(function (p) { return cardMeta(deckKey, p.id); });
     var syn = deckKey === 'tarot'
-      ? tarotSynthesis(d, picks, metas)
+      ? tarotSynthesis(d, picks, metas, spread, rows, ctx)
       : glyphSynthesis(deckKey, d, spread, rows, metas);
 
     return { deckKey: deckKey, spread: spread, rows: rows, synthesis: syn };

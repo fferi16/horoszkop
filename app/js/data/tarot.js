@@ -262,6 +262,54 @@ window.HDATA.tarot = {
         { name: 'A környezet', text: 'Mások hatása: ahogy a környezeted segíti vagy nehezíti az ügyet.' },
         { name: 'Tanács', text: 'A javasolt lépés vagy hozzáállás.' },
         { name: 'Kimenetel', text: 'Amerre a folyamat a jelen állás szerint tart.' }] },
+    { key: 'igennem', name: 'Igen–Nem (3 lap)', cards: 3,
+      desc: 'Zárt (igen/nem) kérdésre: a lapok állása szavaz — az egyenes lap igen, a fordított nem; a lapok jelentése a „miért".',
+      positions: [
+        { name: '1. lap', text: 'Az első szavazat.' },
+        { name: '2. lap', text: 'A mérleg nyelve.' },
+        { name: '3. lap', text: 'A harmadik szavazat — és a kimenet színezete.' }] },
+    { key: 'bolygo', name: 'Bolygó-kirakás', cards: 7,
+      layout: { cols: 3, rows: 5, cells: [
+        { r: 3, c: 2 },      // Nap (közép)
+        { r: 1, c: 2 },      // Hold
+        { r: 2, c: 1 },      // Merkúr
+        { r: 2, c: 3 },      // Vénusz
+        { r: 4, c: 1 },      // Mars
+        { r: 4, c: 3 },      // Jupiter
+        { r: 5, c: 2 }] },   // Szaturnusz
+      desc: 'A hét klasszikus bolygó életterületei, egy-egy lappal — ugyanazok a bolygók, mint a születési képletedben, így közvetlenül összevetheted a bolygókártyáiddal.',
+      positions: [
+        { name: '☉ Nap — a lényeg', text: 'Az életerőd és az önazonosságod jelenlegi állapota — a kirakás közepe.' },
+        { name: '☽ Hold — érzelmek', text: 'Az érzelmi életed, otthonod, biztonságérzeted most.' },
+        { name: '☿ Merkúr — gondolatok', text: 'Kommunikáció, tanulás, ügyek intézése.' },
+        { name: '♀ Vénusz — szeretet', text: 'Szerelem, kapcsolatok, örömök, értékek.' },
+        { name: '♂ Mars — küzdelem', text: 'Tetterő, konfliktusok, ambíció.' },
+        { name: '♃ Jupiter — bőség', text: 'Fejlődés, szerencse, lehetőségek, távlatok.' },
+        { name: '♄ Szaturnusz — lecke', text: 'Felelősség, korlátok, a most érő élettanulság.' }] },
+    { key: 'eletfa', name: 'Életfa-kirakás', cards: 10,
+      layout: { cols: 3, rows: 7, cells: [
+        { r: 1, c: 2 },      // 1. Keter
+        { r: 2, c: 3 },      // 2. Hohma
+        { r: 2, c: 1 },      // 3. Bina
+        { r: 3, c: 3 },      // 4. Heszed
+        { r: 3, c: 1 },      // 5. Gevura
+        { r: 4, c: 2 },      // 6. Tiferet
+        { r: 5, c: 3 },      // 7. Necah
+        { r: 5, c: 1 },      // 8. Hod
+        { r: 6, c: 2 },      // 9. Jeszod
+        { r: 7, c: 2 }] },   // 10. Malhut
+      desc: 'A kabbalisztikus Életfa tíz szefirája, egy-egy lappal: a legmélyebb, filozofikus nagy kirakás — a kérdésed a lét minden szintjén átvilágítva. Szép párja az Angyal-horoszkóp és kabbala szekciónak.',
+      positions: [
+        { name: '1. Keter — a korona', text: 'A legmagasabb cél, az ügy szellemi magja: miért az egész.' },
+        { name: '2. Hohma — bölcsesség', text: 'A teremtő szikra: az ösztönös, friss belátás az ügyben.' },
+        { name: '3. Bina — megértés', text: 'A formáló értelem: ahogyan felfogod és keretezed a helyzetet.' },
+        { name: '4. Heszed — kegyelem', text: 'Ami bőven árad: a segítő, tápláló erők az ügyben.' },
+        { name: '5. Gevura — szigor', text: 'Ami korlátoz és fegyelmez: a szükséges metszés.' },
+        { name: '6. Tiferet — szépség', text: 'A szív és az egyensúly: az ügy valódi közepe, ahol a szálak találkoznak.' },
+        { name: '7. Necah — győzelem', text: 'A kitartás és az érzelmi hajtóerő: ami átvisz a nehezén.' },
+        { name: '8. Hod — ragyogás', text: 'A gondolat és a forma: tervek, szavak, részletek.' },
+        { name: '9. Jeszod — az alap', text: 'A tudatalatti alapzat: álmok, minták, ami a felszín alatt tart.' },
+        { name: '10. Malhut — a királyság', text: 'A megvalósulás: ahogyan az egész a kézzelfogható világban testet ölt.' }] },
     { key: 'kelta', name: 'Kelta kereszt', cards: 10,
       layout: { cols: 4, rows: 4, cells: [
         { r: 2, c: 2 },                 // 1. a helyzet (közép)
@@ -292,6 +340,14 @@ window.HDATA.tarot = {
 
   synthesis: {
     intro: 'Összkép — a lapok együtt:',
+    yesNo: {
+      strongYes: 'Mindhárom lap egyenes állású: a válasz a hagyomány szerint egyértelmű IGEN — a lapok jelentése azt mutatja, milyen úton.',
+      leanYes: 'Két lap egyenes, egy fordított: a válasz inkább IGEN — a fordított lap mutatja, mi szorul még rendezésre.',
+      leanNo: 'Két lap fordított, egy egyenes: a válasz inkább NEM — az egyenes lap mutatja, min múlna a fordulat.',
+      strongNo: 'Mindhárom lap fordított: a válasz a hagyomány szerint egyértelmű NEM — vagy legalábbis nem így és nem most.',
+      how: 'A módszer: az egyenes lap igennel, a fordított nemmel szavaz; a lapok jelentése adja a magyarázatot.'
+    },
+    astroCross: 'Összevetés a születési képleteddel: nálad a %H% hangsúlyos (ott bolygók állnak a képletedben) — az ide esett lapok (%C%) ezért kiemelt figyelmet érdemelnek: a kirakás épp azokon az életterületeken szólal meg, amelyek a képleted szerint is a fő terepeid.',
     majorsHigh: 'A kirakásban feltűnően sok a Nagy Arkánum (%N%/%T%): a hagyomány szerint a kérdésed nem hétköznapi ügy, hanem sorsszintű téma — az események nagyobb erővel mozognak, mint amennyit az egyéni akarat szokott mozgatni.',
     majorsLow: 'A kirakásban nincs vagy alig van Nagy Arkánum: a kérdésed a hétköznapi, kézben tartható rétegben mozog — a kimenetel főleg a te döntéseiden múlik.',
     suitDominant: 'A lapok többsége %SUIT% (%EL% elem): a helyzet súlypontja %DOM% területén van — bármi is a kérdés felszíne, a válasz ezen a rétegen keresendő.',

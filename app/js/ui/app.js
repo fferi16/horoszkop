@@ -1162,10 +1162,69 @@
       $('tarotManualBox').hidden = true;
       tarotState.manual = null;
       var picks = HCORE.tarot.draw(tarotState.deck, sp.cards);
-      renderTarotResult(HCORE.tarot.evaluate(tarotState.deck, sp.key, picks), false);
+      renderTarotResult(
+        HCORE.tarot.evaluate(tarotState.deck, sp.key, picks, tarotCtx()), false);
     });
 
     $('tarotManual').addEventListener('click', buildManualBoard);
+    var logBtn = $('tarotLog');
+    if (logBtn) logBtn.addEventListener('click', renderTarotLog);
+  }
+
+  /** Keresztkiértékelési kontextus a kiszámolt születési profilból. */
+  function tarotCtx() {
+    if (!state.profile || !state.profile.chart) return null;
+    var emph = {};
+    Object.keys(state.profile.chart.planets).forEach(function (k) {
+      var h = state.profile.chart.planets[k].house;
+      if (h) emph[h] = (emph[h] || 0) + 1;
+    });
+    var houses = Object.keys(emph).map(Number).sort(function (a, b) {
+      return emph[b] - emph[a];
+    }).filter(function (h) { return emph[h] >= 2; });
+    return { emphHouses: houses };
+  }
+
+  /* ---- húzásnapló ---- */
+
+  var TLOG = 'asztrolab.huzasnaplo';
+
+  function tarotLogSave(res, manual) {
+    try {
+      var list = JSON.parse(localStorage.getItem(TLOG) || '[]');
+      list.unshift({
+        d: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        deck: tarotState.deck, spread: res.spread.name, manual: !!manual,
+        cards: res.rows.map(function (r) {
+          return r.name + (r.reversed ? ' ℞' : '');
+        })
+      });
+      localStorage.setItem(TLOG, JSON.stringify(list.slice(0, 30)));
+    } catch (e) { /* nem baj */ }
+  }
+
+  function renderTarotLog() {
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(TLOG) || '[]'); } catch (e) {}
+    $('tarotManualBox').hidden = true;
+    if (!list.length) {
+      $('tarotResult').innerHTML = '<p><small>A napló még üres — minden húzás és ' +
+        'kiértékelt saját kirakás ide kerül majd (a böngésződben tárolva, ' +
+        'legfeljebb 30 bejegyzés).</small></p>';
+      return;
+    }
+    $('tarotResult').innerHTML = '<h3 class="sec-h3">Húzásnapló</h3>' +
+      '<div class="sec-items">' + list.map(function (e) {
+        return '<div class="row"><div class="lbl">' + esc(e.d) + ' · ' +
+          esc(e.spread) + (e.manual ? ' · saját kirakás' : '') + '</div>' +
+          '<div class="txt">' + esc(e.cards.join(' · ')) + '</div></div>';
+      }).join('') + '</div>' +
+      '<div class="actions"><button type="button" class="ghost" id="tarotLogClear">' +
+      'Napló törlése</button></div>';
+    $('tarotLogClear').addEventListener('click', function () {
+      localStorage.removeItem(TLOG);
+      renderTarotLog();
+    });
   }
 
   /* ---- saját kirakás: a valódi elrendezés, kattintós lapválasztóval ---- */
@@ -1190,7 +1249,8 @@
     $('tarotEval').addEventListener('click', function () {
       var m = tarotState.manual;
       if (!m || m.picks.some(function (p) { return !p; })) return;
-      renderTarotResult(HCORE.tarot.evaluate(tarotState.deck, m.spread.key, m.picks), true);
+      renderTarotResult(
+        HCORE.tarot.evaluate(tarotState.deck, m.spread.key, m.picks, tarotCtx()), true);
     });
     $('tarotClear').addEventListener('click', buildManualBoard);
   }
@@ -1354,6 +1414,7 @@
     }
     html += '<div class="notes"><p>' + esc(d.synthesis.note) + '</p></div>';
     $('tarotResult').innerHTML = html;
+    tarotLogSave(res, manual);
     $('tarotResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
   /* ---------------- ⚡ ---------------- */
