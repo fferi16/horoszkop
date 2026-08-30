@@ -12,6 +12,13 @@
   --night1:#10132a; --night2:#1d2145; --gold:#d8b95e; --starink:#eceafb;
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Cambria,Georgia,serif;
   --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  /* fejléc: témafüggő háttérkép és szövegszín */
+  --tb-ink:#232032;
+  --tb-img:url('../assets/fejlec-vilagos.webp');
+  --tb-ov1:rgba(244,242,234,.97); --tb-ov2:rgba(244,242,234,.88); --tb-ov3:rgba(244,242,234,.22);
+  --tb-ovm:rgba(244,242,234,.85);
+  --tb-pos:right center; --tb-size:cover;
+  --tb-base1:#efe9d8; --tb-base2:#f7f3e7;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -19,6 +26,12 @@
     --line:#262a49; --accent:#a89ae0; --accent2:#d8b95e; --accent-soft:#1e2140;
     --ok:#6fae83; --warn:#d3924e;
     --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.45);
+    --tb-ink:#eceafb;
+    --tb-img:url('../assets/fejlec-2.webp');
+    --tb-ov1:rgba(16,19,42,.95); --tb-ov2:rgba(16,19,42,.75); --tb-ov3:rgba(16,19,42,.18);
+    --tb-ovm:rgba(16,19,42,.80);
+    --tb-pos:70% 32%; --tb-size:145% auto;
+    --tb-base1:#10132a; --tb-base2:#1d2145;
   }
 }
 :root[data-theme="dark"]{
@@ -26,6 +39,12 @@
   --line:#262a49; --accent:#a89ae0; --accent2:#d8b95e; --accent-soft:#1e2140;
   --ok:#6fae83; --warn:#d3924e;
   --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.45);
+  --tb-ink:#eceafb;
+  --tb-img:url('../assets/fejlec-2.webp');
+  --tb-ov1:rgba(16,19,42,.95); --tb-ov2:rgba(16,19,42,.75); --tb-ov3:rgba(16,19,42,.18);
+  --tb-ovm:rgba(16,19,42,.80);
+  --tb-pos:70% 32%; --tb-size:145% auto;
+  --tb-base1:#10132a; --tb-base2:#1d2145;
 }
 
 *{box-sizing:border-box}
@@ -38,7 +57,7 @@ body{
 
 /* ---- fejléc: éjszakai égbolt, mindkét témában ---- */
 .topbar{
-  position:relative; overflow:hidden; color:var(--starink);
+  position:relative; overflow:hidden; color:var(--tb-ink);
   background:
     radial-gradient(1.6px 1.6px at 12% 28%, rgba(236,234,251,.9) 50%, transparent 51%),
     radial-gradient(1.2px 1.2px at 26% 68%, rgba(236,234,251,.65) 50%, transparent 51%),
@@ -48,29 +67,30 @@ body{
     radial-gradient(1.1px 1.1px at 72% 74%, rgba(236,234,251,.6) 50%, transparent 51%),
     radial-gradient(1.9px 1.9px at 84% 36%, rgba(236,234,251,.85) 50%, transparent 51%),
     radial-gradient(1.2px 1.2px at 93% 62%, rgba(216,185,94,.7) 50%, transparent 51%),
-    linear-gradient(90deg, rgba(16,19,42,.95) 0%, rgba(16,19,42,.75) 42%, rgba(16,19,42,.18) 100%),
-    url('../assets/fejlec-2.webp') 70% 32%/145% auto no-repeat,
-    radial-gradient(ellipse 90% 130% at 70% -30%, var(--night2) 0%, var(--night1) 68%);
+    linear-gradient(90deg, var(--tb-ov1) 0%, var(--tb-ov2) 48%, var(--tb-ov3) 100%),
+    var(--tb-img) var(--tb-pos)/var(--tb-size) no-repeat,
+    radial-gradient(ellipse 90% 130% at 70% -30%, var(--tb-base2) 0%, var(--tb-base1) 68%);
   padding:42px 0 36px; margin-bottom:30px;
   border-bottom:1px solid rgba(216,185,94,.35);
 }
 @media (max-width:560px){
   .topbar{
     background:
-      linear-gradient(rgba(16,19,42,.80), rgba(16,19,42,.80)),
-      url('../assets/fejlec-2.webp') 70% 32%/cover no-repeat,
-      var(--night1);
+      linear-gradient(var(--tb-ovm), var(--tb-ovm)),
+      var(--tb-img) center/cover no-repeat,
+      var(--tb-base1);
   }
 }
 .brand{display:flex; align-items:center; gap:20px}
 .theme-toggle{
   position:absolute; top:14px; right:16px; z-index:2;
-  background:rgba(236,234,251,.08); border:1px solid rgba(216,185,94,.4);
-  color:var(--starink); font-size:1.05rem; width:40px; height:40px;
+  background:color-mix(in srgb, var(--tb-ink) 8%, transparent);
+  border:1px solid rgba(216,185,94,.5);
+  color:var(--tb-ink); font-size:1.05rem; width:40px; height:40px;
   border-radius:999px; cursor:pointer; line-height:1;
   transition:background .15s, transform .12s;
 }
-.theme-toggle:hover{background:rgba(236,234,251,.18); transform:scale(1.06)}
+.theme-toggle:hover{background:color-mix(in srgb, var(--tb-ink) 18%, transparent); transform:scale(1.06)}
 @media print{.theme-toggle{display:none !important}}
 .logo{width:64px; height:64px; flex:none; filter:drop-shadow(0 2px 10px rgba(216,185,94,.25))}
 .topbar h1{
