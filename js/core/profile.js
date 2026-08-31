@@ -3312,6 +3312,7 @@
       var pk = GK.keys[partner] || {};
       var line = GK.lines[a.line] || {};
       var gate = (HDG && HDG[a.gate]) || {};
+      var det = (GK.details && GK.details[a.gate]) || {};
       return {
         key: sp.key, name: sp.name, text: sp.text, sameAs: sp.sameAs || null,
         chart: sp.chart === 'p' ? 'személyiség' : 'design',
@@ -3320,6 +3321,10 @@
         shadow: k.shadow || '', gift: k.gift || '', siddhi: k.siddhi || '',
         keyNote: k.note || '',
         gateName: gate.name || '', gateKey: gate.key || '', gateText: gate.text || '',
+        shadowText: det.shadowText || '', giftText: det.giftText || '',
+        siddhiText: det.siddhiText || '',
+        repressive: det.repressive || null, reactive: det.reactive || null,
+        repressiveNote: det.repressiveNote || null,
         lineName: line.name || '', lineText: line.text || '',
         partner: partner, partnerShadow: pk.shadow || '', partnerGift: pk.gift || ''
       };
