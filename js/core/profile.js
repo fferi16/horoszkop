@@ -83,6 +83,7 @@
     buildHvd(out);
     buildCards(out);
     buildHumanDesign(out);
+    buildGeneKeys(out);
     buildAngels(out);
     buildExotic(out);
     buildWeekdaySystems(out);
@@ -99,7 +100,7 @@
 
     // olyan szekció is megmarad, amelynek csak táblázata vagy grafikonja van
     out.sections = out.sections.filter(function (s) {
-      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign);
+      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys);
     });
     // ha van páros elemzés, az kerüljön legelőre
     for (var si = 1; si < out.sections.length; si++) {
@@ -2947,6 +2948,69 @@
         'gyorsabb égitestek kapui, és ezzel a típus is elcsúszhat. Déli 12 órával számoltunk.');
     }
     s.notes.push(HD.note);
+    if (HD.nodeNote) s.notes.push(HD.nodeNote);
+    out.sections.push(s);
+  }
+
+  /* ================= Gene Keys ================= */
+
+  function buildGeneKeys(out) {
+    var GK = get(D(), 'genekeys', null);
+    var E = HCORE.humanDesign;
+    if (!GK || !E) return;
+
+    var r = E.build(out.utc);
+    var s = section('genekeys', 'Gene Keys — árnyék, ajándék, sziddhi', '⬡', 'ezoterikus');
+
+    // a Human Design aktivációi kulcs szerint, mindkét képletre
+    var byKey = { p: {}, d: {} };
+    r.personality.forEach(function (a) { byKey.p[a.key] = a; });
+    r.design.forEach(function (a) { byKey.d[a.key] = a; });
+
+    function sphereData(sp) {
+      var a = byKey[sp.chart][sp.body];
+      if (!a) return null;
+      var k = GK.keys[a.gate] || {};
+      var partner = E.partnerOf(a.gate);
+      var pk = GK.keys[partner] || {};
+      var line = GK.lines[a.line] || {};
+      return {
+        key: sp.key, name: sp.name, text: sp.text, sameAs: sp.sameAs || null,
+        chart: sp.chart === 'p' ? 'személyiség' : 'design',
+        body: a.name, symbol: a.symbol,
+        gate: a.gate, line: a.line,
+        shadow: k.shadow || '', gift: k.gift || '', siddhi: k.siddhi || '',
+        keyNote: k.note || '',
+        lineName: line.name || '', lineText: line.text || '',
+        partner: partner, partnerShadow: pk.shadow || '', partnerGift: pk.gift || ''
+      };
+    }
+
+    var seqs = GK.sequences.map(function (sq) {
+      return {
+        key: sq.key, name: sq.name, sub: sq.sub, text: sq.text,
+        spheres: sq.spheres.map(sphereData).filter(Boolean)
+      };
+    }).filter(function (sq) { return sq.spheres.length; });
+
+    if (!seqs.length) return;
+
+    s.geneKeys = { sequences: seqs, levels: GK.levels, polarity: GK.polarity,
+      lineNote: GK.lineNote, partnerNote: GK.partnerNote };
+
+    // a négy Elsődleges Ajándék szövegesen is, hogy a szűrés/nyomtatás is adja
+    var act = seqs[0];
+    act.spheres.forEach(function (sp) {
+      item(s, sp.name + ' — ' + sp.gate + '. génkulcs, ' + sp.line + '. vonal',
+        sp.shadow + ' → ' + sp.gift + ' → ' + sp.siddhi, sp.text);
+    });
+
+    s.notes.push(GK.intro);
+    if (!out.input.hasTime) {
+      s.notes.push('Pontos születési idő nélkül a gyorsabb égitestek — különösen a Hold ' +
+        '(Vonzás) — kulcsa elcsúszhat. Déli 12 órával számoltunk.');
+    }
+    s.notes.push(GK.note);
     out.sections.push(s);
   }
 
