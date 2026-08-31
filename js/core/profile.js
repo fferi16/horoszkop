@@ -74,6 +74,7 @@
     buildPlanetDetails(out);
     buildStructure(out);
     buildMoonSection(out);
+    buildLots(out);
     buildVedic(out);
     buildChinese(out);
     buildKoreanJapanese(out);
@@ -100,7 +101,7 @@
 
     // olyan szekció is megmarad, amelynek csak táblázata vagy grafikonja van
     out.sections = out.sections.filter(function (s) {
-      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys);
+      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys || s.lots);
     });
     // ha van páros elemzés, az kerüljön legelőre
     for (var si = 1; si < out.sections.length; si++) {
@@ -549,10 +550,15 @@
       'saturn', 'uranus', 'neptune', 'pluto'];
     var hasTime = out.input.hasTime && c.houses;
 
-    /* --- szekta --- */
+    /* --- szekta ---
+       Házrendszertől függetlenül, a valódi horizont szerint: a Nap ekliptikai
+       szélessége ~0, ezért az „Asc-tól a Descig az MC felé" ív pontosan a
+       horizont feletti félteke. A házszám alapú vizsgálat egész jegyes
+       rendszerben téved, valahányszor a Nap az 1. vagy a 7. jegyben áll.
+       (docs/23-sorsreszek.md) */
     var isDay = null;
     if (hasTime) {
-      isDay = c.planets.sun.house >= 7;         // 7–12. ház: a horizont felett
+      isDay = HCORE.norm360(c.planets.sun.lon - c.houses.asc) > 180;
       var sd = isDay ? WD.sect.day : WD.sect.night;
       item(s, 'Szekta', sd.name, sd.text);
       out.sect = isDay ? 'day' : 'night';
@@ -2859,6 +2865,97 @@
          (both(p[0], ['sun', 'moon', 'venus', 'jupiter']) ||
           both(p[1], ['sun', 'moon', 'venus', 'jupiter'])))) cats.push('stabilitas');
     return cats;
+  }
+
+  /* ================= sorsrészek és firdaria ================= */
+
+  function buildLots(out) {
+    var LD = get(D(), 'lots', null);
+    var FD = get(D(), 'firdaria', null);
+    var E = HCORE.lots;
+    var c = out.chart;
+    // mindkettő szektafüggő, tehát pontos idő és házak kellenek
+    if (!LD || !E || !out.input.hasTime || !c.houses) return;
+
+    var isDay = out.sect ? out.sect === 'day'
+      : E.isDayBirth(c.planets.sun.lon, c.houses.asc);
+
+    var lons = {};
+    ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn'].forEach(function (k) {
+      lons[k] = c.planets[k].lon;
+    });
+    var L = E.compute(lons, c.houses.asc, isDay);
+    if (!L) return;
+
+    var s = section('sorsreszek', 'Sorsrészek és időurak', '⊗', 'nyugati');
+
+    function place(lon) {
+      var sg = HCORE.toSign(lon);
+      return {
+        text: sg.text, sign: sg.name,
+        house: c.houses ? HCORE.houseOf(lon, c.houses.cusps) : null
+      };
+    }
+
+    var rows = LD.list.map(function (def) {
+      var pl = place(L[def.key]);
+      return {
+        symbol: def.symbol, name: def.name, greek: def.greek, ruler: def.ruler,
+        deg: pl.text, sign: pl.sign, house: pl.house, text: def.text,
+        main: def.key === 'fortune' || def.key === 'spirit'
+      };
+    });
+    var basisPl = place(L.basis);
+    rows.push({
+      symbol: LD.basis.symbol, name: LD.basis.name, greek: LD.basis.greek, ruler: '—',
+      deg: basisPl.text, sign: basisPl.sign, house: basisPl.house,
+      text: LD.basis.text, extra: LD.basis.note, main: false
+    });
+
+    // a Fortuna ura — Valens szerint az aszcendens urával egyenrangú
+    var fortuneSign = HCORE.toSign(L.fortune);
+    var fsd = signData(fortuneSign.key);
+    var fortuneRuler = fsd ? fsd.ruler : null;
+
+    item(s, 'Fortuna (' + (isDay ? 'nappali' : 'éjszakai') + ' képlet)',
+      place(L.fortune).text + (rows[0].house ? ' · ' + rows[0].house + '. ház' : ''),
+      LD.list[0].text);
+    if (fortuneRuler) {
+      item(s, 'A Fortuna ura', fortuneRuler,
+        'Valens a Fortuna urát az aszcendens urával egyenrangúnak tartotta: érdemes ' +
+        'megnézni, hol áll és milyen állapotban van a képletedben.');
+    }
+    item(s, 'Szellem', place(L.spirit).text,
+      LD.list[1].text);
+
+    /* --- firdaria --- */
+    var fir = null, sched = null;
+    if (FD) {
+      fir = E.firdaria(out.utc, new Date(), isDay);
+      sched = E.firdariaSchedule(out.utc, isDay);
+      if (fir) {
+        item(s, 'Jelenlegi firdaria-periódus',
+          FD.names[fir.lord] + (fir.sub ? ' / ' + FD.names[fir.sub] : ''),
+          FD.meanings[fir.lord] +
+          (fir.sub ? ' Az alperiódus ura a ' + FD.names[fir.sub] + ': ' +
+            FD.meanings[fir.sub].charAt(0).toLowerCase() + FD.meanings[fir.sub].slice(1) : ''));
+      }
+    }
+
+    s.lots = {
+      isDay: isDay, rows: rows,
+      sectNote: LD.sectNote, fortuneHouseNote: LD.fortuneHouseNote,
+      firdaria: fir, schedule: sched,
+      fNames: FD ? FD.names : null, fSymbols: FD ? FD.symbols : null,
+      fMeanings: FD ? FD.meanings : null,
+      fVariantNote: FD ? FD.variantNote : null, fSubNote: FD ? FD.subNote : null,
+      fNote: FD ? FD.note : null
+    };
+
+    s.notes.push(LD.intro);
+    s.notes.push(LD.sectNote);
+    s.notes.push(LD.note);
+    out.sections.push(s);
   }
 
   /* ================= Human Design ================= */
