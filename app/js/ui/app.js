@@ -474,6 +474,44 @@
       ('0' + d.getDate()).slice(-2) + '.';
   }
 
+  /* ---------------- draconikus, Vertex, aszteroidák ---------------- */
+
+  function renderExtras(sec) {
+    var X = sec.extras;
+    if (!X) return '';
+    var html = '';
+
+    if (X.asteroids && X.asteroids.length) {
+      html += '<h3 class="sec-h3">A négy fő aszteroida</h3>' +
+        '<p><small>' + esc(X.astIntro) + '</small></p><div class="ast-grid">';
+      X.asteroids.forEach(function (a) {
+        html += '<div class="ast"><div class="ast-h"><span class="sym">' + a.symbol +
+          '</span><span class="nm">' + esc(a.name) + '</span></div>' +
+          '<div class="ast-kw">' + esc(a.keyword) + '</div>' +
+          '<div class="ast-pos">' + esc(a.sign.text) + '</div>' +
+          '<div class="ast-t">' + esc(a.text) + '</div></div>';
+      });
+      html += '</div><p><small>' + esc(X.astNote) + ' ' + esc(X.astRange) + '</small></p>';
+    }
+
+    if (X.draconic) {
+      html += '<details class="extra"><summary>A teljes draconikus képlet</summary>' +
+        '<p><small>Az elforgatás mértéke: ' + X.draconic.offset.toFixed(2).replace('.', ',') +
+        '°' + (X.draconic.asc ? ' · draconikus Asc: ' + esc(X.draconic.asc) : '') +
+        (X.draconic.mc ? ' · MC: ' + esc(X.draconic.mc) : '') + '</small></p>' +
+        '<div class="tbl-scroll"><table><thead><tr><th>Égitest</th>' +
+        '<th>Draconikus állás</th></tr></thead><tbody>';
+      X.draconic.rows.forEach(function (r) {
+        html += '<tr><td><span class="sym">' + r.symbol + '</span>' + esc(r.name) +
+          (r.retro ? ' <span class="retro">℞</span>' : '') + '</td>' +
+          '<td>' + esc(r.deg) + '</td></tr>';
+      });
+      html += '</tbody></table></div><p><small>' + esc(X.nodeNote) + '</small></p></details>';
+    }
+
+    return html;
+  }
+
   /* ---------------- sorsrészek és firdaria ---------------- */
 
   function renderLots(sec) {
@@ -1193,6 +1231,7 @@
     if (s.luckPillars) html += renderDashaTable(s.luckPillars,
       'A tízéves szerencseoszlopaid', '');
     if (s.lots) html += renderLots(s);
+    if (s.extras) html += renderExtras(s);
     if (s.humanDesign) html += renderHumanDesign(s);
     if (s.geneKeys) html += renderGeneKeys(s);
     if (s.matrix) html += renderPsychomatrix(s);
@@ -1277,7 +1316,7 @@
     '🇭🇺': 'nepi', '🔬': 'kronobiologia', '⏰': 'belsoora', '📈': 'bioritmus',
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
     '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria',
-    '◈': 'humandesign', '⬡': 'genekeys', '⊗': 'sorsreszek'
+    '◈': 'humandesign', '⬡': 'genekeys', '⊗': 'sorsreszek', '✧': 'kiegeszitok'
   };
 
   function iconSrc(slug, theme) {

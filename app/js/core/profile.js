@@ -75,6 +75,7 @@
     buildStructure(out);
     buildMoonSection(out);
     buildLots(out);
+    buildExtras(out);
     buildVedic(out);
     buildChinese(out);
     buildKoreanJapanese(out);
@@ -101,7 +102,7 @@
 
     // olyan szekció is megmarad, amelynek csak táblázata vagy grafikonja van
     out.sections = out.sections.filter(function (s) {
-      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys || s.lots);
+      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys || s.lots || s.extras);
     });
     // ha van páros elemzés, az kerüljön legelőre
     for (var si = 1; si < out.sections.length; si++) {
@@ -2865,6 +2866,82 @@
          (both(p[0], ['sun', 'moon', 'venus', 'jupiter']) ||
           both(p[1], ['sun', 'moon', 'venus', 'jupiter'])))) cats.push('stabilitas');
     return cats;
+  }
+
+  /* ================= draconikus, Vertex, aszteroidák ================= */
+
+  function buildExtras(out) {
+    var X = HCORE.extras;
+    var AD = get(D(), 'asteroids', null);
+    if (!X) return;
+    var c = out.chart;
+
+    var s = section('kiegeszitok', 'Draconikus képlet, Vertex, aszteroidák', '✧', 'ezoterikus');
+
+    /* --- draconikus --- */
+    var dr = X.draconic(c);
+    if (dr) {
+      item(s, 'Draconikus Nap', dr.planets.sun.sign.text,
+        'A draconikus („lélek-") képletben minden pozíció annyival fordul el, hogy az ' +
+        'Északi holdcsomó 0° Kosra kerüljön. A fényszögek és a házhelyzetek változatlanok — ' +
+        'csak a jegyek mozdulnak. A 20. századi hagyomány a tudattalan indítékok, a ' +
+        '„magasabb életcél" rétegeként olvassa.');
+      item(s, 'Draconikus Hold', dr.planets.moon.sign.text,
+        'A Hold draconikus jegye: a hagyomány szerint az érzelmi működés mögötti, ' +
+        'szavak nélküli réteg.');
+      if (dr.ascSign) {
+        item(s, 'Draconikus aszcendens', dr.ascSign.text,
+          'A tengelyek is elfordulnak — figyelem: ez szimbolikus elforgatás, nem valódi ' +
+          'horizont az adott szélességen.');
+      }
+    }
+
+    /* --- Vertex --- */
+    var vtx = null;
+    if (out.input.hasTime && c.houses) {
+      var eps = c.houses.obliquity || HCORE.obliquity(out.utc);
+      var vl = X.vertex(c.houses.ramc, out.place.lat, eps);
+      var reliable = X.vertexReliable(out.place.lat, eps);
+      vtx = { lon: vl, sign: HCORE.toSign(vl), anti: HCORE.norm360(vl + 180), reliable: reliable };
+      item(s, 'Vertex', HCORE.toSign(vl).text +
+        (reliable ? '' : ' — a trópusokon megbízhatatlan'),
+        'A „harmadik tengely": az elsőrendű vertikális és az ekliptika metszéspontja ' +
+        'nyugaton. A modern hagyomány sorsszerű találkozásokhoz köti. Johndro dolgozta ' +
+        'ki, Jayne finomította — az ő javaslatára lett a mai Vertex a szemközti pont.' +
+        (reliable ? '' : ' FIGYELEM: a szülőhely a trópusokon van (|szélesség| < 23,44°), ' +
+          'ahol a Vertex geometriailag megbízhatatlan — más programok is gyakran az ' +
+          'Anti-Vertexet adják itt.'));
+    }
+
+    /* --- aszteroidák --- */
+    var ast = AD ? X.asteroids(out.utc) : null;
+    if (ast && ast.length) {
+      ast.forEach(function (a) {
+        item(s, a.symbol + ' ' + a.name + ' — ' + a.keyword, a.sign.text, a.text);
+      });
+    }
+
+    s.extras = {
+      draconic: dr ? {
+        offset: dr.offset,
+        rows: dr.list.map(function (p) {
+          return { symbol: p.symbol, name: p.name, deg: p.sign.text, retro: p.retrograde };
+        }),
+        asc: dr.ascSign ? dr.ascSign.text : null,
+        mc: dr.mcSign ? dr.mcSign.text : null
+      } : null,
+      vertex: vtx,
+      asteroids: ast,
+      nodeNote: 'A draconikus elforgatás az ÁTLAGOS holdcsomót használja — ' +
+        'következetesen a képlet többi részével. A valós (true) csomó a de facto ' +
+        'szabvány más programokban; az eltérés legfeljebb ~1,9°, ami jegyhatár közelében ' +
+        'más draconikus jegyet adhat.',
+      astNote: AD ? AD.note : null,
+      astRange: AD ? AD.rangeNote : null,
+      astIntro: AD ? AD.intro : null
+    };
+
+    if (s.items.length) out.sections.push(s);
   }
 
   /* ================= sorsrészek és firdaria ================= */
