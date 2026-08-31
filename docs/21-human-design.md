@@ -181,6 +181,75 @@ Merkúr, Vénusz, Mars, Jupiter, Szaturnusz, Uránusz, Neptunusz, Plútó.
 
 A Khirón **nem** része a Human Design aktivációknak.
 
+## A központok értelmezése: definiált, nyitott, teljesen nyitott
+
+A felület nem feltételes általánosságot ír ki („ha nyitott, akkor…"), hanem azt,
+ami a felhasználó saját képletében **igaz**. Ehhez központonként külön szöveg
+tartozik definiált és nyitott állapotra.
+
+### Három állapot, nem kettő
+
+Ra Uru Hu külön tanította a különbséget, és a program is megkülönbözteti:
+
+| Állapot | Mechanika | Értelmezés |
+|---|---|---|
+| **Definiált** | teljes csatorna (mindkét kapu aktív) | rögzített, következetes; kifelé sugároz |
+| **Nyitott** | van aktivált („lógó") kapu, de nincs teljes csatorna | fogékony, **de van viszonyítási pontja** |
+| **Teljesen nyitott** | egyetlen aktivált kapu sincs | nincs viszonyítási pont: a legnagyobb befolyásolhatóság és a legnagyobb bölcsesség-lehetőség |
+
+Ra szavaival: „ha van lógó kapud, van mibe kapaszkodnod" — enélkül „nincs mód
+felmérni a kondicionálást". A legtöbb népszerű HD-oldal a nyitott és a teljesen
+nyitott állapotot egybemossa.
+
+### „Nem-önmagad" kérdések
+
+Központonként egy felismerő kérdés tartozik a nyitott állapothoz. **Fontos
+forrásjelölés:** a kérdés-formátum tanítói hagyomány, nem szó szerinti Ra
+Uru Hu — a Jovian Archive ugyanezt a tartalmat kijelentő módban hozza. Két
+független forrás szó szerint azonosan adja mind a kilencet, tehát a lista
+stabil, de a megfogalmazást nem szabad személyesen Rának tulajdonítani.
+
+A kérdések **nem a felhasználóról szóló ítéletek**: olyan belső hangokat
+neveznek meg, amelyeket maga a rendszer bírál. A felület ezt a keretezést
+külön kiírja, mert a szövegkörnyezetből kiszakítva úgy hatnának, mintha a
+program azt mondaná a felhasználónak, hogy baj van vele.
+
+### Százalékok — csak ahol van forrás
+
+A Jovian Archive **nem közöl központonkénti statisztikát** (csak típus,
+tekintély, definíció, profil, kereszt). Ezért csak négy központnál írunk
+százalékot:
+
+| Központ | Definiált | Alap |
+|---|---|---|
+| Napfonat | kb. az emberek fele | Jovian szó szerint (49,5%); egybevág az érzelmi tekintély arányával |
+| Szakrális | kb. 70% | levezethető: definiált szakrális ⟺ generátor/manifesztáló generátor |
+| Fej | kb. 30% | Jovian blog („kb. 70%-nak nyitott") |
+| Szív (Ego) | kb. 33% | Ra szó szerint: „az emberiség kétharmadának nyitott az egója" |
+
+A többi öt központra keringő számok forrás nélküliek és gyanúsan egyformák a
+különböző oldalakon — ezeket **nem írjuk ki**.
+
+> Külön figyelmeztetés: a „a szív definiált az emberek 1/8-ánál" állítás
+> sehonnan nem igazolható. Valószínűleg az *ego-tekintéllyel* keverik, ami
+> tényleg ritka (~1–2%) — a definiált ego-*központ* viszont nem az.
+
+## Egészségügyi állítások: mit nem írunk ki
+
+A Human Design irodalma tele van orvosi és lélektani állításokkal. Ezekből
+**semmit nem veszünk át**:
+
+- mirigy- és szervmegfeleltetések tényként (a lép „immunrendszer"-ként — ezt
+  a korábbi változatból kivettük),
+- betegségnevek bármely központhoz kötve (depresszió, cukorbetegség, pajzsmirigy,
+  „mellékvese-kimerülés", szorongásos zavarok),
+- az az állítás, hogy a nem hiteles élet betegséget okoz,
+- szerhasználat mint „design-következmény",
+- bármi, ami az orvoshoz fordulástól tántorít.
+
+Ahol a hagyomány nyelve determinisztikus, tompítjuk: „mindig" helyett
+„a rendszer szerint", klinikai szavak helyett élményszintű megfogalmazás.
+
 ## Nyitott kérdés: átlagos vagy valós holdcsomó ⚠️
 
 A program **átlagos (mean)** holdcsomót számol. A hivatalos Jovian szoftver
