@@ -332,6 +332,148 @@
     return html;
   }
 
+  /* ---------------- Human Design ---------------- */
+
+  /* A bodygraph központjainak helye és alakja (viewBox: 0 0 300 470). */
+  var HD_SHAPES = {
+    head:   { x: 150, y: 38,  shape: 'tri-up',   w: 74, h: 48, lbl: 'Fej',     dy: 14 },
+    ajna:   { x: 150, y: 112, shape: 'tri-down', w: 74, h: 48, lbl: 'Ajna',    dy: -8 },
+    throat: { x: 150, y: 186, shape: 'square',   w: 62, h: 54, lbl: 'Torok',   dy: 4 },
+    g:      { x: 150, y: 270, shape: 'diamond',  w: 62, h: 62, lbl: 'G',       dy: 4 },
+    heart:  { x: 228, y: 288, shape: 'tri-left', w: 46, h: 46, lbl: 'Szív',    dy: 4, ldx: 6 },
+    spleen: { x: 62,  y: 348, shape: 'tri-right',w: 52, h: 62, lbl: 'Lép',     dy: 4, ldx: -8 },
+    solar:  { x: 238, y: 348, shape: 'tri-left', w: 58, h: 62, lbl: 'Napfonat',dy: 4, ldx: 10 },
+    sacral: { x: 150, y: 356, shape: 'square',   w: 62, h: 54, lbl: 'Szakrális',dy: 4 },
+    root:   { x: 150, y: 434, shape: 'square',   w: 62, h: 54, lbl: 'Gyökér',  dy: 4 }
+  };
+
+  function hdShapePath(s) {
+    var x = s.x, y = s.y, w = s.w / 2, h = s.h / 2;
+    if (s.shape === 'tri-up') return [x, y - h, x + w, y + h, x - w, y + h];
+    if (s.shape === 'tri-down') return [x, y + h, x + w, y - h, x - w, y - h];
+    if (s.shape === 'tri-left') return [x - w, y, x + w, y - h, x + w, y + h];
+    if (s.shape === 'tri-right') return [x + w, y, x - w, y - h, x - w, y + h];
+    if (s.shape === 'diamond') return [x, y - h, x + w, y, x, y + h, x - w, y];
+    return [x - w, y - h, x + w, y - h, x + w, y + h, x - w, y + h];
+  }
+
+  function renderBodygraph(hd) {
+    var defined = {};
+    hd.centers.forEach(function (c) { if (c.defined) defined[c.key] = true; });
+
+    // csatornák központpárok szerint csoportosítva, hogy a párhuzamosak ne fedjék egymást
+    var byPair = {};
+    hd.channels.forEach(function (ch) {
+      var a = ch.fromKey, b = ch.toKey;
+      var key = [a, b].sort().join('|');
+      (byPair[key] = byPair[key] || []).push(ch);
+    });
+
+    var lines = '';
+    Object.keys(byPair).forEach(function (key) {
+      var parts = key.split('|'), group = byPair[key];
+      var A = HD_SHAPES[parts[0]], B = HD_SHAPES[parts[1]];
+      if (!A || !B) return;
+      var dx = B.x - A.x, dy = B.y - A.y;
+      var len = Math.sqrt(dx * dx + dy * dy) || 1;
+      var nx = -dy / len, ny = dx / len;          // merőleges egységvektor
+      group.forEach(function (ch, i) {
+        var off = (i - (group.length - 1) / 2) * 9;
+        lines += '<line x1="' + (A.x + nx * off).toFixed(1) + '" y1="' + (A.y + ny * off).toFixed(1) +
+          '" x2="' + (B.x + nx * off).toFixed(1) + '" y2="' + (B.y + ny * off).toFixed(1) +
+          '" class="hd-chan"><title>' + esc(ch.gates + ' · ' + ch.name) + '</title></line>';
+      });
+    });
+
+    var shapes = '';
+    Object.keys(HD_SHAPES).forEach(function (k) {
+      var s = HD_SHAPES[k];
+      var pts = hdShapePath(s).map(function (n) { return n.toFixed(1); });
+      var pairs = [];
+      for (var i = 0; i < pts.length; i += 2) pairs.push(pts[i] + ',' + pts[i + 1]);
+      var info = hd.centers.filter(function (c) { return c.key === k; })[0] || {};
+      shapes += '<polygon points="' + pairs.join(' ') + '" class="hd-center' +
+        (defined[k] ? ' is-defined' : '') + '"><title>' +
+        esc(info.name + ' — ' + (defined[k] ? 'definiált' : 'nyitott')) + '</title></polygon>';
+      shapes += '<text x="' + (s.x + (s.ldx || 0)) + '" y="' + (s.y + s.dy) + '" class="hd-lbl' +
+        (defined[k] ? ' is-defined' : '') + '">' + esc(s.lbl) + '</text>';
+    });
+
+    return '<div class="hd-graph"><svg viewBox="0 0 300 470" role="img" ' +
+      'aria-label="Human Design bodygraph"><g class="hd-lines">' + lines + '</g>' +
+      shapes + '</svg></div>';
+  }
+
+  function renderHumanDesign(sec) {
+    var hd = sec.humanDesign;
+    if (!hd) return '';
+
+    var html = '<h3 class="sec-h3">A képleted (bodygraph)</h3>' +
+      '<div class="hd-top">' + renderBodygraph(hd) +
+      '<div class="hd-legend">' +
+      '<div class="hd-lg"><span class="sw on"></span><div><strong>Definiált központ</strong> — ' +
+      hd.definedCount + ' a 9-ből. Itt következetes, megbízható a működésed: ez a saját, ' +
+      'állandó energiád, amit a környezet nem ingat meg.</div></div>' +
+      '<div class="hd-lg"><span class="sw"></span><div><strong>Nyitott központ</strong> — ' +
+      (9 - hd.definedCount) + ' a 9-ből. Itt a környezet hat rád: felerősíted mások energiáját. ' +
+      'A rendszer szerint itt tanulsz a legtöbbet, de itt vagy a legsérülékenyebb is.</div></div>' +
+      '<div class="hd-lg"><span class="sw line"></span><div><strong>Csatorna</strong> — ' +
+      hd.channels.length + ' darab köti össze a központjaidat. Két kapu együttállásából ' +
+      'születik, és ettől lesz definiált a két végén álló központ.</div></div>' +
+      '</div></div>';
+
+    // központok
+    html += '<h3 class="sec-h3">Központok</h3><div class="hd-centers">';
+    hd.centers.forEach(function (c) {
+      html += '<div class="hd-c' + (c.defined ? ' on' : '') + '">' +
+        '<div class="hd-c-h"><span class="dot"></span>' + esc(c.name) +
+        '<span class="tag">' + (c.defined ? 'definiált' : 'nyitott') + '</span></div>' +
+        '<div class="hd-c-t">' + esc(c.text) + '</div></div>';
+    });
+    html += '</div><p><small>A definiált központok a következetes, megbízható működésed ' +
+      'területei; a nyitottak azok, ahol a környezet erősen hat rád — a rendszer szerint ' +
+      'itt tanulsz a legtöbbet, de itt vagy a legsérülékenyebb is.</small></p>';
+
+    // csatornák
+    if (hd.channels.length) {
+      html += '<h3 class="sec-h3">Csatornáid (' + hd.channels.length + ')</h3>' +
+        '<div class="hd-chans">';
+      hd.channels.forEach(function (ch) {
+        html += '<div class="hd-ch"><div class="hd-ch-h">' +
+          '<span class="num">' + esc(ch.gates) + '</span>' + esc(ch.name) + '</div>' +
+          '<div class="ends">' + esc(ch.from + ' ↔ ' + ch.to) + '</div>' +
+          '<div class="hd-ch-t">' + esc(ch.text) + '</div></div>';
+      });
+      html += '</div>';
+    } else {
+      html += '<p><small>Egyetlen csatornád sincs definiálva — ez a Reflektor képlet ' +
+        'sajátossága: minden központod nyitott.</small></p>';
+    }
+
+    // aktivációk
+    html += '<details class="extra"><summary>A 26 aktiváció (kapu és vonal)</summary>' +
+      '<div class="tbl-scroll"><table><thead><tr><th>Égitest</th>' +
+      '<th>Személyiség (tudatos)</th><th>Design (tudattalan)</th></tr></thead><tbody>';
+    for (var i = 0; i < hd.personality.length; i++) {
+      var p = hd.personality[i], d = hd.design[i];
+      html += '<tr><td><span class="sym">' + p.symbol + '</span>' + esc(p.name) + '</td>' +
+        '<td><strong>' + p.gate + '.' + p.line + '</strong> <small>' + esc(p.key) + '</small></td>' +
+        '<td><strong>' + d.gate + '.' + d.line + '</strong> <small>' + esc(d.key) + '</small></td></tr>';
+    }
+    html += '</tbody></table></div>' +
+      '<p><small>A design oszlop a születésed előtti kb. 88 nap ' +
+      '(' + fmtDate(hd.designDate) + ') égi állását mutatja — a rendszer szerint ez a ' +
+      'tudattalan, testi öröksége a képletnek.</small></p></details>';
+
+    return html;
+  }
+
+  function fmtDate(d) {
+    if (!d) return '';
+    return d.getFullYear() + '. ' + ('0' + (d.getMonth() + 1)).slice(-2) + '. ' +
+      ('0' + d.getDate()).slice(-2) + '.';
+  }
+
   function renderHvd(sec) {
     if (!sec.hvd) return '';
     var colors = {
@@ -932,6 +1074,7 @@
     if (s.dashaTable) html += renderDashaTable(s.dashaTable);
     if (s.luckPillars) html += renderDashaTable(s.luckPillars,
       'A tízéves szerencseoszlopaid', '');
+    if (s.humanDesign) html += renderHumanDesign(s);
     if (s.matrix) html += renderPsychomatrix(s);
     if (s.matrixDM) html += renderDestinyMatrix(s);
     if (s.hvd) html += renderHvd(s);
@@ -1013,7 +1156,8 @@
     '🃏': 'kartyak', '👼': 'angyal', '🌍': 'naptarak', '📅': 'szuletesnap',
     '🇭🇺': 'nepi', '🔬': 'kronobiologia', '⏰': 'belsoora', '📈': 'bioritmus',
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
-    '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria'
+    '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria',
+    '◈': 'humandesign'
   };
 
   function iconSrc(slug, theme) {

@@ -101,6 +101,13 @@ hónap és év arkánumából származtatott nyolcszög rajzolt ábrával, a kö
 feladattal, a családi átlókkal, az égi és összegző életfeladattal, valamint a
 7 elemből álló csakrasorral.
 
+**Human Design** — teljes, kiszámolt képlet: a születés pillanata (személyiség) és a
+88 nappal korábbi „design" állás alapján mind a 26 aktiváció kapuval és vonallal, a
+64 kapu az I Csing keréken, a 36 csatorna, a 9 központ definiált/nyitott állapota
+rajzolt bodygraph-fal, ebből a **típus** (Generátor, Manifesztáló Generátor,
+Manifesztor, Projektor, Reflektor), a **stratégia**, a **belső tekintély**, a
+**profil**, a definíció és az inkarnációs kereszt.
+
 **Egyéb rendszerek** — 72 kabbalisztikus **születési angyal**, arkangyal, napangyal,
 héber naptár szerinti születésnap; maja Tzolkin, kelta fa, egyiptomi istenség-jegy,
 indián totem, rúna, jávai **weton** neptu-értékkel, 9 csillag ki, Kua-szám,
@@ -172,6 +179,9 @@ A motor több független referenciaponttal van hitelesítve:
 | Sorskártya | jan. 1. = Pikk király, júl. 4. = Káró bubi, dec. 25. = Kőr 6 |
 | Pszichomátrix | 1985. máj. 7. → munkaszámok 35, 8, 21, 3 — a dokumentált mintapéldával egyezik |
 | Sorsmátrix | a nyílt forrású referencia-implementáció logikája szerint, kézi arkánum-számítással egyeztetve |
+| Human Design kerék | mind a 32 „programozó partner" kapupár a keréken pontosan 180°-ra esik |
+| Human Design design-idő | a napív pontosan 88,000000°, a dátum 88–89 nappal a születés előtt |
+| Human Design típusok | 600 véletlen születésen a típuseloszlás a publikált arányokat adja (generátor-család ~67%, projektor ~21%, manifesztor ~11%, reflektor ~1%) |
 | Sorsmátrix csakratábla | a felhasználó referencia-ábrájával mind a 8 sor × 3 oszlop egyezik |
 | ХВД csakraanalízis | a forráskönyv példája (1987.03.04) mind a 7 csakrára pontos; a magyar minta markerei (18·2·23) is egyeznek |
 | Szabian szimbólumok | mind a 360 fok ellenőrizve Jones és Rudhyar szövegével: 0 hiba, eltolódás nincs |
