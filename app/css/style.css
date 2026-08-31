@@ -423,6 +423,16 @@ tr.fir-active td{font-weight:600}
 .gk-spectrum .gf{background:var(--accent-soft); color:var(--accent)}
 .gk-spectrum .sd{background:color-mix(in srgb,var(--accent2) 18%,transparent); color:var(--accent2)}
 .gk-sph-t{font-size:.88rem; color:var(--muted)}
+.gk-lv-block{margin-top:10px; display:flex; flex-direction:column; gap:8px}
+.gk-lvl{font-size:.86rem; color:var(--muted); padding-left:11px; border-left:3px solid var(--line)}
+.gk-lvl .lb{display:block; font-weight:700; font-size:.74rem; text-transform:uppercase;
+  letter-spacing:.06em; margin-bottom:2px}
+.gk-lvl.sh{border-left-color:var(--warn)} .gk-lvl.sh .lb{color:var(--warn)}
+.gk-lvl.gf{border-left-color:var(--accent)} .gk-lvl.gf .lb{color:var(--accent)}
+.gk-lvl.sd{border-left-color:var(--accent2)} .gk-lvl.sd .lb{color:var(--accent2)}
+.gk-pol{display:flex; flex-direction:column; gap:3px; font-size:.8rem; color:var(--muted);
+  padding-left:14px; margin:-3px 0 1px}
+.gk-pol strong{color:var(--ink); font-weight:600}
 .gk-gate{font-size:.86rem; color:var(--muted); margin-top:8px; padding-top:8px;
   border-top:1px dashed var(--line)}
 .gk-gate strong{color:var(--ink); font-weight:600}

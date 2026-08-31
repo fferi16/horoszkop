@@ -216,6 +216,35 @@ oldalakról, hanem az I Csing forrásból származnak).
 | 63 | Kétely | Kérdezés | Igazság | A beteljesülés után |
 | 64 | Zűrzavar | Képzelet | Megvilágosodás (illumináció) | A beteljesülés előtt |
 
+## A kulcsok tartalma — és a szerzői jogi korlát ⚠️
+
+A három szó (Árnyék → Ajándék → Sziddhi) **címke, nem tartalom**: önmagában nem
+mondja meg, mit jelent az adott szint. A program ezért mind a 64 kulcshoz tárol
+egy-egy leírást a három szinthez, valamint az Árnyék **két pólusát**:
+
+- **elfojtó (repressive)** — az energia befelé fordul,
+- **reaktív (reactive)** — az energia kifelé fordul.
+
+> **Fontos:** Richard Rudd kulcsonkénti szövegei **szerzői jogvédett könyvanyag**,
+> és a genekeys.com nyilvános kulcsoldalai amúgy sem közlik őket (csak a három
+> címkét és egy rövid szemlélődési felhívást). A programban szereplő leírások
+> ezért **saját megfogalmazások**, a kutatás során összegyűjtött *tartalom* alapján
+> — szó szerinti átvétel nincs.
+
+### Az 58-as kulcs kivétele
+
+Az 58-asnak **nincs elfojtó pólusa**. Rudd indoklása szerint ez a génkulcs maga
+az életerő, amelyet nem lehet elnyomni — a reaktív pólus (beavatkozás) viszont
+megvan. Egyes másodlagos oldalak kitalálnak ide egy címkét; ezt **nem vettük át**,
+a program a hiányt jelöli.
+
+### Forrás a kulcsonkénti tartalomhoz
+
+A repressive/reactive pólusokat a genekeys.com nyilvános oldalai nem közlik; ezek
+elsődlegesen a `humandesign.zone` kulcsonkénti bontásaiból származnak, több kulcsnál
+független forrással keresztellenőrizve. A legkevésbé alátámasztott a **23-as**
+(némaság / széttöredezettség) — ha ez fontossá válik, érdemes újraellenőrizni.
+
 ### Megjegyzések a táblához
 
 - **55-ös kulcs.** A hivatalos kulcsoldal szerint az Ajándék *és* a Sziddhi is

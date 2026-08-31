@@ -675,6 +675,22 @@
           '<span class="s sd">' + esc(sp.siddhi) + '</span>' +
           '</div>' +
           '<div class="gk-sph-t">' + esc(sp.text) + '</div>' +
+          (sp.shadowText
+            ? '<div class="gk-lv-block">' +
+              '<div class="gk-lvl sh"><span class="lb">' + esc(sp.shadow) + '</span>' +
+              esc(sp.shadowText) + '</div>' +
+              '<div class="gk-pol">' +
+              (sp.repressive
+                ? '<span><strong>Befelé fordulva:</strong> ' + esc(sp.repressive) + '</span>'
+                : (sp.repressiveNote ? '<span>' + esc(sp.repressiveNote) + '</span>' : '')) +
+              (sp.reactive
+                ? '<span><strong>Kifelé fordulva:</strong> ' + esc(sp.reactive) + '</span>' : '') +
+              '</div>' +
+              '<div class="gk-lvl gf"><span class="lb">' + esc(sp.gift) + '</span>' +
+              esc(sp.giftText) + '</div>' +
+              '<div class="gk-lvl sd"><span class="lb">' + esc(sp.siddhi) + '</span>' +
+              esc(sp.siddhiText) + '</div></div>'
+            : '') +
           (sp.gateText ? '<div class="gk-gate"><strong>' + sp.gate + '. kapu — ' +
             esc(sp.gateName) + (sp.gateKey ? ' · ' + esc(sp.gateKey) : '') + '</strong> ' +
             esc(sp.gateText) + '</div>' : '') +
