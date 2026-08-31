@@ -229,6 +229,10 @@ A motor több független referenciaponttal van hitelesítve:
 | 20 | [Kirakási módok](docs/20-kirakasi-modok.md) | tarot-, Lenormand- és cigánykártya-kirakások, pozíciójelentések |
 | 21 | [Human Design](docs/21-human-design.md) | kapukerék, 9 központ, 36 csatorna, típus- és tekintélyszabályok — Jovian Archive alapján ellenőrizve |
 | 22 | [Gene Keys](docs/22-gene-keys.md) | 64 génkulcs (árnyék–ajándék–sziddhi), a hologenetikus profil 11 szférája, programozó partnerek |
+| 23 | [Sorsrészek](docs/23-sorsreszek.md) | hét hermetikus lot + Basis, a szekta helyes meghatározása, a megfordítás vitája |
+| 24 | [Firdaria](docs/24-firdaria.md) | perzsa időurak, a vitatott éjszakai sorrend, alperiódusok — Abu Ma'sar alapján |
+| 25 | [Draconikus, Vertex, aszteroidák](docs/25-draconikus-vertex-aszteroidak.md) | a Vertex trópusi degenerációja, aszteroida-pontosság JPL-méréssel |
+| 26 | [A hagyomány nedvei](docs/26-dosha.md) | váta/pitta/kapha a BPHS és a Sāravalī szerint — és miért nem ájurvédikus alkatmeghatározás |
 
 Minden fejezet magyar nyelvű, táblázatos, forrásmegjelöléssel, és következetesen
 elválasztja a hiteles hagyományt a modern konstrukcióktól, illetve a tudományt az
