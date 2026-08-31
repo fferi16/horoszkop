@@ -595,7 +595,13 @@
         '<div class="lot-pos">' + esc(r.deg) +
         (r.house ? ' <span class="hs">' + r.house + '. ház</span>' : '') + '</div>' +
         '<div class="lot-t">' + esc(r.text) + '</div>' +
-        (r.inPlace ? '<div class="lot-in">' + esc(r.inPlace) + '</div>' : '') +
+        (r.angular ? '<div class="lot-in"><strong>' + esc(r.angular.name) + '</strong> — ' +
+          esc(r.angular.text) + '</div>' : '') +
+        (r.lordOf && r.lordOf.found
+          ? '<div class="lot-in"><strong>Ura:</strong> ' + esc(r.lordOf.symbol || '') + ' ' +
+            esc(r.lordOf.name) + ' — ' + esc(r.lordOf.deg) +
+            (r.lordOf.house ? ', ' + r.lordOf.house + '. ház' : '') +
+            (r.lordOf.dignity ? ', ' + esc(r.lordOf.dignity) : '') + '</div>' : '') +
         (r.extra ? '<div class="lot-x">' + esc(r.extra) + '</div>' : '') +
         '</div>';
     });
