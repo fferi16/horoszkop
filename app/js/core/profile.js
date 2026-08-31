@@ -2959,18 +2959,44 @@
     /* --- draconikus --- */
     var dr = X.draconic(c);
     if (dr) {
+      /* A draconikus képletnél az a beszédes, hogy a lélekréteg jegye EGYEZIK-e a
+         trópusival vagy szembeállítható vele — a puszta fokszám semmit nem mond. */
+      function dracoLine(tropSign, dracSign, layerLabel, layerText) {
+        var td = signData(tropSign.key), dd = signData(dracSign.key);
+        if (!dd) return layerText;
+        var same = tropSign.key === dracSign.key;
+        var out = layerText + ' ';
+        if (same) {
+          out += 'Nálad a draconikus és a trópusi jegy UGYANAZ (' + dd.name + '): a ' +
+            'hagyomány szerint ez azt jelenti, hogy ' + layerLabel + ' szintjén nincs ' +
+            'feszültség a tudatos és a mélyebb réteg között — ugyanaz hajt kívül-belül.';
+        } else {
+          out += 'Nálad a trópusi ' + (td ? td.name : tropSign.name) + ' mögött draconikusan ' +
+            az(dd.name) + ' ' + dd.name + ' áll (' + dd.element.toLowerCase() + ' elem, ' +
+            dd.quality.toLowerCase() + ' minőség). A hagyomány szerint kifelé ' +
+            (td ? (td.positive || []).slice(0, 2).join(', ') : '') + ' módon mutatkozol meg, ' +
+            'a mélyebb réteg viszont ' + (dd.positive || []).slice(0, 3).join(', ') +
+            ' irányba húz.';
+        }
+        return out;
+      }
+
       item(s, 'Draconikus Nap', dr.planets.sun.sign.text,
-        'A draconikus („lélek-") képletben minden pozíció annyival fordul el, hogy az ' +
-        'Északi holdcsomó 0° Kosra kerüljön. A fényszögek és a házhelyzetek változatlanok — ' +
-        'csak a jegyek mozdulnak. A 20. századi hagyomány a tudattalan indítékok, a ' +
-        '„magasabb életcél" rétegeként olvassa.');
+        dracoLine(c.planets.sun.sign, dr.planets.sun.sign, 'az életcél',
+          'A draconikus („lélek-") képletben minden pozíció annyival fordul el, hogy az ' +
+          'Északi holdcsomó 0° Kosra kerüljön; a fényszögek és a házhelyzetek változatlanok. ' +
+          'A 20. századi hagyomány a tudattalan indítékok rétegeként olvassa.'));
+
       item(s, 'Draconikus Hold', dr.planets.moon.sign.text,
-        'A Hold draconikus jegye: a hagyomány szerint az érzelmi működés mögötti, ' +
-        'szavak nélküli réteg.');
-      if (dr.ascSign) {
+        dracoLine(c.planets.moon.sign, dr.planets.moon.sign, 'az érzelmi működés',
+          'A Hold draconikus jegye a hagyomány szerint az érzelmi működés mögötti, ' +
+          'szavak nélküli réteg.'));
+
+      if (dr.ascSign && c.ascSign) {
         item(s, 'Draconikus aszcendens', dr.ascSign.text,
-          'A tengelyek is elfordulnak — figyelem: ez szimbolikus elforgatás, nem valódi ' +
-          'horizont az adott szélességen.');
+          dracoLine(c.ascSign, dr.ascSign, 'a megmutatkozás',
+            'A tengelyek is elfordulnak. Figyelem: ez szimbolikus elforgatás, nem valódi ' +
+            'horizont az adott szélességen.'));
       }
     }
 
