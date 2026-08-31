@@ -1,5 +1,7 @@
 /* humandesign.js — Human Design adatmodul: kapuk, központok, csatornák, típusok
  * Sima script (nem ES modul), UTF-8. Betöltés: <script src="js/data/humandesign.js"></script>
+ * Forrás: docs/21-human-design.md (Jovian Archive, több független forrással
+ *         keresztellenőrizve — a szabályok indoklása és a forrás-URL-ek ott).
  *
  * A rendszert Ra Uru Hu (Alan Robert Krakower) alkotta meg 1987-ben; a nyugati
  * asztrológiát, az I Csing 64 hexagramját, a kabbalista életfát és a csakra-
@@ -117,7 +119,7 @@ window.HDATA.humandesign = {
    * ------------------------------------------------------------- */
   channels: [
     { g: [1, 8],   name: 'Inspiráció',        text: 'A kreatív szerepmodell csatornája: a saját egyediségeddel mutatsz példát.' },
-    { g: [2, 14],  name: 'A Ütem',            text: 'Az irány és az erőforrás összekapcsolása: tudod, merre kell menni, és van hozzá energiád.' },
+    { g: [2, 14],  name: 'Az Ütem',           text: 'Az irány és az erőforrás összekapcsolása: tudod, merre kell menni, és van hozzá energiád.' },
     { g: [3, 60],  name: 'Mutáció',           text: 'Az újdonság csatornája: a változás nem tervezhető, hullámokban érkezik.' },
     { g: [4, 63],  name: 'Logika',            text: 'A kételytől a képletig: mintákat keresel, amelyek a jövőben is működnek.' },
     { g: [5, 15],  name: 'Ritmus',            text: 'A természet ritmusához illeszkedő életvitel — a rendszeresség adja az erődet.' },
@@ -125,25 +127,25 @@ window.HDATA.humandesign = {
     { g: [7, 31],  name: 'Az Alfa',           text: 'A vezetés csatornája — de csak akkor működik, ha megválasztanak rá.' },
     { g: [9, 52],  name: 'Koncentráció',      text: 'A kitartó összpontosítás: a részletekben maradás képessége.' },
     { g: [10, 20], name: 'Ébredés',           text: 'Önmagad lenni itt és most — a hitelesség csatornája.' },
-    { g: [10, 34], name: 'Felfedezés',        text: 'A meggyőződés követése: azt csinálod, amiben hiszel, akkor is, ha nem értik.' },
+    { g: [10, 34], name: 'Feltárás',          text: 'A meggyőződés követése: azt csinálod, amiben hiszel, akkor is, ha nem értik.' },
     { g: [10, 57], name: 'Tökéletesített forma', text: 'Az ösztönös túlélés csatornája: a tested pontosan tudja, mi jó neked.' },
     { g: [11, 56], name: 'Kíváncsiság',       text: 'Az ötletek és a történetek keresője: gondolatokat adsz tovább, nem igazságokat.' },
     { g: [12, 22], name: 'Nyitottság',        text: 'A hangulatfüggő önkifejezés: ha jön a pillanat, gyönyörűen szólalsz meg.' },
     { g: [13, 33], name: 'A Tékozló',         text: 'A tanú csatornája: gyűjtöd a múlt tapasztalatait, hogy továbbadhasd.' },
     { g: [16, 48], name: 'A hullámhossz',     text: 'A tehetség csatornája: a mélységből gyakorlással lesz mesterség.' },
-    { g: [17, 62], name: 'A szervező',        text: 'A vélemény és a részletek: rendezett érveléssel győzöl meg másokat.' },
+    { g: [17, 62], name: 'Elfogadás',         text: 'A vélemény és a részletek: rendezett érveléssel győzöl meg másokat — szervező alkat.' },
     { g: [18, 58], name: 'Ítélkezés',         text: 'A jobbítás csatornája: meglátod, mi nem működik, és javítani akarsz rajta.' },
     { g: [19, 49], name: 'Szintézis',         text: 'Az érzékenység csatornája: megérzed, mire van szüksége a közösségnek.' },
     { g: [20, 34], name: 'Karizma',           text: 'A tett csatornája: amit gondolsz, azt azonnal cselekvésbe is fordítod.' },
     { g: [20, 57], name: 'Az agyhullám',      text: 'A pillanatnyi intuíció azonnali kimondása — ösztönös tisztánlátás.' },
     { g: [21, 45], name: 'A pénz vonala',     text: 'Az anyagi világ irányítása: erőforrások fölötti kontroll és felelősség.' },
-    { g: [23, 43], name: 'Struktúrálás',      text: 'A zsenialitás csatornája: egyedi belátásaidat érthetővé teszed — ha jó az időzítés.' },
+    { g: [23, 43], name: 'Strukturálás',      text: 'A zsenialitás csatornája: egyedi belátásaidat érthetővé teszed — ha jó az időzítés.' },
     { g: [24, 61], name: 'Tudatosság',        text: 'A gondolkodó csatornája: a titok vonzása, amíg meg nem születik a felismerés.' },
     { g: [25, 51], name: 'Beavatás',          text: 'A sokk és az egyetemes szeretet: kihívásokon keresztül vezetsz másokat.' },
-    { g: [26, 44], name: 'Vállalkozó szellem',text: 'Az emlékezet és a meggyőzés: tudod, mit hogyan kell eladni.' },
+    { g: [26, 44], name: 'Megadás',           text: 'Az emlékezet és a meggyőzés: közvetítő alkat, aki tudja, mit hogyan kell átadni.' },
     { g: [27, 50], name: 'Megőrzés',          text: 'A gondoskodás csatornája: a törzs értékeit és a rászorulókat óvod.' },
     { g: [28, 38], name: 'Küzdelem',          text: 'A makacsság csatornája: keresed, miért érdemes küzdeni az életben.' },
-    { g: [29, 46], name: 'Felfedezés',        text: 'A siker csatornája: ha igent mondasz és jelen vagy, jókor vagy jó helyen.' },
+    { g: [29, 46], name: 'Rátalálás',         text: 'A siker csatornája: ha igent mondasz és jelen vagy, jókor vagy jó helyen — ott is sikerülhet, ahol másoknak nem.' },
     { g: [30, 41], name: 'Felismerés',        text: 'A vágy csatornája: a képzelet elindítja az élmény utáni sóvárgást.' },
     { g: [32, 54], name: 'Átalakulás',        text: 'A becsvágy csatornája: az ambíciót ösztönös értékítélet fékezi.' },
     { g: [34, 57], name: 'Erő',               text: 'Az ösztönös erő: a tested pontosan tudja, mikor kell cselekedni.' },
@@ -209,12 +211,17 @@ window.HDATA.humandesign = {
   definitions: {
     0: { name: 'Nincs definíció', text: 'Egyetlen központod sem definiált — teljesen nyitott, tükröző képlet.' },
     1: { name: 'Egyszeres definíció', text: 'A definiált központjaid egyetlen összefüggő egységet alkotnak: önmagadban is egész vagy, nem kell külső kapcsolat a működéshez.' },
-    2: { name: 'Kettős definíció', text: 'Két különálló csoport alkotja a definíciódat: két „belső ember", akiket mások vagy a tranzitok kötnek össze. Ezért kell néha idő, míg összeérsz.' },
+    2: { name: 'Osztott (kettős) definíció', text: 'Két különálló csoport alkotja a definíciódat: két „belső ember", akiket mások vagy a tranzitok kötnek össze. Ezért kell néha idő, míg összeérsz.' },
     3: { name: 'Hármas hasadás', text: 'Három különálló csoport: sokféle inger kell, hogy összeálljon a kép — a nyüzsgő környezet jót tesz.' },
     4: { name: 'Négyes hasadás', text: 'Négy különálló csoport: nagyon sokrétű működés, amelyet a környezet köt össze.' }
   },
 
   note: 'A Human Design nem tudományos rendszer: az asztrológiai pozíciókat az I Csing ' +
     'hexagramjaihoz rendeli, és ebből vezet le személyiségképet. Pontos születési idő ' +
-    'nélkül a torok, a G-központ és a profil is elcsúszhat — órányi eltérés is más típust adhat.'
+    'nélkül a torok, a G-központ és a profil is elcsúszhat — órányi eltérés is más típust adhat.',
+
+  nodeNote: 'A holdcsomópontokat átlagos (mean) csomópont szerint számoljuk. Más ' +
+    'kalkulátorok valós (true) csomóponttal is dolgozhatnak, ami legfeljebb ~1,7°, ' +
+    'azaz kb. egyharmad kapunyi eltérés — ha egy csomóponti kapud épp határon áll, ' +
+    'előfordulhat, hogy egy másik program eggyel odébb sorolja.'
 };

@@ -44,6 +44,18 @@
     };
   }
 
+  /**
+   * Programozó partner: a keréken pontosan szemben álló kapu (180°), ami egyben
+   * a fordított hexagram is. A kerékből SZÁRMAZTATJUK, nem kézzel kódoljuk —
+   * így önellenőrző: ha a kerék sorrendje helyes, a párok is azok.
+   */
+  function partnerOf(gate) {
+    var order = D().wheelOrder || [];
+    var i = order.indexOf(gate);
+    if (i < 0) return null;
+    return order[(i + 32) % 64];
+  }
+
   /* ---------------- a design időpont megkeresése ---------------- */
 
   /**
@@ -180,7 +192,20 @@
     return 'projector';
   }
 
-  /** Belső tekintély a szokásos hierarchia szerint. */
+  /**
+   * Belső tekintély a hivatalos hierarchia szerint:
+   * érzelmi → szakrális → lép → ego → ön-vetítéses → mentális → holdciklus.
+   *
+   * A tankönyvi feltétel az ön-vetítésesnél szigorúbb ("a G a TOROKKAL van
+   * összekötve"), a mentálisnál pedig "csak a torok fölött van definíció".
+   * A puszta `centers.g` itt mégis egyenértékű: a G nem-torok csatornái
+   * (10-34, 5-15, 2-14, 29-46 → szakrális; 10-57 → lép; 25-51 → szív) mind
+   * olyan központot definiálnak, amely ELŐBB áll ebben a sorrendben, tehát
+   * ide már csak torokhoz kötött G-vel lehet eljutni. Ugyanez igaz a
+   * mentálisra: minden gyökér-csatorna előbb definiál magasabb prioritású
+   * központot. Ne "javítsd" szigorúbbra — a mostani alak bizonyítottan
+   * ugyanazt adja.
+   */
   function authorityOf(centers, type) {
     if (type === 'reflector') return 'lunar';
     if (centers.solar) return 'emotional';
@@ -253,6 +278,7 @@
     gateOf: gateOf,
     designDate: designDate,
     activations: activations,
+    partnerOf: partnerOf,
     GATE_SPAN: GATE_SPAN
   };
 

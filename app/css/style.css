@@ -321,6 +321,41 @@ button:active{transform:translateY(1px)}
   text-transform:uppercase; letter-spacing:.04em}
 .hd-ch-t{font-size:.86rem; color:var(--muted); margin-top:4px}
 
+/* ---- Gene Keys ---- */
+.gk-levels{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px; margin-bottom:8px}
+.gk-lv{border-radius:12px; padding:13px 15px; border:1px solid var(--line); background:var(--bg)}
+.gk-lv-n{font-family:var(--serif); font-size:1.1rem; margin-bottom:4px}
+.gk-lv-t{font-size:.85rem; color:var(--muted)}
+.gk-shadow{border-left:3px solid var(--warn)}
+.gk-shadow .gk-lv-n{color:var(--warn)}
+.gk-gift{border-left:3px solid var(--accent)}
+.gk-gift .gk-lv-n{color:var(--accent)}
+.gk-siddhi{border-left:3px solid var(--accent2)}
+.gk-siddhi .gk-lv-n{color:var(--accent2)}
+.gk-seq-sub{font-size:.9rem; color:var(--muted); margin:0 0 14px}
+.gk-spheres{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:12px}
+.gk-sph{border:1px solid var(--line); border-radius:13px; padding:14px 16px; background:var(--bg)}
+.gk-sph-h{display:flex; align-items:baseline; gap:10px}
+.gk-sph-h .nm{font-family:var(--serif); font-size:1.12rem; color:var(--ink)}
+.gk-sph-h .gt{margin-left:auto; font-family:var(--serif); font-size:1.05rem;
+  color:var(--accent2); white-space:nowrap}
+.gk-src{font-size:.72rem; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--muted); margin-top:2px}
+.gk-spectrum{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin:10px 0 8px}
+.gk-spectrum .s{padding:4px 10px; border-radius:999px; font-size:.85rem; font-weight:600}
+.gk-spectrum .arw{color:var(--muted); font-size:.85rem}
+.gk-spectrum .sh{background:color-mix(in srgb,var(--warn) 16%,transparent); color:var(--warn)}
+.gk-spectrum .gf{background:var(--accent-soft); color:var(--accent)}
+.gk-spectrum .sd{background:color-mix(in srgb,var(--accent2) 18%,transparent); color:var(--accent2)}
+.gk-sph-t{font-size:.88rem; color:var(--muted)}
+.gk-note{font-size:.82rem; color:var(--muted); margin-top:8px; padding:8px 11px;
+  background:var(--accent-soft); border-radius:9px}
+.gk-meta{display:flex; flex-direction:column; gap:5px; margin-top:10px;
+  padding-top:9px; border-top:1px solid var(--line); font-size:.8rem; color:var(--muted)}
+.gk-meta strong{color:var(--ink); font-weight:600}
+.gk-foot{margin-top:16px}
+
 /* ---- generált szekcióikonok ---- */
 .card h2 .icon-img{
   width:46px; height:46px; border-radius:50%; object-fit:cover; flex:none;

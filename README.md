@@ -108,6 +108,11 @@ rajzolt bodygraph-fal, ebből a **típus** (Generátor, Manifesztáló Generáto
 Manifesztor, Projektor, Reflektor), a **stratégia**, a **belső tekintély**, a
 **profil**, a definíció és az inkarnációs kereszt.
 
+**Gene Keys (Génkulcsok)** — Richard Rudd rendszere ugyanerre a 64 kapus kerékre:
+a hologenetikus profil mind a **11 szférája** (aktivációs, Vénusz- és Gyöngy-szekvencia)
+génkulccsal és vonallal, mindegyik a három frekvenciaszinttel — **árnyék → ajándék →
+sziddhi** —, valamint a keréből származtatott **programozó partnerrel**.
+
 **Egyéb rendszerek** — 72 kabbalisztikus **születési angyal**, arkangyal, napangyal,
 héber naptár szerinti születésnap; maja Tzolkin, kelta fa, egyiptomi istenség-jegy,
 indián totem, rúna, jávai **weton** neptu-értékkel, 9 csillag ki, Kua-szám,
@@ -182,6 +187,9 @@ A motor több független referenciaponttal van hitelesítve:
 | Human Design kerék | mind a 32 „programozó partner" kapupár a keréken pontosan 180°-ra esik |
 | Human Design design-idő | a napív pontosan 88,000000°, a dátum 88–89 nappal a születés előtt |
 | Human Design típusok | 600 véletlen születésen a típuseloszlás a publikált arányokat adja (generátor-család ~67%, projektor ~21%, manifesztor ~11%, reflektor ~1%) |
+| Human Design szabályok | a kerék, a központok, mind a 36 csatorna, a típus-, tekintély-, profil- és keresztszabályok a Jovian Archive alapján tételesen ellenőrizve (lásd [docs/21](docs/21-human-design.md)) |
+| Gene Keys szférák | mind a 13 szféra a hivatalos genekeys.com szféra→bolygó táblát követi; a dokumentált átfedések (Hivatás ≡ Mag, Márka ≡ Életfeladat) is stimmelnek |
+| Gene Keys partnerek | a 32 pár a kerékből származtatva, nem kézzel kódolva; a hivatalos 1↔2 és 7↔13 példa egyezik |
 | Sorsmátrix csakratábla | a felhasználó referencia-ábrájával mind a 8 sor × 3 oszlop egyezik |
 | ХВД csakraanalízis | a forráskönyv példája (1987.03.04) mind a 7 csakrára pontos; a magyar minta markerei (18·2·23) is egyeznek |
 | Szabian szimbólumok | mind a 360 fok ellenőrizve Jones és Rudhyar szövegével: 0 hiba, eltolódás nincs |
@@ -218,6 +226,9 @@ A motor több független referenciaponttal van hitelesítve:
 | 17 | [Születés, fény, időzítés](docs/17-kronobiologia-szuletes-feny.md) | születési évszak hatásméretei, fény-PRC (Khalsa 2003), melanopikus EDI — *részleges* |
 | 18 | [Kronobiológiai pszichogenetika (ХВД)](docs/18-kronobiologia-hvd.md) | Zsazskov csakraanalízise: a feltört zárt képlet, mind a három forrástáblázat, ellenőrzés |
 | 19 | [Szabian-ellenőrzés](docs/19-szabian-ellenorzes.md) | mind a 360 szimbólum összevetése két független forráscsaláddal (Jones és Rudhyar) |
+| 20 | [Kirakási módok](docs/20-kirakasi-modok.md) | tarot-, Lenormand- és cigánykártya-kirakások, pozíciójelentések |
+| 21 | [Human Design](docs/21-human-design.md) | kapukerék, 9 központ, 36 csatorna, típus- és tekintélyszabályok — Jovian Archive alapján ellenőrizve |
+| 22 | [Gene Keys](docs/22-gene-keys.md) | 64 génkulcs (árnyék–ajándék–sziddhi), a hologenetikus profil 11 szférája, programozó partnerek |
 
 Minden fejezet magyar nyelvű, táblázatos, forrásmegjelöléssel, és következetesen
 elválasztja a hiteles hagyományt a modern konstrukcióktól, illetve a tudományt az

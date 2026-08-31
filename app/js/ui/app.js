@@ -474,6 +474,61 @@
       ('0' + d.getDate()).slice(-2) + '.';
   }
 
+  /* ---------------- Gene Keys ---------------- */
+
+  function renderGeneKeys(sec) {
+    var gk = sec.geneKeys;
+    if (!gk) return '';
+
+    var html = '<div class="gk-levels">';
+    ['shadow', 'gift', 'siddhi'].forEach(function (lv) {
+      var L = gk.levels[lv];
+      html += '<div class="gk-lv gk-' + lv + '"><div class="gk-lv-n">' + esc(L.name) +
+        '</div><div class="gk-lv-t">' + esc(L.text) + '</div></div>';
+    });
+    html += '</div>';
+
+    gk.sequences.forEach(function (sq) {
+      html += '<h3 class="sec-h3">' + esc(sq.name) + '</h3>' +
+        '<p class="gk-seq-sub"><strong>' + esc(sq.sub) + '</strong> — ' + esc(sq.text) + '</p>' +
+        '<div class="gk-spheres">';
+
+      sq.spheres.forEach(function (sp) {
+        html += '<div class="gk-sph">' +
+          '<div class="gk-sph-h"><span class="nm">' + esc(sp.name) + '</span>' +
+          '<span class="gt">' + sp.gate + '.' + sp.line + '</span></div>' +
+          '<div class="gk-src">' + esc(sp.chart) + ' · ' + esc(sp.body) +
+          (sp.sameAs ? ' · azonos a(z) ' + esc(sp.sameAs === 'core' ? 'Mag' : 'Életfeladat') +
+            ' pontjával' : '') + '</div>' +
+          '<div class="gk-spectrum">' +
+          '<span class="s sh">' + esc(sp.shadow) + '</span>' +
+          '<span class="arw">→</span>' +
+          '<span class="s gf">' + esc(sp.gift) + '</span>' +
+          '<span class="arw">→</span>' +
+          '<span class="s sd">' + esc(sp.siddhi) + '</span>' +
+          '</div>' +
+          '<div class="gk-sph-t">' + esc(sp.text) + '</div>' +
+          (sp.keyNote ? '<div class="gk-note">' + esc(sp.keyNote) + '</div>' : '') +
+          '<div class="gk-meta">' +
+          '<span><strong>' + sp.line + '. vonal:</strong> ' + esc(sp.lineName) + ' — ' +
+          esc(sp.lineText) + '</span>' +
+          '<span><strong>Programozó partner:</strong> ' + sp.partner + '. génkulcs (' +
+          esc(sp.partnerShadow) + ' → ' + esc(sp.partnerGift) + ')</span>' +
+          '</div>' +
+          '</div>';
+      });
+      html += '</div>';
+    });
+
+    html += '<div class="gk-foot"><p><small><strong>' + esc(gk.polarity.intro) + '</strong> ' +
+      '<em>' + esc(gk.polarity.repressive.name) + '</em> — ' + esc(gk.polarity.repressive.text) +
+      ' <em>' + esc(gk.polarity.reactive.name) + '</em> — ' + esc(gk.polarity.reactive.text) +
+      '</small></p><p><small>' + esc(gk.partnerNote) + '</small></p>' +
+      '<p><small>' + esc(gk.lineNote) + '</small></p></div>';
+
+    return html;
+  }
+
   function renderHvd(sec) {
     if (!sec.hvd) return '';
     var colors = {
@@ -1075,6 +1130,7 @@
     if (s.luckPillars) html += renderDashaTable(s.luckPillars,
       'A tízéves szerencseoszlopaid', '');
     if (s.humanDesign) html += renderHumanDesign(s);
+    if (s.geneKeys) html += renderGeneKeys(s);
     if (s.matrix) html += renderPsychomatrix(s);
     if (s.matrixDM) html += renderDestinyMatrix(s);
     if (s.hvd) html += renderHvd(s);
@@ -1157,7 +1213,7 @@
     '🇭🇺': 'nepi', '🔬': 'kronobiologia', '⏰': 'belsoora', '📈': 'bioritmus',
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
     '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria',
-    '◈': 'humandesign'
+    '◈': 'humandesign', '⬡': 'genekeys'
   };
 
   function iconSrc(slug, theme) {
