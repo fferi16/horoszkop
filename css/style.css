@@ -321,6 +321,16 @@ button:active{transform:translateY(1px)}
   text-transform:uppercase; letter-spacing:.04em}
 .hd-ch-t{font-size:.86rem; color:var(--muted); margin-top:4px}
 
+/* ---- aszteroidák ---- */
+.ast-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:11px}
+.ast{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
+.ast-h{display:flex; align-items:baseline; gap:8px}
+.ast-h .sym{font-size:1.3rem; color:var(--accent2)}
+.ast-h .nm{font-family:var(--serif); font-size:1.08rem}
+.ast-kw{font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
+.ast-pos{font-family:var(--serif); font-size:1rem; margin:5px 0 6px; color:var(--accent)}
+.ast-t{font-size:.86rem; color:var(--muted)}
+
 /* ---- sorsrészek és firdaria ---- */
 .lot-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:11px}
 .lot{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
