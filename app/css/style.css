@@ -321,6 +321,30 @@ button:active{transform:translateY(1px)}
   text-transform:uppercase; letter-spacing:.04em}
 .hd-ch-t{font-size:.86rem; color:var(--muted); margin-top:4px}
 
+/* ---- sorsrészek és firdaria ---- */
+.lot-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:11px}
+.lot{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
+.lot.main{border-color:var(--accent2); background:var(--accent-soft)}
+.lot-h{display:flex; align-items:baseline; gap:8px}
+.lot-h .sym{font-size:1.15rem; color:var(--accent2)}
+.lot-h .nm{font-family:var(--serif); font-size:1.08rem; color:var(--ink)}
+.lot-h .gr{margin-left:auto; font-size:.72rem; color:var(--muted); font-style:italic}
+.lot-pos{font-family:var(--serif); font-size:1rem; margin:4px 0 6px; color:var(--ink)}
+.lot-pos .hs{font-family:var(--sans); font-size:.75rem; color:var(--muted)}
+.lot-t{font-size:.86rem; color:var(--muted)}
+.lot-x{font-size:.8rem; color:var(--muted); margin-top:7px; padding-top:7px;
+  border-top:1px solid var(--line); font-style:italic}
+.fir-now{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:12px; margin-bottom:14px}
+.fir-lord{display:flex; gap:12px; align-items:center; background:var(--accent-soft);
+  border:1px solid var(--accent); border-radius:12px; padding:12px 15px}
+.fir-lord .sym{font-size:2rem; color:var(--accent2); flex:none; line-height:1}
+.fir-lord .k{font-size:.7rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted)}
+.fir-lord .v{font-family:var(--serif); font-size:1.2rem; color:var(--ink)}
+.fir-lord .sub{font-size:.76rem; color:var(--muted); margin-top:1px}
+tr.fir-active{background:color-mix(in srgb,var(--accent-soft) 80%,transparent)}
+tr.fir-active td{font-weight:600}
+
 /* ---- Gene Keys ---- */
 .gk-levels{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:12px; margin-bottom:8px}

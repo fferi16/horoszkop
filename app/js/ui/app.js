@@ -474,6 +474,69 @@
       ('0' + d.getDate()).slice(-2) + '.';
   }
 
+  /* ---------------- sorsrészek és firdaria ---------------- */
+
+  function renderLots(sec) {
+    var L = sec.lots;
+    if (!L) return '';
+
+    var html = '<h3 class="sec-h3">A hét hermetikus sorsrész</h3>' +
+      '<p><small>' + esc(L.sectNote) + '</small></p>' +
+      '<div class="lot-grid">';
+
+    L.rows.forEach(function (r) {
+      html += '<div class="lot' + (r.main ? ' main' : '') + '">' +
+        '<div class="lot-h"><span class="sym">' + r.symbol + '</span>' +
+        '<span class="nm">' + esc(r.name) + '</span>' +
+        '<span class="gr">' + esc(r.greek) + '</span></div>' +
+        '<div class="lot-pos">' + esc(r.deg) +
+        (r.house ? ' <span class="hs">' + r.house + '. ház</span>' : '') + '</div>' +
+        '<div class="lot-t">' + esc(r.text) + '</div>' +
+        (r.extra ? '<div class="lot-x">' + esc(r.extra) + '</div>' : '') +
+        '</div>';
+    });
+    html += '</div><p><small>' + esc(L.fortuneHouseNote) + '</small></p>';
+
+    /* --- firdaria --- */
+    if (L.firdaria && L.schedule) {
+      var f = L.firdaria;
+      html += '<h3 class="sec-h3">Firdaria — perzsa időurak</h3>';
+      html += '<div class="fir-now"><div class="fir-lord">' +
+        '<span class="sym">' + L.fSymbols[f.lord] + '</span>' +
+        '<div><div class="k">Jelenlegi főperiódus</div>' +
+        '<div class="v">' + esc(L.fNames[f.lord]) + '</div>' +
+        '<div class="sub">' + fmtDate(f.start) + ' – ' + fmtDate(f.end) +
+        ' · ' + f.startAge + '–' + f.endAge + ' éves kor</div></div></div>';
+      if (f.sub) {
+        html += '<div class="fir-lord"><span class="sym">' + L.fSymbols[f.sub] + '</span>' +
+          '<div><div class="k">Alperiódus</div>' +
+          '<div class="v">' + esc(L.fNames[f.sub]) + '</div>' +
+          '<div class="sub">' + fmtDate(f.subStart) + ' – ' + fmtDate(f.subEnd) +
+          ' · ' + (f.subIndex + 1) + '. a hétből</div></div></div>';
+      }
+      html += '</div>';
+
+      html += '<div class="tbl-scroll"><table><thead><tr><th>Ur</th><th>Év</th>' +
+        '<th>Életkor</th><th>Időszak</th><th>Jelentés</th></tr></thead><tbody>';
+      L.schedule.forEach(function (row) {
+        var active = row.lord === f.lord && f.cycles === 0;
+        html += '<tr' + (active ? ' class="fir-active"' : '') + '>' +
+          '<td><span class="sym">' + L.fSymbols[row.lord] + '</span>' +
+          esc(L.fNames[row.lord]) + '</td>' +
+          '<td>' + row.years + '</td>' +
+          '<td>' + row.fromAge + '–' + row.toAge + '</td>' +
+          '<td>' + fmtDate(row.from) + ' – ' + fmtDate(row.to) + '</td>' +
+          '<td><small>' + esc(L.fMeanings[row.lord]) + '</small></td></tr>';
+      });
+      html += '</tbody></table></div>';
+      html += '<p><small>' + esc(L.fSubNote) + '</small></p>' +
+        '<p><small>' + esc(L.fVariantNote) + '</small></p>' +
+        '<p><small>' + esc(L.fNote) + '</small></p>';
+    }
+
+    return html;
+  }
+
   /* ---------------- Gene Keys ---------------- */
 
   function renderGeneKeys(sec) {
@@ -1129,6 +1192,7 @@
     if (s.dashaTable) html += renderDashaTable(s.dashaTable);
     if (s.luckPillars) html += renderDashaTable(s.luckPillars,
       'A tízéves szerencseoszlopaid', '');
+    if (s.lots) html += renderLots(s);
     if (s.humanDesign) html += renderHumanDesign(s);
     if (s.geneKeys) html += renderGeneKeys(s);
     if (s.matrix) html += renderPsychomatrix(s);
@@ -1213,7 +1277,7 @@
     '🇭🇺': 'nepi', '🔬': 'kronobiologia', '⏰': 'belsoora', '📈': 'bioritmus',
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
     '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria',
-    '◈': 'humandesign', '⬡': 'genekeys'
+    '◈': 'humandesign', '⬡': 'genekeys', '⊗': 'sorsreszek'
   };
 
   function iconSrc(slug, theme) {
