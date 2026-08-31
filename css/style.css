@@ -312,6 +312,12 @@ button:active{transform:translateY(1px)}
 .hd-c-h .tag{margin-left:auto; font-size:.68rem; text-transform:uppercase;
   letter-spacing:.06em; color:var(--muted); font-weight:500}
 .hd-c-t{font-size:.86rem; color:var(--muted); margin-top:5px}
+.hd-c-g{font-size:.8rem; color:var(--muted); margin-top:6px; font-style:italic}
+.hd-c-q{font-size:.84rem; color:var(--ink); margin-top:8px; padding:7px 10px;
+  background:color-mix(in srgb,var(--warn) 12%,transparent); border-radius:8px}
+.hd-c-w{font-size:.84rem; color:var(--muted); margin-top:7px}
+.hd-c-p{font-size:.74rem; color:var(--muted); margin-top:7px; padding-top:6px;
+  border-top:1px solid var(--line)}
 .hd-chans{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:10px}
 .hd-ch{border-left:3px solid var(--accent2); background:var(--bg);
   border-radius:0 11px 11px 0; padding:10px 13px}
@@ -330,6 +336,8 @@ button:active{transform:translateY(1px)}
 .ast-kw{font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
 .ast-pos{font-family:var(--serif); font-size:1rem; margin:5px 0 6px; color:var(--accent)}
 .ast-t{font-size:.86rem; color:var(--muted)}
+.ast-in{display:block; margin-top:7px; padding-top:7px; border-top:1px dashed var(--line);
+  color:var(--ink)}
 
 /* ---- sorsrészek és firdaria ---- */
 .lot-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:11px}
@@ -342,6 +350,8 @@ button:active{transform:translateY(1px)}
 .lot-pos{font-family:var(--serif); font-size:1rem; margin:4px 0 6px; color:var(--ink)}
 .lot-pos .hs{font-family:var(--sans); font-size:.75rem; color:var(--muted)}
 .lot-t{font-size:.86rem; color:var(--muted)}
+.lot-in{font-size:.85rem; color:var(--ink); margin-top:7px; padding-top:7px;
+  border-top:1px dashed var(--line)}
 .lot-x{font-size:.8rem; color:var(--muted); margin-top:7px; padding-top:7px;
   border-top:1px solid var(--line); font-style:italic}
 .fir-now{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
@@ -383,6 +393,9 @@ tr.fir-active td{font-weight:600}
 .gk-spectrum .gf{background:var(--accent-soft); color:var(--accent)}
 .gk-spectrum .sd{background:color-mix(in srgb,var(--accent2) 18%,transparent); color:var(--accent2)}
 .gk-sph-t{font-size:.88rem; color:var(--muted)}
+.gk-gate{font-size:.86rem; color:var(--muted); margin-top:8px; padding-top:8px;
+  border-top:1px dashed var(--line)}
+.gk-gate strong{color:var(--ink); font-weight:600}
 .gk-note{font-size:.82rem; color:var(--muted); margin-top:8px; padding:8px 11px;
   background:var(--accent-soft); border-radius:9px}
 .gk-meta{display:flex; flex-direction:column; gap:5px; margin-top:10px;

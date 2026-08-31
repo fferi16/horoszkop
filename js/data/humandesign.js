@@ -102,17 +102,140 @@ window.HDATA.humandesign = {
   /* ---------------------------------------------------------------
    * A 9 központ
    * ------------------------------------------------------------- */
+  /* A központok kétállapotú leírással: a felhasználó SAJÁT képletére szabva.
+     Forrás: docs/21-human-design.md — Jovian Archive, több iskolával egyeztetve.
+     A százalék csak ott szerepel, ahol hiteles forrás áll mögötte. */
   centers: {
-    head:   { name: 'Fej',        motor: false, sub: 'inspiráció',       text: 'A mentális nyomás központja: kérdések, kétely, inspiráció. Ha nyitott, könnyen átveszed mások kérdéseinek nyomását.' },
-    ajna:   { name: 'Ajna',       motor: false, sub: 'tudatosság',       text: 'A fogalmi gondolkodás és a bizonyosság központja. Ha nyitott, rugalmasan gondolkodsz — de nyomás alatt biztosnak akarsz tűnni.' },
-    throat: { name: 'Torok',      motor: false, sub: 'megnyilvánulás',   text: 'A kimondás és a cselekvés központja. Minden megnyilvánulás rajta keresztül ér a világba.' },
-    g:      { name: 'G-központ',  motor: false, sub: 'identitás, irány', text: 'Az identitás, az irány és a szeretet központja. Ha nyitott, a környezet erősen befolyásolja, kinek érzed magad.' },
-    heart:  { name: 'Szív (Ego)', motor: true,  sub: 'akaraterő',        text: 'Az akaraterő és az önbecsülés motorja. Ha nyitott, könnyen bizonyítási kényszerbe kerülsz.' },
-    sacral: { name: 'Szakrális',  motor: true,  sub: 'életerő',          text: 'A munkabírás és a termékenység motorja — a rendszer legfontosabb energiaközpontja.' },
-    solar:  { name: 'Napfonat',   motor: true,  sub: 'érzelmek',         text: 'Az érzelmi hullám motorja. Ha definiált, az igazságod időben van: várd ki a hullám nyugalmasabb pontját.' },
-    spleen: { name: 'Lép',        motor: false, sub: 'ösztön',           text: 'Az ösztönös túlélés, az immunrendszer és a pillanatnyi „most igen / most nem" központja.' },
-    root:   { name: 'Gyökér',     motor: true,  sub: 'lendület',         text: 'A stressz és az adrenalin motorja: az a nyomás, amitől elindulunk és haladunk.' }
+    head: {
+      name: 'Fej', motor: false, sub: 'inspiráció', pct: 'kb. 30%',
+      defined: 'Következetesen a saját kérdéseid foglalkoztatnak, és a tudni akarás nyomása ' +
+        'nálad mindig be van kapcsolva. Kifelé inspiráló hatású vagy: kérdéseket és ötleteket ' +
+        'sugárzol, amelyektől mások is kíváncsivá válnak. Árnyoldala a gondolati túlterhelés — ' +
+        'nehéz eldönteni, melyik kérdés érdemli meg valóban a figyelmedet.',
+      open: 'Mások kérdéseit és kételyeit veszed fel és erősíted föl — sokszor élesebben ' +
+        'érzed a nyomást, mint az, akitől ered. A rendszer szerint itt könnyű abba a csapdába ' +
+        'esni, hogy olyan kérdéseket próbálsz megválaszolni, amelyek valójában nem a tieid.',
+      question: 'Mások kérdéseit próbálom megválaszolni?',
+      wisdom: 'Idővel éles érzéked lesz ahhoz, mi és ki igazán inspiráló — és melyik kérdést ' +
+        'nem kell egyáltalán megoldani.'
+    },
+    ajna: {
+      name: 'Ajna', motor: false, sub: 'tudatosság',
+      defined: 'Rögzített gondolkodásmódod van: stabil fogalmaid és véleményeid, amelyekre ' +
+        'számíthatsz. Mások mentálisan határozottnak látnak. Árnyoldala, hogy ugyanez a ' +
+        'következetesség be is szűkíthet, és az elme folyamatosan jár — ehhez kifutás kell.',
+      open: 'Sokféle gondolkodásmódot veszel be, és egyszerre több nézőpontot is tudsz ' +
+        'tartani. Ez rugalmasság, nem hiányosság — de a rendszer szerint nyomás alatt ' +
+        'kísértés biztosabbnak mutatkozni, mint amennyire valóban az vagy.',
+      question: 'Azt próbálom bizonygatni másoknak (vagy magamnak), hogy biztos vagyok a dolgomban?',
+      wisdom: 'Idővel magukról a gondolatokról és a hitrendszerekről leszel bölcs: sokfélét ' +
+        'tudsz mérlegelni anélkül, hogy bármelyik foglyul ejtene.'
+    },
+    throat: {
+      name: 'Torok', motor: false, sub: 'megnyilvánulás',
+      defined: 'Következetes, felismerhető módon kommunikálsz és cselekszel — az ismerőseid ' +
+        'tudják, milyen a „hangod". Fontos tudni: a torok nem forrás, hanem sebességváltó; ' +
+        'az, amit közvetít, attól függ, melyik központtal van összekötve.',
+      open: 'A körülötted lévő hangokat erősíted fel, és ahhoz igazítod a kommunikációdat, ' +
+        'akivel épp vagy. A rendszer szerint itt a jellemző csapda, hogy a figyelem ' +
+        'kikényszerítéséért szólalsz meg vagy cselekszel.',
+      question: 'Azért beszélek vagy cselekszem, hogy felhívjam magamra a figyelmet?',
+      wisdom: 'Idővel megtanulod megkülönböztetni a hiteles megszólalást az előadottól, és ' +
+        'ráérzel az időzítésre. A hagyomány szerint épp akkor kapsz figyelmet, amikor már ' +
+        'nem próbálod kicsikarni — érdemes megvárni, hogy kérdezzenek.'
+    },
+    g: {
+      name: 'G-központ', motor: false, sub: 'identitás, irány',
+      defined: 'Stabil önazonosságod és következetes irányérzéked van, amely a különböző ' +
+        'helyzetekben és kapcsolatokban is ugyanaz marad. Ez a stabilitás átadható: mások ' +
+        'meg tudnak benne pihenni. Árnyoldala a merevség — ha minden helyzetben ugyanazt az ' +
+        'identitást várod el magadtól és másoktól.',
+      open: 'Annak az identitását, irányát és szeretetét veszed fel, aki épp jelen van — és ' +
+        'sajátosan magáé a környezeté is. A rendszer szerint itt a keresés maga a csapda: ' +
+        'a szorítás, hogy megtaláld, „ki vagy".',
+      question: 'Szeretetet és irányt keresek?',
+      wisdom: 'Idővel bölcs leszel az identitásról, a szeretetről — és jellegzetesen a ' +
+        'helyről is: ennél a központnál az irány a helyes környezeten keresztül oldódik meg.'
+    },
+    heart: {
+      name: 'Szív (Ego)', motor: true, sub: 'akaraterő', pct: 'kb. 33%',
+      defined: 'Következetesen hozzáférsz az akaraterőhöz, és stabil értékérzeted van: ' +
+        'ha ígérsz valamit, meg is tartod. Fontos tudni, hogy ez lüktető, nem folyamatos ' +
+        'motor — munka, aztán pihenés. A jellemző hiba, ha a csúcson túl sokat ígérsz, ' +
+        'és a pihenőszakaszt kudarcként éled meg.',
+      open: 'Mások akaraterejét és értékkel kapcsolatos nyomását erősíted fel, és az ' +
+        'önértékelésed a társaságtól függően ingadozik. A rendszer szerint innen ered a ' +
+        'legismertebb csapda: a bizonyítási kényszer. A hagyomány hangsúlyozza, hogy nem ' +
+        'az érzés a baj, hanem az, amit kompenzálásból teszünk ellene.',
+      question: 'Van valami bizonyítanivalóm — vagy javítanivalóm magamon?',
+      wisdom: 'Idővel bölcs leszel arról, mi érdemel egyáltalán bizonyítást és mi nem. ' +
+        'A rendszer válasza egyszerű: nincs mit bizonyítanod.'
+    },
+    sacral: {
+      name: 'Szakrális', motor: true, sub: 'életerő', pct: 'kb. 70%',
+      defined: 'Megújuló életerő, amely alvással töltődik: a rendszer szerint arra vagy ' +
+        'tervezve, hogy dolgozz és válaszolj a felmerülő lehetőségekre. A világ munkatempóját ' +
+        'nagyrészt az ilyen képletek szabják meg. Figyelem: a hagyomány kifejezetten cáfolja, ' +
+        'hogy a definiált szakrális automatikusan tudná, mikor elég — ez pillanatról pillanatra ' +
+        'zajló figyelem kérdése.',
+      open: 'A körülötted lévők életerejét erősíted fel — a hagyomány szerint akár túl ' +
+        'intenzíven is —, de ez kölcsönvett energia, amit nem tudsz sokáig tartani. ' +
+        'A jellemző csapda: nem tudni, mikor elég.',
+      question: 'Tudom, mikor elég?',
+      wisdom: 'Idővel magáról az energiáról leszel bölcs: megérzed, kiben van most valódi ' +
+        'lendület, ki tetteti, és ki az, aki már a lezáráshoz ért.'
+    },
+    solar: {
+      name: 'Napfonat', motor: true, sub: 'érzelmek', pct: 'kb. fele az embereknek',
+      defined: 'Saját érzelmi hullámod van, amely a saját ütemében emelkedik és süllyed, ' +
+        'a környezettől függetlenül. Ebből következik a legfontosabb szabály: nálad nincs ' +
+        'azonnali igazság — az érzelmi tisztaság idővel érik. Árnyoldala, hogy a hullámod ' +
+        'a szándékodtól függetlenül is meghatározza egy tér hangulatát.',
+      open: 'A saját hullám helyett mások érzelmeit veszed be, és sajátodként éled meg. ' +
+        'A rendszer szerint itt korán megtanult stratégia lesz a konfliktus kerülése — ' +
+        'a béke fenntartása akár az igazság rovására is.',
+      question: 'Kerülöm a konfrontációt és az igazságot?',
+      wisdom: 'Idővel magukról az érzelmekről leszel bölcs: megérzed egy tér érzelmi ' +
+        'állapotát, és megtanulsz kicsit nagyobb távolságból nézni arra, ami átfut rajtad.'
+    },
+    spleen: {
+      name: 'Lép', motor: false, sub: 'ösztön',
+      defined: 'Következetesen hozzáférsz az ösztönös éberséghez és a jóllét testi ' +
+        'érzetéhez; megbízható az időzítésed. A körülötted lévők is érzik ezt a biztonságot. ' +
+        'Fontos: ez a jelzés halk, spontán, és nem ismétli meg magát — könnyen elnyomja ' +
+        'az elme vagy egy érzelmi hullám.',
+      open: 'Mások félelmeit és ösztöneit is felerősíted, és érzékenyebb vagy a biztonság ' +
+        'kérdéseire. A rendszer szerint a jellemző csapda a ragaszkodás: emberekhez, ' +
+        'munkához vagy szokáshoz, mert az ismerősség biztonságnak érződik.',
+      question: 'Ragaszkodom ahhoz, ami nem tesz jót nekem?',
+      wisdom: 'Idővel bölcs leszel arról, mi és ki tesz valóban jót neked, és megtanulod ' +
+        'megkülönböztetni a félelmet az intuíciótól — és megbízni a szükséges lezárásokban.'
+    },
+    root: {
+      name: 'Gyökér', motor: true, sub: 'lendület',
+      defined: 'Következetes módon kezeled a nyomást, és motivációként tudod használni. ' +
+        'Viszonylag védett vagy mások sürgetésétől — cserébe te adod a tempót, vagyis ' +
+        'nyomást helyezel másokra. Ez az energia lüktet, nem folyamatos, ezért az időzítés számít.',
+      open: 'Mások stresszét, határidejét és sürgetését erősíted fel, mintha a sajátod volna. ' +
+        'A rendszer szerint a jellemző csapda a sietés: minél előbb túlesni mindenen, hogy ' +
+        'végre megszabadulj a nyomástól.',
+      question: 'Sietek mindent elvégezni, hogy megszabaduljak a nyomástól?',
+      wisdom: 'Idővel bölcs leszel a nyomásról és az időzítésről: megkülönbözteted, melyik ' +
+        'nyomás a tiéd és melyik nem — és hogy a nyomásra nem kötelező azonnal cselekedni.'
+    }
   },
+
+  openNote: 'A nyitott központok a hagyomány szerint nem hiányosak és nem javítandók: ' +
+    'itt vagy a legfogékonyabb, és a rendszer szerint épp ezek válnak idővel a bölcsesség ' +
+    'helyévé. A „nem-önmagad" kérdések nem rólad szóló ítéletek, hanem olyan belső hangok, ' +
+    'amelyeket maga a rendszer bírál — arra valók, hogy felismerd őket.',
+
+  fullyOpenNote: 'A teljesen nyitott központban egyetlen kapud sincs aktiválva: nincs ' +
+    'rögzített viszonyítási pont, amelyhez a kívülről érkezőt mérhetnéd. A hagyomány ' +
+    'szerint ez egyszerre a legnagyobb befolyásolhatóság és a legnagyobb bölcsesség-lehetőség.',
+
+  hangingNote: 'A nyitott központban aktivált („lógó") kapu rögzített viszonyítási pontot ' +
+    'ad: van mihez mérned, ami kívülről érkezik.',
 
   /* ---------------------------------------------------------------
    * A 36 csatorna

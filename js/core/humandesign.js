@@ -255,7 +255,21 @@
 
     var comps = components(chans);
 
+    /* Nyitott központonként a „lógó" kapuk: aktivált kapu, amely nem alkot csatornát.
+       Ha egy nyitott központban egy sincs, az a „teljesen nyitott" állapot — a
+       hagyomány szerint nincs viszonyítási pont, amihez a kívülről jövőt mérni lehet. */
+    var gatesData = D().gates || {};
+    var hanging = {};
+    Object.keys(D().centers || {}).forEach(function (c) { hanging[c] = []; });
+    Object.keys(gateSet).forEach(function (gs) {
+      var gnum = +gs, gd = gatesData[gnum];
+      if (!gd || centers[gd.center]) return;          // definiált központ nem érdekes
+      if (hanging[gd.center]) hanging[gd.center].push(gnum);
+    });
+    Object.keys(hanging).forEach(function (c) { hanging[c].sort(function (a, b) { return a - b; }); });
+
     return {
+      hangingGates: hanging,
       designDate: dDate,
       personality: pers,
       design: des,

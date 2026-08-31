@@ -425,14 +425,21 @@
     // központok
     html += '<h3 class="sec-h3">Központok</h3><div class="hd-centers">';
     hd.centers.forEach(function (c) {
+      var tag = c.defined ? 'definiált' : (c.fullyOpen ? 'teljesen nyitott' : 'nyitott');
       html += '<div class="hd-c' + (c.defined ? ' on' : '') + '">' +
         '<div class="hd-c-h"><span class="dot"></span>' + esc(c.name) +
-        '<span class="tag">' + (c.defined ? 'definiált' : 'nyitott') + '</span></div>' +
-        '<div class="hd-c-t">' + esc(c.text) + '</div></div>';
+        '<span class="tag">' + tag + '</span></div>' +
+        '<div class="hd-c-t">' + esc(c.text) + '</div>' +
+        (c.hanging && c.hanging.length
+          ? '<div class="hd-c-g">Aktivált kapuid itt: ' + c.hanging.join(', ') + '.</div>' : '') +
+        (c.stateNote ? '<div class="hd-c-g">' + esc(c.stateNote) + '</div>' : '') +
+        (c.question
+          ? '<div class="hd-c-q"><strong>Felismerő kérdés:</strong> „' + esc(c.question) + '"</div>' : '') +
+        (c.wisdom ? '<div class="hd-c-w">' + esc(c.wisdom) + '</div>' : '') +
+        (c.pct ? '<div class="hd-c-p">Az emberek ' + esc(c.pct) + '-ánál definiált.</div>' : '') +
+        '</div>';
     });
-    html += '</div><p><small>A definiált központok a következetes, megbízható működésed ' +
-      'területei; a nyitottak azok, ahol a környezet erősen hat rád — a rendszer szerint ' +
-      'itt tanulsz a legtöbbet, de itt vagy a legsérülékenyebb is.</small></p>';
+    html += '</div><p><small>' + esc(hd.openNote) + '</small></p>';
 
     // csatornák
     if (hd.channels.length) {
@@ -489,7 +496,9 @@
           '</span><span class="nm">' + esc(a.name) + '</span></div>' +
           '<div class="ast-kw">' + esc(a.keyword) + '</div>' +
           '<div class="ast-pos">' + esc(a.sign.text) + '</div>' +
-          '<div class="ast-t">' + esc(a.text) + '</div></div>';
+          '<div class="ast-t">' + esc(a.text) +
+          (a.inSign ? '<span class="ast-in">' + esc(a.inSign) + '</span>' : '') +
+          '</div></div>';
       });
       html += '</div><p><small>' + esc(X.astNote) + ' ' + esc(X.astRange) + '</small></p>';
     }
@@ -530,6 +539,7 @@
         '<div class="lot-pos">' + esc(r.deg) +
         (r.house ? ' <span class="hs">' + r.house + '. ház</span>' : '') + '</div>' +
         '<div class="lot-t">' + esc(r.text) + '</div>' +
+        (r.inPlace ? '<div class="lot-in">' + esc(r.inPlace) + '</div>' : '') +
         (r.extra ? '<div class="lot-x">' + esc(r.extra) + '</div>' : '') +
         '</div>';
     });
@@ -609,6 +619,9 @@
           '<span class="s sd">' + esc(sp.siddhi) + '</span>' +
           '</div>' +
           '<div class="gk-sph-t">' + esc(sp.text) + '</div>' +
+          (sp.gateText ? '<div class="gk-gate"><strong>' + sp.gate + '. kapu — ' +
+            esc(sp.gateName) + (sp.gateKey ? ' · ' + esc(sp.gateKey) : '') + '</strong> ' +
+            esc(sp.gateText) + '</div>' : '') +
           (sp.keyNote ? '<div class="gk-note">' + esc(sp.keyNote) + '</div>' : '') +
           '<div class="gk-meta">' +
           '<span><strong>' + sp.line + '. vonal:</strong> ' + esc(sp.lineName) + ' — ' +

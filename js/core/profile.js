@@ -29,6 +29,18 @@
 
   function fmtDeg(x) { return x.toFixed(2).replace('.', ',') + '°'; }
 
+  /** Jegynevek -ban/-ben ragozva (magánhangzó-harmónia). */
+  var SIGN_IN = {
+    kos: 'Kosban', bika: 'Bikában', ikrek: 'Ikrekben', rak: 'Rákban',
+    oroszlan: 'Oroszlánban', szuz: 'Szűzben', merleg: 'Mérlegben',
+    skorpio: 'Skorpióban', nyilas: 'Nyilasban', bak: 'Bakban',
+    vizonto: 'Vízöntőben', halak: 'Halakban'
+  };
+  function signIn(key, fallback) { return SIGN_IN[key] || (fallback + '-ban'); }
+
+  /** „az 1. / az 5. ház", egyébként „a N. ház" — a kimondott sorszám szerint. */
+  function houseArticle(n) { return (n === 1 || n === 5) ? 'az' : 'a'; }
+
   function section(id, title, icon, category) {
     return { id: id, title: title, icon: icon, category: category, items: [], notes: [] };
   }
@@ -2917,7 +2929,21 @@
     var ast = AD ? X.asteroids(out.utc) : null;
     if (ast && ast.length) {
       ast.forEach(function (a) {
-        item(s, a.symbol + ' ' + a.name + ' — ' + a.keyword, a.sign.text, a.text);
+        var sd = signData(a.sign.key);
+        // nem általánosságban mondjuk el, mit jelent az aszteroida, hanem hogy
+        // a felhasználó SAJÁT jegyében milyen természetet ölt
+        var inSign = '';
+        if (sd) {
+          var pos = (sd.positive || []).slice(0, 4).join(', ');
+          var kwl = a.keyword.toLowerCase();
+          inSign = ' Nálad a ' + signIn(a.sign.key, sd.name) + ' áll (' +
+            sd.element.toLowerCase() + ' elem, ' + sd.quality.toLowerCase() +
+            ' minőség), tehát ' + az(kwl) + ' ' + kwl + ' területén ' +
+            az(sd.name) + ' ' + sd.name + ' jellege érvényesül: ' + pos + '.';
+        }
+        a.inSign = inSign;
+        item(s, a.symbol + ' ' + a.name + ' — ' + a.keyword, a.sign.text,
+          a.text + inSign);
       });
     }
 
@@ -2974,11 +3000,35 @@
       };
     }
 
+    var HD12 = get(D(), 'western.houses', null);
+
+    /** Nem általánosságban, hanem a felhasználó saját jegye/háza szerint. */
+    function inPlace(lon, label) {
+      var sg = HCORE.toSign(lon), sd = signData(sg.key);
+      var hs = c.houses ? HCORE.houseOf(lon, c.houses.cusps) : null;
+      var parts = [];
+      if (sd) {
+        var tr = (sd.positive || []).slice(0, 3).join(', ');
+        parts.push('Nálad a ' + signIn(sg.key, sd.name) + ' áll (' +
+          sd.element.toLowerCase() + ' elem, ' + sd.quality.toLowerCase() +
+          ' minőség), ura ' + az(sd.ruler) + ' ' + sd.ruler + ' — ' + az(label) + ' ' +
+          label + ' ezért ' + az(tr) + ' ' + tr + ' jellegét ölti.');
+      }
+      if (hs && HD12 && HD12[hs - 1]) {
+        var kw = (HD12[hs - 1].keywords || []).slice(0, 3).join(', ');
+        parts.push(houseArticle(hs).charAt(0).toUpperCase() + houseArticle(hs).slice(1) +
+          ' ' + hs + '. házba esik, tehát ' + (kw ? 'a ' + kw : 'ennek a háznak a') +
+          ' területén mutatkozik meg.');
+      }
+      return parts.join(' ');
+    }
+
     var rows = LD.list.map(function (def) {
       var pl = place(L[def.key]);
       return {
         symbol: def.symbol, name: def.name, greek: def.greek, ruler: def.ruler,
         deg: pl.text, sign: pl.sign, house: pl.house, text: def.text,
+        inPlace: inPlace(L[def.key], def.name),
         main: def.key === 'fortune' || def.key === 'spirit'
       };
     });
@@ -3063,11 +3113,19 @@
 
     /* --- központok --- */
     var defined = Object.keys(r.centers);
+    // állapot-specifikus szöveg: azt mondjuk el, ami NÁLA igaz, nem feltételes általánosságot
     var centerRows = Object.keys(HD.centers).map(function (k) {
       var c = HD.centers[k];
+      var isDef = !!r.centers[k];
+      var hang = (r.hangingGates && r.hangingGates[k]) || [];
+      var fully = !isDef && hang.length === 0;
       return {
-        key: k, name: c.name, sub: c.sub, motor: c.motor,
-        defined: !!r.centers[k], text: c.text
+        key: k, name: c.name, sub: c.sub, motor: c.motor, pct: c.pct || null,
+        defined: isDef, fullyOpen: fully, hanging: hang,
+        text: isDef ? c.defined : c.open,
+        question: isDef ? null : c.question,
+        wisdom: isDef ? null : c.wisdom,
+        stateNote: isDef ? null : (fully ? HD.fullyOpenNote : HD.hangingNote)
       };
     });
 
@@ -3094,6 +3152,7 @@
     }
 
     s.humanDesign = {
+      openNote: HD.openNote,
       type: ty, authority: au, profile: r.profile, profileName: pr.name,
       centers: centerRows, definedCount: defined.length,
       channels: chans,
@@ -3141,6 +3200,10 @@
     r.personality.forEach(function (a) { byKey.p[a.key] = a; });
     r.design.forEach(function (a) { byKey.d[a.key] = a; });
 
+    // a génkulcs és a Human Design kapu ugyanaz a hexagram, ezért a kapu
+    // tartalmi leírása itt is érvényes (lásd docs/22-gene-keys.md)
+    var HDG = get(D(), 'humandesign.gates', null);
+
     function sphereData(sp) {
       var a = byKey[sp.chart][sp.body];
       if (!a) return null;
@@ -3148,6 +3211,7 @@
       var partner = E.partnerOf(a.gate);
       var pk = GK.keys[partner] || {};
       var line = GK.lines[a.line] || {};
+      var gate = (HDG && HDG[a.gate]) || {};
       return {
         key: sp.key, name: sp.name, text: sp.text, sameAs: sp.sameAs || null,
         chart: sp.chart === 'p' ? 'személyiség' : 'design',
@@ -3155,6 +3219,7 @@
         gate: a.gate, line: a.line,
         shadow: k.shadow || '', gift: k.gift || '', siddhi: k.siddhi || '',
         keyNote: k.note || '',
+        gateName: gate.name || '', gateKey: gate.key || '', gateText: gate.text || '',
         lineName: line.name || '', lineText: line.text || '',
         partner: partner, partnerShadow: pk.shadow || '', partnerGift: pk.gift || ''
       };
