@@ -82,6 +82,7 @@
     buildDestinyMatrix(out);
     buildHvd(out);
     buildCards(out);
+    buildHumanDesign(out);
     buildAngels(out);
     buildExotic(out);
     buildWeekdaySystems(out);
@@ -98,7 +99,7 @@
 
     // olyan szekció is megmarad, amelynek csak táblázata vagy grafikonja van
     out.sections = out.sections.filter(function (s) {
-      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry);
+      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign);
     });
     // ha van páros elemzés, az kerüljön legelőre
     for (var si = 1; si < out.sections.length; si++) {
@@ -2857,6 +2858,96 @@
          (both(p[0], ['sun', 'moon', 'venus', 'jupiter']) ||
           both(p[1], ['sun', 'moon', 'venus', 'jupiter'])))) cats.push('stabilitas');
     return cats;
+  }
+
+  /* ================= Human Design ================= */
+
+  function buildHumanDesign(out) {
+    var HD = get(D(), 'humandesign', null);
+    var E = HCORE.humanDesign;
+    if (!HD || !E) return;
+
+    var r = E.build(out.utc);
+    var s = section('humandesign', 'Human Design — típus, tekintély, profil', '◈', 'ezoterikus');
+
+    var ty = HD.types[r.type], au = HD.authorities[r.authority];
+    var pr = HD.profiles[r.profile], cx = HD.crossTypes[r.crossType];
+    var df = HD.definitions[Math.min(r.definition, 4)];
+
+    item(s, 'Típus', ty.name + ' (' + ty.ratio + ')', ty.text);
+    item(s, 'Stratégia', ty.strategy,
+      'A rendszer szerint ez a helyes döntéshozatal külső szabálya. Ha nem eszerint élsz, ' +
+      'a jellemző „nem-önmagad" érzés a ' + ty.notSelf + '.');
+    item(s, 'Belső tekintély', au.name, au.text);
+    item(s, 'Profil', r.profile + ' — ' + pr.name, pr.text);
+    item(s, 'Definíció', df.name, df.text);
+    item(s, 'Inkarnációs kereszt',
+      cx.name + ': ' + r.cross.pSun + '/' + r.cross.pEarth + ' | ' +
+      r.cross.dSun + '/' + r.cross.dEarth,
+      cx.text + ' A négy szám a tudatos és tudattalan Nap–Föld tengelyed kapuja.');
+
+    /* --- központok --- */
+    var defined = Object.keys(r.centers);
+    var centerRows = Object.keys(HD.centers).map(function (k) {
+      var c = HD.centers[k];
+      return {
+        key: k, name: c.name, sub: c.sub, motor: c.motor,
+        defined: !!r.centers[k], text: c.text
+      };
+    });
+
+    /* --- csatornák --- */
+    var chans = r.channels.map(function (ch) {
+      var ka = HD.gates[ch.g[0]].center, kb = HD.gates[ch.g[1]].center;
+      return {
+        gates: ch.g[0] + '–' + ch.g[1], name: ch.name, text: ch.text,
+        fromKey: ka, toKey: kb,
+        from: HD.centers[ka].name, to: HD.centers[kb].name
+      };
+    });
+
+    /* --- aktivációs táblázat --- */
+    function actRows(list) {
+      return list.map(function (a) {
+        var g = HD.gates[a.gate] || {};
+        return {
+          symbol: a.symbol, name: a.name,
+          gate: a.gate, line: a.line,
+          gateName: g.name || '', key: g.key || ''
+        };
+      });
+    }
+
+    s.humanDesign = {
+      type: ty, authority: au, profile: r.profile, profileName: pr.name,
+      centers: centerRows, definedCount: defined.length,
+      channels: chans,
+      personality: actRows(r.personality),
+      design: actRows(r.design),
+      designDate: r.designDate,
+      gateSource: r.gateSource,
+      gates: r.gates
+    };
+
+    /* --- a legerősebb kapuk szövegesen --- */
+    var pSun = r.personality[0], dSun = r.design[0];
+    var pg = HD.gates[pSun.gate], dg = HD.gates[dSun.gate];
+    if (pg) {
+      item(s, 'Tudatos Nap — ' + pSun.gate + '. kapu, ' + pSun.line + '. vonal',
+        pg.name + ' · ' + pg.key, pg.text);
+    }
+    if (dg) {
+      item(s, 'Tudattalan Nap — ' + dSun.gate + '. kapu, ' + dSun.line + '. vonal',
+        dg.name + ' · ' + dg.key, dg.text);
+    }
+
+    s.notes.push(HD.intro);
+    if (!out.input.hasTime) {
+      s.notes.push('Pontos születési idő nélkül ez a képlet csak tájékoztató: a Hold és a ' +
+        'gyorsabb égitestek kapui, és ezzel a típus is elcsúszhat. Déli 12 órával számoltunk.');
+    }
+    s.notes.push(HD.note);
+    out.sections.push(s);
   }
 
   function buildSynastry(out) {

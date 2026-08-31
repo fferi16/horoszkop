@@ -284,6 +284,43 @@ button:active{transform:translateY(1px)}
 .toc-panel .t-icon{flex:none; width:1.5em; text-align:center}
 #sections .card{scroll-margin-top:76px}
 
+/* ---- Human Design ---- */
+.hd-top{display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:22px; align-items:start}
+@media (max-width:640px){ .hd-top{grid-template-columns:1fr} }
+.hd-graph svg{width:100%; height:auto; max-height:520px; display:block}
+.hd-graph .hd-chan{stroke:var(--accent2); stroke-width:4; stroke-linecap:round; opacity:.9}
+.hd-graph .hd-center{fill:var(--bg); stroke:var(--line); stroke-width:2}
+.hd-graph .hd-center.is-defined{fill:var(--accent-soft); stroke:var(--accent); stroke-width:2.5}
+.hd-graph .hd-lbl{
+  font-family:var(--sans); font-size:9px; fill:var(--muted);
+  text-anchor:middle; pointer-events:none; letter-spacing:.02em;
+}
+.hd-graph .hd-lbl.is-defined{fill:var(--ink); font-weight:600}
+.hd-legend{display:flex; flex-direction:column; gap:14px; justify-content:center}
+.hd-lg{display:flex; gap:11px; align-items:flex-start; font-size:.88rem; color:var(--muted)}
+.hd-lg strong{color:var(--ink)}
+.hd-lg .sw{width:20px; height:20px; border-radius:5px; flex:none; margin-top:2px;
+  background:var(--bg); border:2px solid var(--line)}
+.hd-lg .sw.on{background:var(--accent-soft); border-color:var(--accent)}
+.hd-lg .sw.line{border:none; height:4px; margin-top:10px; border-radius:2px; background:var(--accent2)}
+.hd-centers{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px}
+.hd-c{border:1px solid var(--line); border-radius:11px; padding:11px 13px; background:var(--bg)}
+.hd-c.on{border-color:var(--accent); background:var(--accent-soft)}
+.hd-c-h{display:flex; align-items:center; gap:7px; font-weight:600; font-size:.95rem}
+.hd-c-h .dot{width:9px; height:9px; border-radius:50%; background:var(--line); flex:none}
+.hd-c.on .hd-c-h .dot{background:var(--accent)}
+.hd-c-h .tag{margin-left:auto; font-size:.68rem; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--muted); font-weight:500}
+.hd-c-t{font-size:.86rem; color:var(--muted); margin-top:5px}
+.hd-chans{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:10px}
+.hd-ch{border-left:3px solid var(--accent2); background:var(--bg);
+  border-radius:0 11px 11px 0; padding:10px 13px}
+.hd-ch-h{display:flex; align-items:baseline; gap:8px; font-weight:600}
+.hd-ch-h .num{font-family:var(--serif); color:var(--accent2); font-size:1.05rem; flex:none}
+.hd-ch .ends{font-size:.72rem; color:var(--muted); margin-top:2px;
+  text-transform:uppercase; letter-spacing:.04em}
+.hd-ch-t{font-size:.86rem; color:var(--muted); margin-top:4px}
+
 /* ---- generált szekcióikonok ---- */
 .card h2 .icon-img{
   width:46px; height:46px; border-radius:50%; object-fit:cover; flex:none;
