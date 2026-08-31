@@ -481,6 +481,62 @@
       ('0' + d.getDate()).slice(-2) + '.';
   }
 
+  /* ---------------- a hagyomány nedvei ---------------- */
+
+  function renderDosha(sec) {
+    var D = sec.dosha;
+    if (!D) return '';
+
+    var html = '<div class="dosha-warn">' + esc(D.shortDisclaimer) + '</div>';
+
+    // a három nedv jelentése
+    html += '<div class="dosha-3">';
+    ['vata', 'pitta', 'kapha'].forEach(function (k) {
+      var d = D.doshas[k];
+      var n = D.tally[k] || 0;
+      html += '<div class="dosha-c"><div class="dosha-h">' + esc(d.name) +
+        '<span class="cnt">' + n + ' jelölés</span></div>' +
+        '<div class="dosha-e">' + esc(d.elements) + '</div>' +
+        '<div class="dosha-t">' + esc(d.fn) + ' ' + esc(d.temperament) + '</div></div>';
+    });
+    html += '</div>';
+
+    // komponensek — mindegyik a saját forrásával és megbízhatóság-jelzésével
+    html += '<h3 class="sec-h3">Mit mond az egyes szabály</h3><div class="dosha-comps">';
+    D.components.forEach(function (comp) {
+      var names = comp.doshas.map(function (x) {
+        return (D.doshas[x] || {}).name || x;
+      }).join(' + ');
+      html += '<div class="dosha-comp"><div class="dc-h">' + esc(comp.title) +
+        '<span class="badge badge-' + (comp.confidence === 'klasszikus' ? 'ok' : 'warn') +
+        '">' + esc(comp.confidence) + '</span></div>' +
+        '<div class="dc-v">' + esc(names) + '</div>';
+
+      if (comp.key === 'saravali' && comp.ranked) {
+        html += '<div class="dc-rank">';
+        comp.ranked.forEach(function (r, i) {
+          html += '<div class="dc-r' + (i === 0 ? ' top' : '') + '">' +
+            '<span class="p">' + esc(r.name) + '</span>' +
+            '<span class="tt">' + esc(r.tattva) + '</span>' +
+            '<span class="dg">' + esc(r.dignity) + '</span></div>';
+        });
+        html += '</div>';
+      }
+      if (comp.key === 'nadi' && comp.nadiName) {
+        html += '<div class="dc-x">Nakshatra: ' + esc(D.nakshatra || '') +
+          ' · nádi: ' + esc(comp.nadiName) + '</div>';
+      }
+      html += '<div class="dc-src">' + esc(comp.source) + '</div>' +
+        (comp.caveat ? '<div class="dc-cav">' + esc(comp.caveat) + '</div>' : '') +
+        '</div>';
+    });
+    html += '</div>';
+
+    html += '<p><small>' + esc(D.prakritiNote) + '</small></p>' +
+      '<div class="dosha-disc">' + esc(D.disclaimer) + '</div>';
+    return html;
+  }
+
   /* ---------------- draconikus, Vertex, aszteroidák ---------------- */
 
   function renderExtras(sec) {
@@ -1245,6 +1301,7 @@
       'A tízéves szerencseoszlopaid', '');
     if (s.lots) html += renderLots(s);
     if (s.extras) html += renderExtras(s);
+    if (s.dosha) html += renderDosha(s);
     if (s.humanDesign) html += renderHumanDesign(s);
     if (s.geneKeys) html += renderGeneKeys(s);
     if (s.matrix) html += renderPsychomatrix(s);
@@ -1329,7 +1386,8 @@
     '🇭🇺': 'nepi', '🔬': 'kronobiologia', '⏰': 'belsoora', '📈': 'bioritmus',
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
     '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria',
-    '◈': 'humandesign', '⬡': 'genekeys', '⊗': 'sorsreszek', '✧': 'kiegeszitok'
+    '◈': 'humandesign', '⬡': 'genekeys', '⊗': 'sorsreszek', '✧': 'kiegeszitok',
+    '☘': 'nedvek'
   };
 
   function iconSrc(slug, theme) {

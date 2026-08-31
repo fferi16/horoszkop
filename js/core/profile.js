@@ -89,6 +89,7 @@
     buildLots(out);
     buildExtras(out);
     buildVedic(out);
+    buildDosha(out);
     buildChinese(out);
     buildKoreanJapanese(out);
     buildNumerology(out);
@@ -114,7 +115,7 @@
 
     // olyan szekció is megmarad, amelynek csak táblázata vagy grafikonja van
     out.sections = out.sections.filter(function (s) {
-      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys || s.lots || s.extras);
+      return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys || s.lots || s.extras || s.dosha);
     });
     // ha van páros elemzés, az kerüljön legelőre
     for (var si = 1; si < out.sections.length; si++) {
@@ -2880,6 +2881,71 @@
     return cats;
   }
 
+  /* ================= a hagyomány nedvei (váta/pitta/kapha) ================= */
+
+  function buildDosha(out) {
+    var DO = get(D(), 'dosha', null);
+    var E = HCORE.dosha;
+    if (!DO || !E) return;
+
+    var utc = out.utc, c = out.chart;
+    var signs = {};
+    ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn'].forEach(function (k) {
+      if (c.planets[k]) signs[k] = HCORE.toSign(HCORE.toSidereal(c.planets[k].lon, utc)).key;
+    });
+
+    var lagna = null;
+    if (out.input.hasTime && c.houses) {
+      lagna = HCORE.toSign(HCORE.toSidereal(c.houses.asc, utc)).key;
+    }
+    var nk = C.nakshatra(HCORE.toSidereal(c.planets.moon.lon, utc));
+
+    var r = E.analyse({
+      planetSigns: signs, lagnaSign: lagna,
+      nakshatra: nk ? nk.index : null
+    });
+    if (!r || !r.components.length) return;
+
+    var s = section('nedvek', 'A hagyomány nedvei — váta, pitta, kapha', '☘', 'kelet');
+
+    // a komponensek szövegesen is, hogy a nyomtatás és a szűrés is adja
+    r.components.forEach(function (comp) {
+      var names = comp.doshas.map(function (d) {
+        return (DO.doshas[d] || {}).name || d;
+      }).join(' + ');
+      var detail = '';
+      if (comp.key === 'saravali') {
+        detail = 'A legerősebb az öt közül: ' + comp.strongest.map(function (x) {
+          return x.name + ' (' + x.dignity + ', ' + x.tattva + ' tattva)';
+        }).join(', ') + '. ';
+      } else if (comp.key === 'lagnalord') {
+        detail = 'A lagnád ura a ' + (DO.planets[comp.lord] ? '' : '') +
+          ({ sun: 'Nap', moon: 'Hold', mercury: 'Merkúr', venus: 'Vénusz', mars: 'Mars',
+             jupiter: 'Jupiter', saturn: 'Szaturnusz' }[comp.lord] || comp.lord) + '. ';
+      } else if (comp.key === 'nadi') {
+        detail = 'A Hold nakshatrája ' + (nk ? nk.name : '') + ', ennek nádija ' +
+          comp.nadiName + '. ';
+      }
+      item(s, comp.title, names, detail + comp.source);
+    });
+
+    s.dosha = {
+      components: r.components, tally: r.tally,
+      doshas: DO.doshas, planetNames: {
+        sun: 'Nap', moon: 'Hold', mercury: 'Merkúr', venus: 'Vénusz',
+        mars: 'Mars', jupiter: 'Jupiter', saturn: 'Szaturnusz'
+      },
+      nakshatra: nk ? nk.name : null,
+      prakritiNote: DO.prakritiNote, disclaimer: DO.disclaimer,
+      shortDisclaimer: DO.shortDisclaimer
+    };
+
+    s.notes.push(DO.intro);
+    s.notes.push(DO.prakritiNote);
+    s.notes.push(DO.disclaimer);
+    out.sections.push(s);
+  }
+
   /* ================= draconikus, Vertex, aszteroidák ================= */
 
   function buildExtras(out) {
@@ -3106,10 +3172,18 @@
     item(s, 'Belső tekintély', au.name, au.text);
     item(s, 'Profil', r.profile + ' — ' + pr.name, pr.text);
     item(s, 'Definíció', df.name, df.text);
+    // a kereszt négy kapuját nevesítjük is — a puszta szám semmit nem mond
+    function gname(n) {
+      var gd = HD.gates[n];
+      return gd ? (n + '. ' + gd.name + ' (' + gd.key + ')') : (n + '.');
+    }
     item(s, 'Inkarnációs kereszt',
       cx.name + ': ' + r.cross.pSun + '/' + r.cross.pEarth + ' | ' +
       r.cross.dSun + '/' + r.cross.dEarth,
-      cx.text + ' A négy szám a tudatos és tudattalan Nap–Föld tengelyed kapuja.');
+      cx.text + ' A négy kapud: tudatos Nap ' + gname(r.cross.pSun) + ', tudatos Föld ' +
+      gname(r.cross.pEarth) + '; tudattalan Nap ' + gname(r.cross.dSun) + ', tudattalan Föld ' +
+      gname(r.cross.dEarth) + '. A rendszer szerint ez a négy kapu együtt rajzolja ki az ' +
+      'életfeladatod témáját.');
 
     /* --- központok --- */
     var defined = Object.keys(r.centers);

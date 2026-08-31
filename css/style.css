@@ -327,6 +327,36 @@ button:active{transform:translateY(1px)}
   text-transform:uppercase; letter-spacing:.04em}
 .hd-ch-t{font-size:.86rem; color:var(--muted); margin-top:4px}
 
+/* ---- a hagyomány nedvei (dosha) ---- */
+.dosha-warn{font-size:.82rem; color:var(--warn); border:1px solid var(--warn);
+  border-radius:9px; padding:8px 12px; margin-bottom:14px;
+  background:color-mix(in srgb,var(--warn) 8%,transparent)}
+.dosha-3{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:11px}
+.dosha-c{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
+.dosha-h{display:flex; align-items:baseline; gap:8px; font-family:var(--serif); font-size:1.1rem}
+.dosha-h .cnt{margin-left:auto; font-family:var(--sans); font-size:.72rem; color:var(--muted)}
+.dosha-e{font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; color:var(--accent2)}
+.dosha-t{font-size:.85rem; color:var(--muted); margin-top:6px}
+.dosha-comps{display:flex; flex-direction:column; gap:11px}
+.dosha-comp{border-left:3px solid var(--accent); background:var(--bg);
+  border-radius:0 11px 11px 0; padding:11px 14px}
+.dc-h{display:flex; align-items:center; gap:9px; font-weight:600; flex-wrap:wrap}
+.dc-h .badge{font-size:.68rem; text-transform:uppercase; letter-spacing:.05em;
+  padding:2px 8px; border-radius:999px; font-weight:600}
+.badge-ok{background:color-mix(in srgb,var(--ok) 18%,transparent); color:var(--ok)}
+.badge-warn{background:color-mix(in srgb,var(--warn) 18%,transparent); color:var(--warn)}
+.dc-v{font-family:var(--serif); font-size:1.05rem; color:var(--accent); margin:3px 0 6px}
+.dc-rank{display:flex; flex-direction:column; gap:2px; margin:7px 0}
+.dc-r{display:flex; gap:10px; font-size:.8rem; color:var(--muted); padding:3px 0}
+.dc-r.top{color:var(--ink); font-weight:600}
+.dc-r .p{min-width:82px}
+.dc-r .tt{min-width:52px; color:var(--accent2)}
+.dc-x{font-size:.82rem; color:var(--muted); margin:5px 0}
+.dc-src{font-size:.76rem; color:var(--muted); margin-top:6px; font-style:italic}
+.dc-cav{font-size:.78rem; color:var(--warn); margin-top:6px}
+.dosha-disc{font-size:.8rem; color:var(--muted); margin-top:16px; padding:12px 14px;
+  border:1px solid var(--line); border-radius:11px; background:var(--bg)}
+
 /* ---- aszteroidák ---- */
 .ast-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:11px}
 .ast{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--bg)}
