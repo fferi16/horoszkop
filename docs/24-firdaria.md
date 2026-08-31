@@ -125,6 +125,59 @@ beszél („amikor a szülött a 71. évébe lép"). A programban a **közepes t
 legfeljebb ~5,5 nap eltérést jelent. Ez implementációs döntés, nem forrásból
 következő tény.
 
+## Hogyan kell értelmezni — a periódus ura a natális ígéretet aktiválja
+
+A periódus ura **nem hoz új jelentést**: azt hozza működésbe, amit az a bolygó a
+születési képletben ígér. Ezért a periódusról nem általánosságban kell beszélni,
+hanem a felhasználó saját bolygóállásáról.
+
+### A dokumentált szabály (Bonatti)
+
+Bonatti *Liber Astronomiae* (Zoller-fordítás) — ez az **egyetlen kifejezetten
+kimondott értelmezési szabály** a firdaria középkori forrásaiban:
+
+> a jelölők aszerint rendelkeznek, hogy **jól elhelyezettek**-e — akkor *növelik a
+> jót és csökkentik a rosszat* —, vagy **rosszul elhelyezettek**, mert akkor
+> *növelik a rosszat és csökkentik a jót*.
+
+**Ez fontosabb, mint amilyennek látszik:** eszerint **nem** az dönt, hogy a bolygó
+jótevő vagy rosszindulatú-e. Egy jól elhelyezett Szaturnusz- vagy Mars-periódus
+*csökkenti* a rosszat — nem rossz évtized. Egy rosszul álló Jupiter- vagy
+Vénusz-periódus *növeli* a rosszat.
+
+Abu Ma'sar IV.1:1 ezt kiegészíti: a bolygó „kezeli a szülöttet", és ez idő alatt
+„valamit jelez a jóból vagy a rosszból" — vagyis minden periódusban mindkettő
+benne van, csak az arányt dönti el az ur állapota.
+
+### Amit a források NEM mondanak ki ⚠️
+
+A „nézd meg a natális házát, az uralt házait, a fényszögeit és a diszpozitorát"
+kiegészítés **nem szerepel** a firdaria-fejezetekben (sem Abu Ma'sarnál, sem
+al-Qabīṣīnál, sem Bonattinál). Ez a *bármely jelölő* megítélésére vonatkozó
+általános középkori tanítás alkalmazása — jogos, mert a „jól elhelyezett" épp
+ezeket foglalja magába, de **kiterjesztés**, nem idézet. A felület ezért a
+bolygó állását úgy hozza, mint *ami a „jól elhelyezett" tartalma*.
+
+Szintén **nincs** firdaria-specifikus szekta-szabály („kint lévő rosszindulatú
+rosszabb"), és nincs forrás arra sem, mi történik, ha a periódus ura egyben az
+aszcendens vagy a Fortuna ura. Utóbbira a legjobb előzmény Valens II.14, ahol
+egy bolygó hatása „a saját idővezérsége befejezéséig" tart — ez a doktrína, de
+nem firdaria.
+
+### Az alperiódus viszonya a főperiódushoz
+
+A források nyelve **társulás**, nem „szűrés":
+
+- a **fő ur a teljes periódusban megtartja a hatalmat** (Bonatti: „ő maga nyeri el
+  a tekintélyt"),
+- az **első heted a fő ur egyedül**, hígítatlanul,
+- minden további hetedben egy **társ** osztozik a kormányzásban, és az ítélet a
+  **kettejükre együtt** vonatkozik.
+
+A gyakran hallott „az alúr megszűri a fő urat" megfogalmazás védhető modern
+átirat, de a forrásmodell inkább együtt-jelölés, amelyben a fő ur elsőbbséget
+élvez — az alúr **nem fordíthatja meg** a periódus alaphangját.
+
 ## A periódusok jelentése
 
 - **Nap** — identitás, életerő, elismerés, tekintély, apa, láthatóság a pályán.

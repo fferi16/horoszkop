@@ -3092,36 +3092,106 @@
       };
     }
 
-    var HD12 = get(D(), 'western.houses', null);
+    /* Valens szerint a sorsrészt NEM jegy vagy ház szerint értelmezzük — a
+       „Fortuna a 12 házban" séma modern kitalálmány. Ami attesztált:
+       az angularitás foka, és az UR állása. (docs/23-sorsreszek.md) */
+    var ANGULAR = [1, 4, 7, 10], SUCCEDENT = [2, 5, 8, 11];
 
-    /** Nem általánosságban, hanem a felhasználó saját jegye/háza szerint. */
-    function inPlace(lon, label) {
-      var sg = HCORE.toSign(lon), sd = signData(sg.key);
-      var hs = c.houses ? HCORE.houseOf(lon, c.houses.cusps) : null;
-      var parts = [];
-      if (sd) {
-        var tr = (sd.positive || []).slice(0, 3).join(', ');
-        parts.push('Nálad a ' + signIn(sg.key, sd.name) + ' áll (' +
-          sd.element.toLowerCase() + ' elem, ' + sd.quality.toLowerCase() +
-          ' minőség), ura ' + az(sd.ruler) + ' ' + sd.ruler + ' — ' + az(label) + ' ' +
-          label + ' ezért ' + az(tr) + ' ' + tr + ' jellegét ölti.');
+    /* HAGYOMÁNYOS méltóság: a nyugati adattábla modern uralkodókkal dolgozik
+       (Skorpió = Plútó, Vízöntő = Uránusz), ami hellenisztikus technikában
+       értelmezhetetlen — egy Skorpióban álló Mars így nem kapna otthon-jelzést. */
+    var TRAD_DOM = {
+      kos: 'mars', bika: 'venus', ikrek: 'mercury', rak: 'moon',
+      oroszlan: 'sun', szuz: 'mercury', merleg: 'venus', skorpio: 'mars',
+      nyilas: 'jupiter', bak: 'saturn', vizonto: 'saturn', halak: 'jupiter'
+    };
+    var TRAD_EXALT = {
+      kos: 'sun', bika: 'moon', szuz: 'mercury', halak: 'venus',
+      bak: 'mars', rak: 'jupiter', merleg: 'saturn'
+    };
+    var OPPOSITE = {
+      kos: 'merleg', bika: 'skorpio', ikrek: 'nyilas', rak: 'bak',
+      oroszlan: 'vizonto', szuz: 'halak', merleg: 'kos', skorpio: 'bika',
+      nyilas: 'ikrek', bak: 'rak', vizonto: 'oroszlan', halak: 'szuz'
+    };
+    function tradDignity(pkey, signKey) {
+      if (TRAD_DOM[signKey] === pkey)
+        return { name: 'otthonában', text: 'Saját jegyében: a hagyomány szerint itt működik a legszabadabban.' };
+      if (TRAD_EXALT[signKey] === pkey)
+        return { name: 'felmagasztalva', text: 'Exaltációban: kiemelt, ünnepi működés.' };
+      var opp = OPPOSITE[signKey];
+      if (opp && TRAD_DOM[opp] === pkey)
+        return { name: 'száműzetésben', text: 'Száműzetésben: a jegy természete szemben áll a bolygóéval.' };
+      if (opp && TRAD_EXALT[opp] === pkey)
+        return { name: 'esésben', text: 'Esésben: itt a leghalkabb — több tudatosságot kér.' };
+      return { name: 'vendégségben', text: 'Se nem erősíti, se nem gyengíti a jegy (peregrinus).' };
+    }
+
+    function angularity(hs) {
+      if (!hs) return null;
+      if (ANGULAR.indexOf(hs) >= 0)
+        return { key: 'sarok', name: 'sarokházban', text: 'A legerősebb elhelyezés.' };
+      if (SUCCEDENT.indexOf(hs) >= 0)
+        return { key: 'kovetkezo', name: 'következő házban', text: 'Közepesen erős elhelyezés.' };
+      return { key: 'lehanyatlo', name: 'lehanyatló házban',
+        text: 'A hagyomány szerint ez a gyengébb elhelyezés — Valens a nehezebb esetek közé sorolja.' };
+    }
+
+    /** A sorsrész ura (HAGYOMÁNYOS uralkodó) és annak natális állása. */
+    function rulerOf(lon) {
+      var sd = signData(HCORE.toSign(lon).key);
+      if (!sd) return null;
+      var name = sd.rulerTraditional || sd.ruler;
+      var key = null;
+      for (var k in c.planets) {
+        if (c.planets[k] && c.planets[k].name === name) { key = k; break; }
       }
-      if (hs && HD12 && HD12[hs - 1]) {
-        var kw = (HD12[hs - 1].keywords || []).slice(0, 3).join(', ');
-        parts.push(houseArticle(hs).charAt(0).toUpperCase() + houseArticle(hs).slice(1) +
-          ' ' + hs + '. házba esik, tehát ' + (kw ? 'a ' + kw : 'ennek a háznak a') +
-          ' területén mutatkozik meg.');
-      }
-      return parts.join(' ');
+      var p = key ? c.planets[key] : null;
+      if (!p) return { name: name, found: false };
+      var dig = tradDignity(key, p.sign.key);
+      return {
+        name: name, found: true, key: key, symbol: p.symbol,
+        sign: p.sign.name, deg: p.sign.text, house: p.house || null,
+        angular: angularity(p.house),
+        dignity: dig ? dig.name : null,
+        signText: get(D(), 'western.planetInSign.' + key + '.' + p.sign.key, ''),
+        houseText: p.house
+          ? (get(D(), 'western.planetInHouse.' + key + '.' + p.house, '') ||
+             get(D(), 'westernExt.planetInHouse.' + key + '.' + p.house, '')) : ''
+      };
+    }
+
+    /** Jótevő/rosszindulatú fényszög a sorsrészre (Valens II.17). */
+    var BENEFIC = ['venus', 'jupiter'], MALEFIC = ['mars', 'saturn'];
+    function contactsTo(lon) {
+      var hits = [];
+      BENEFIC.concat(MALEFIC).forEach(function (k) {
+        var p = c.planets[k];
+        if (!p) return;
+        var d = Math.abs(HCORE.angleDiff(p.lon, lon));
+        var asp = null;
+        if (d <= 8) asp = 'együttállás';
+        else if (Math.abs(d - 180) <= 8) asp = 'szembenállás';
+        else if (Math.abs(d - 120) <= 7) asp = 'trigon';
+        else if (Math.abs(d - 90) <= 7) asp = 'kvadrát';
+        else if (Math.abs(d - 60) <= 5) asp = 'szextil';
+        if (asp) hits.push({ key: k, name: p.name, symbol: p.symbol, aspect: asp,
+          benefic: BENEFIC.indexOf(k) >= 0 });
+      });
+      return hits;
     }
 
     var rows = LD.list.map(function (def) {
       var pl = place(L[def.key]);
+      var main = def.key === 'fortune' || def.key === 'spirit';
       return {
         symbol: def.symbol, name: def.name, greek: def.greek, ruler: def.ruler,
         deg: pl.text, sign: pl.sign, house: pl.house, text: def.text,
-        inPlace: inPlace(L[def.key], def.name),
-        main: def.key === 'fortune' || def.key === 'spirit'
+        angular: angularity(pl.house),
+        // a részletes hagyomány szerinti olvasat csak a két fő sorsrésznél
+        lordOf: main ? rulerOf(L[def.key]) : null,
+        contacts: main ? contactsTo(L[def.key]) : null,
+        main: main
       };
     });
     var basisPl = place(L.basis);
@@ -3131,21 +3201,66 @@
       text: LD.basis.text, extra: LD.basis.note, main: false
     });
 
-    // a Fortuna ura — Valens szerint az aszcendens urával egyenrangú
+    /* A Fortuna ura — Valens szerint az aszcendens urával egyenrangú.
+       HAGYOMÁNYOS uralkodót kell használni: ez hellenisztikus technika, a
+       modern uralkodók (Uránusz, Neptunusz, Plútó) itt értelmezhetetlenek. */
     var fortuneSign = HCORE.toSign(L.fortune);
     var fsd = signData(fortuneSign.key);
-    var fortuneRuler = fsd ? fsd.ruler : null;
+    var fortuneRuler = fsd ? (fsd.rulerTraditional || fsd.ruler) : null;
 
     item(s, 'Fortuna (' + (isDay ? 'nappali' : 'éjszakai') + ' képlet)',
-      place(L.fortune).text + (rows[0].house ? ' · ' + rows[0].house + '. ház' : ''),
-      LD.list[0].text);
-    if (fortuneRuler) {
-      item(s, 'A Fortuna ura', fortuneRuler,
-        'Valens a Fortuna urát az aszcendens urával egyenrangúnak tartotta: érdemes ' +
-        'megnézni, hol áll és milyen állapotban van a képletedben.');
+      place(L.fortune).text + (rows[0].angular ? ' · ' + rows[0].angular.name : ''),
+      LD.list[0].text + (rows[0].angular ? ' ' + rows[0].angular.text : ''));
+
+    var fLord = rows[0].lordOf;
+    if (fLord && fLord.found) {
+      item(s, 'A Fortuna ura — ' + fLord.name,
+        fLord.deg + (fLord.house ? ' · ' + fLord.house + '. ház' : '') +
+        (fLord.dignity ? ' · ' + fLord.dignity : ''),
+        'Valens a Fortuna urát az aszcendens urával egyenrangúnak tartotta, ezért ez a ' +
+        'sorsrész legfontosabb mutatója. Nálad ' + az(fLord.name) + ' ' + fLord.name +
+        ' tölti be ezt a szerepet' +
+        (fLord.angular ? ', és ' + fLord.angular.name + ' áll — ' +
+          fLord.angular.text.charAt(0).toLowerCase() + fLord.angular.text.slice(1) : '') +
+        (fLord.signText ? ' ' + fLord.signText : ''));
     }
-    item(s, 'Szellem', place(L.spirit).text,
-      LD.list[1].text);
+
+    /* A Fortunától számított helyek — kizárólag egész jegyes (Valens II.17, II.20) */
+    var fSignIdx = Math.floor(HCORE.norm360(L.fortune) / 30);
+    function fromFortune(n) {
+      var idx = (fSignIdx + n - 1) % 12;
+      var lst = get(D(), 'western.signs', []);
+      return lst[idx] ? lst[idx].name : '';
+    }
+    item(s, 'A Fortunától számított helyek',
+      '11. — Szerzés: ' + fromFortune(11),
+      'Valens a Fortunát „második aszcendensként" kezeli, és tőle is számol helyeket — ' +
+      'egész jegyesen. A 11. a Szerzés helye, „a javak és a vagyon adományozója": nálad ' +
+      az(fromFortune(11)) + ' ' + fromFortune(11) + '. A 10. a Rang helye (' +
+      fromFortune(10) + '), a 8. a Halálé (' + fromFortune(8) + '), az 1. maga az Élet (' +
+      fromFortune(1) + ').');
+
+    /* Jótevő/rosszindulatú érintés a Fortunán (Valens II.17) */
+    var fc = rows[0].contacts || [];
+    if (fc.length) {
+      var ben = fc.filter(function (x) { return x.benefic; });
+      var mal = fc.filter(function (x) { return !x.benefic; });
+      item(s, 'Ami a Fortunádat érinti',
+        fc.map(function (x) { return x.symbol + ' ' + x.name + ' (' + x.aspect + ')'; }).join(', '),
+        (ben.length ? 'Jótevő érintés (' + ben.map(function (x) { return x.name; }).join(', ') +
+          '): Valens szerint ez „a jó jele és a javak adományozója". ' : '') +
+        (mal.length ? 'Rosszindulatú érintés (' + mal.map(function (x) { return x.name; }).join(', ') +
+          '): a hagyomány szerint a javak elvesztésével és testi gyengeséggel hozható ' +
+          'összefüggésbe — a Fortuna a test sorsrésze, ezért testileg is olvassák. ' : '') +
+        'Fontos: ez a hagyomány olvasata, nem jóslat.');
+    }
+
+    var sLord = rows[1].lordOf;
+    item(s, 'Szellem', place(L.spirit).text +
+      (rows[1].angular ? ' · ' + rows[1].angular.name : ''),
+      LD.list[1].text +
+      (sLord && sLord.found ? ' Az ura nálad ' + az(sLord.name) + ' ' + sLord.name + ', ' +
+        sLord.deg + (sLord.house ? ', ' + sLord.house + '. ház' : '') + '.' : ''));
 
     /* --- firdaria --- */
     var fir = null, sched = null;
@@ -3153,11 +3268,42 @@
       fir = E.firdaria(out.utc, new Date(), isDay);
       sched = E.firdariaSchedule(out.utc, isDay);
       if (fir) {
+        /* A periódus ura nem hoz új jelentést: a natális ígéretét aktiválja.
+           Bonatti szerint a döntő az ur ÁLLAPOTA, nem az, hogy jótevő-e.
+           (docs/24-firdaria.md) */
+        var lp = c.planets[fir.lord];
+        var lDig = lp ? tradDignity(fir.lord, lp.sign.key) : null;
+        var natal = '';
+        if (lp) {
+          natal = ' Nálad ' + az(FD.names[fir.lord]) + ' ' + FD.names[fir.lord] + ' ' +
+            lp.sign.text + (lp.house ? ', ' + lp.house + '. ház' : '') +
+            (lDig ? ', ' + lDig.name : '') + ' — a hagyomány szerint a periódus ezt a ' +
+            'natális ígéretet hozza működésbe, nem valami újat.';
+          var lHouseText = lp.house
+            ? (get(D(), 'western.planetInHouse.' + fir.lord + '.' + lp.house, '') ||
+               get(D(), 'westernExt.planetInHouse.' + fir.lord + '.' + lp.house, '')) : '';
+          if (lHouseText) natal += ' ' + lHouseText;
+        }
         item(s, 'Jelenlegi firdaria-periódus',
           FD.names[fir.lord] + (fir.sub ? ' / ' + FD.names[fir.sub] : ''),
-          FD.meanings[fir.lord] +
-          (fir.sub ? ' Az alperiódus ura a ' + FD.names[fir.sub] + ': ' +
-            FD.meanings[fir.sub].charAt(0).toLowerCase() + FD.meanings[fir.sub].slice(1) : ''));
+          FD.meanings[fir.lord] + natal);
+
+        item(s, 'Mitől jó vagy nehéz egy periódus',
+          lDig ? (FD.names[fir.lord] + ' — ' + lDig.name) : 'a periódus urának állapotától',
+          'Bonatti szabálya szerint nem az dönt, hogy a periódus ura jótevő vagy ' +
+          'rosszindulatú bolygó: a jól elhelyezett ur „növeli a jót és csökkenti a rosszat", ' +
+          'a rosszul elhelyezett fordítva. Egy jól álló Szaturnusz-periódus tehát nem rossz ' +
+          'évtized, egy rosszul álló Vénusz-periódus pedig nem felhőtlen.' +
+          (lDig ? ' ' + lDig.text : ''));
+
+        if (fir.sub) {
+          var sp = c.planets[fir.sub];
+          item(s, 'Az alperiódus ura — ' + FD.names[fir.sub],
+            sp ? sp.sign.text + (sp.house ? ' · ' + sp.house + '. ház' : '') : '—',
+            'A források nyelve társulás, nem „szűrés": a fő ur végig megtartja a ' +
+            'tekintélyt, az alúr pedig osztozik a kormányzásban — módosítja a periódus ' +
+            'hangját, de nem fordítja meg. ' + FD.meanings[fir.sub]);
+        }
       }
     }
 

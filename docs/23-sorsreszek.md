@@ -147,6 +147,73 @@ Ez újraértelmezés, nem az ókori jelentés folytatása.
     adományozója").
 - Placidus-csúcsokból **ne** származtassunk Fortuna-házakat: annak nincs hagyományos alapja.
 
+## Hogyan kell ÉRTELMEZNI — és mit nem szabad kiírni ⚠️
+
+A számítás önmagában semmit nem mond a felhasználóról. Az alábbiak a Valens
+*Anthologiae* (Riley-fordítás, teljes szövegben ellenőrizve) szerinti szabályok.
+
+### Amit NEM szabad kiírni
+
+- **„A Fortuna a 12 házban" szakácskönyv.** A teljes Valensben, Paulusnál,
+  Rhetoriusnál és Firmicusnál **nincs** házankénti Fortuna-értelmezés. A neten
+  terjedő „Fortuna az 1. házban azt jelenti…" listák **modern kitalálmányok**.
+  Ami valóban van: az **angularitás** (sarok / következő / lehanyatló), és néhány
+  konkrét, mindig feltételes eset (12., 8., 2., 4. hely) — ezek is csak akkor,
+  ha az ur vagy egy rosszindulatú bolygó is érintett.
+- **A Fortuna jegy szerinti értelmezése.** A hellenisztikus források nem
+  értelmezik a Fortunát jegy szerint. A jegy **egyetlen** módon számít:
+  megadja az urat. Tehát nem a Fortuna jegyéről kell szöveget adni, hanem az
+  **ura** állásáról.
+
+### Amit igen (Valens, tételesen)
+
+**1. A Fortuna ura az aszcendens urával egyenrangú** (II.4, II.17). Meg kell nézni
+a jegyét, a házát, a méltóságát, a fényszögeit, és hogy sarokházban áll-e.
+**Hagyományos uralkodóval** — a modern Uránusz/Neptunusz/Plútó itt értelmezhetetlen.
+
+**2. Angularitás-fok** (II.17): sarok > következő > lehanyatló. A lehanyatló
+elhelyezés a súlyos eset.
+
+**3. A négyes mátrix** (II.2) — ez a legjobban használható passzus:
+
+| Fortuna + ura | Fényszög | Kimenet |
+|---|---|---|
+| sarok- vagy következő házban | jótevő fényszög | némi jó sors és rang; hullámzással, de nem tehetetlenül |
+| rosszul elhelyezve | semleges | közepes, sőt nehéz ügyek; nehezen boldogul |
+| rosszul elhelyezve | rosszindulatú fényszög | a legnehezebb kimenet |
+| rosszul elhelyezve | **jótevő fényszög** | **mások segítségéből** él meg — tisztes élet, de nem magától |
+
+A negyedik sor a legérdekesebb: jótevő fényszög rosszul álló Fortunára
+*függő* jó sorsot ad, nem önerőset.
+
+**4. Együttállás és fényszög** (II.17): jótevő a Fortunán vagy fényszögben →
+javak; rosszindulatú → a javak elvesztése **és testi betegség** (a Fortuna a
+test sorsrésze, ezért testileg is olvasódik).
+
+**5. A Fortunától származtatott helyek** (II.17, II.20) — **kizárólag egész jegyes**:
+
+| Hely a Fortunától | Jelentés |
+|---|---|
+| 1. | „Élet" — az aszcendens megfelelője |
+| 8. | a Halál helye |
+| 10. | „Rang" — az MC megfelelője, hivatás és kiemelkedés |
+| 11. | **a Szerzés helye** — „a javak és a vagyon adományozója" |
+
+**6. A Szellem ura** (II.19) létrája: a Fortunán vagy a Fortunától számított 10.
+helyen → kiemelkedő; saját helyén vagy sarokban → amennyire a körülmények
+engedik, jó; lehanyatlóan vagy rosszindulatú fényszöggel → nehéz.
+
+**7. Fortuna ↔ Szellem helyettesítés** (IV.4): ha a Fortuna vagy az ura rosszul
+áll (lehanyatló, illetve a 2. vagy 8. helyen), akkor a Szellem veszi át a testi
+jelzést is — és fordítva.
+
+### Manilius eltérő rendszere — ne keverjük
+
+Manilius *Astronomica* III. egy másik, tizenkét sorsrészes kört ad a Fortunától
+számolva, más jelentésekkel. Ez **összeegyeztethetetlen** a Valens-féle
+dodekatroposszal, és a későbbi asztrológusok nem vették át — csak a 11. hely
+(Szerzés) egyezik. Nem implementáljuk.
+
 ## Ellenőrző példa (regressziós teszt)
 
 Greenbaum kidolgozott nappali példája:
