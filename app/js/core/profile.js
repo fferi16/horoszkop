@@ -779,7 +779,18 @@
 
     item(s, 'Születési holdfázis', mp.symbol + ' ' + mp.name +
       ' (' + Math.round(mp.illumination * 100) + '%-os megvilágítás)', pd ? pd.text : '');
-    item(s, 'Holdkor', mp.age.toFixed(1).replace('.', ',') + ' napos hold', '');
+    // holdkor: hány nappal az újhold után, és mennyi volt hátra a következő fő fázisig
+    var syn = 29.530588, age = mp.age;
+    var toFull = mp.waxing ? syn / 2 - age : null;
+    var toNew = mp.waxing ? null : syn - age;
+    var fmt1 = function (x) { return x.toFixed(1).replace('.', ','); };
+    var ageText = 'A születésedkor a Hold ' + fmt1(age) + ' napos volt: ' +
+      (mp.waxing
+        ? 'növekvő szakaszban járt, ' + fmt1(toFull) + ' nappal a telihold előtt. '
+        : 'fogyó szakaszban járt, ' + fmt1(age - syn / 2) + ' nappal a telihold után, ' + fmt1(toNew) + ' nappal a következő újhold előtt. ') +
+      'A hagyomány a növekvő Hold alatt születetteket kifelé építkező, a fogyó Hold alatt születetteket feldolgozó, elengedő alkatnak tartja — ' +
+      (mp.waxing ? 'nálad az előbbi' : 'nálad az utóbbi') + ' érvényes.';
+    item(s, 'Holdkor', fmt1(age) + ' napos hold', ageText);
 
     // a 8 születési holdfázis-típus (Rudhyar)
     var types = get(D(), 'exotic.moonPhaseTypes', []);
