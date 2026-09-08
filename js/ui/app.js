@@ -2105,7 +2105,14 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  // Dinamikus betöltésnél (modules.js) a DOMContentLoaded már lefuthatott,
+  // mire idáig érünk — ezért nem csak az eseményre várunk.
+  function onReady(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  onReady(function () {
     initTheme();
     initMode();
     initCoffee();
