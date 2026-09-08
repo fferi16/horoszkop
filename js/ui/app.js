@@ -1431,7 +1431,7 @@
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
     '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria',
     '◈': 'humandesign', '⬡': 'genekeys', '⊗': 'sorsreszek', '✧': 'kiegeszitok',
-    '☘': 'nedvek'
+    '☘': 'nedvek', '⏩': 'releasing', '🌘': 'fogyatkozasok', '⧫': 'felpontok', '🗺': 'asztrokarto'
   };
 
   function iconSrc(slug, theme) {
