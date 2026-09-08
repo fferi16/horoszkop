@@ -117,13 +117,15 @@
     out.sections = out.sections.filter(function (s) {
       return s && (s.items.length || s.table || s.aspects || s.biorhythm || s.chronoTool || s.matrix || s.matrixDM || s.hvd || s.houseDetails || s.planetDetails || s.dashaTable || s.baziBalance || s.transits || s.synastry || s.humanDesign || s.geneKeys || s.lots || s.extras || s.dosha);
     });
-    // ha van páros elemzés, az kerüljön legelőre
-    for (var si = 1; si < out.sections.length; si++) {
-      if (out.sections[si].id === 'szinasztria') {
-        out.sections.unshift(out.sections.splice(si, 1)[0]);
-        break;
+    // sorrend: Összegzés legelöl (ez a nyitóoldal), utána a páros elemzés, majd a többi
+    ['szinasztria', 'osszegzes'].forEach(function (id) {
+      for (var si = 1; si < out.sections.length; si++) {
+        if (out.sections[si].id === id) {
+          out.sections.unshift(out.sections.splice(si, 1)[0]);
+          break;
+        }
       }
-    }
+    });
     return out;
   }
 
