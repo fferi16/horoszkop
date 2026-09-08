@@ -36,12 +36,14 @@ Amit **nem** találtunk hitelesnek: a „Hold a 12 natális házban" napi jelent
 - tranzit bolygó (5) × natális célpont (13) × fényszögminőség (3: harmonikus, feszült, együttállás) — sablonos összerakás: *„A tranzit Vénusz trigont zár a Holdaddal (kedd 14:20): …"* — a bolygó-mondat + a célpont-terület + a minőség; nem 195 külön szöveg, hanem 5 + 13 + 3 elem.
 - a Hold natális házban (12), újhold/telihold natális házban (12+12), üresjárat (1), bolygóórák (7), ingresszus (5 bolygó × 12 jegy — a jegy alapszövegéből), állomás (3).
 
-## 4. A modul (külön, nem a profil része)
+## 4. A modul (külön kódmodul, a profil részeként megjelenítve)
 
-- Új mód a főoldalon a *Horoszkóp* és a *Kártyavetés* mellé: **Előrejelzés** (`data-mode="elorejelzes"`), saját ikonnal.
-- Bemenet: a már kitöltött születési adatok (a profil űrlapja) + dátumválasztó (alapból ma) + tartózkodási hely (alapból a születési hely).
-- Fájlok: `core/forecast.js` (gyors tranzitok, üresjárat, bolygóórák, lunáció, ingresszus, pontozás), `data/forecast.js` (szövegek), `ui/forecast.js` (napi kártya + heti sáv), tesztek `tests/forecast.test.js`.
-- Kimenet: **Ma** (Hold háza és fázisa, üresjárat-idők, a nap érintései időponttal, a mostani bolygóóra, 5 terület csillaggal + levezetés), **A hét** (7 napos sáv, események), és a keret: havi profekció + lunáris hónap (a profilból, egy sorban).
+- A felhasználó kérésére (2026-09-08) nincs külön nézet és dátumválasztó: az előrejelzés a **profillal együtt** készül el, a tartalom-rácsban **Előrejelzés** kategóriaként (4 szekció), mindig a mai naptól.
+- Fájlok: `core/forecast.js` (gyors tranzitok, üresjárat, bolygóórák, lunáció, ingresszus, állomás, pontozás), `core/forecast-sections.js` (a négy szekció összeállítása a profil item/notes/table formájában), `data/forecast.js` (szövegek), tesztek `tests/forecast.test.js`.
+- **Ma**: nagy hármas + keret (éves/havi profekció, lunáris hónap), a nap mérlege (5 terület csillaggal + levezetés), a Hold háza és fázisa, üresjárat, a nap érintései időponttal, a bolygók ma a házaidban (aszcendens szerinti olvasat), bolygóóra most.
+- **A hét**: napról napra csillagok + a nap érintései + a Hold háza; a hét eseményei (lunáció a házban, ingresszus, állomás, üresjárat).
+- **A hónap** (30 nap): a Nap–Mars nyolc legsúlyosabb pontos érintése a képletre, lunációk, ingresszusok, állomások, a gyors bolygók útja a házakban.
+- **Az év** (12 hónap): Merkúr-retrográd időszakok házzal; havi tábla — a Nap háza, újhold/telihold háza, lassú tranzitok pontos hónapja (a meglévő keresővel), Mars-ingresszus, állomások; a keret a profekció/szolár/tranzit/fogyatkozás szekciókra mutat.
 
 ## 5. Tisztesség
 

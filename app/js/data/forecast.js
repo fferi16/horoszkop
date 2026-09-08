@@ -108,6 +108,7 @@ window.HDATA.forecast = {
     direct: 'A %P% %D%-kor direktbe fordul (%S%, a képleted %H%. háza): a visszanéző szakasz lezárul, a hagyomány szerint innen újra előre lehet lépni ezen a területen.'
   },
 
+  mercuryRetroYear: 'A Merkúr retrográd szakaszaiban a hagyomány szerint a kommunikáció, az utazás, a szerződések és a technika átnézésre, újragondolásra kerül — a zárójelben a jegy és a képleted háza, ahol a fordulat történik: ezen az életterületen érdemes lassítani és ellenőrizni.',
   hour: {
     saturn: 'Szaturnusz-óra: türelem, fegyelem, szerkezet — a hagyomány szerint a komoly, lassú, lezáró munkára és a határok meghúzására való',
     jupiter: 'Jupiter-óra: távlat, tanulás, nagyvonalúság — a hagyomány a kérésekhez, tanácshoz, bővítéshez tartja jónak',
@@ -121,6 +122,21 @@ window.HDATA.forecast = {
 
   dayRuler: { sun: 'vasárnap — a Nap napja', moon: 'hétfő — a Hold napja', mars: 'kedd — a Mars napja', mercury: 'szerda — a Merkúr napja', jupiter: 'csütörtök — a Jupiter napja', venus: 'péntek — a Vénusz napja', saturn: 'szombat — a Szaturnusz napja' },
 
+  /* a bolygók ma a natális házakban — az aszcendens szerinti napi olvasat (docs/33 §1) */
+  planetInHouse: {
+    sun: 'a Nap ~egy hónapig itt világít: ez az életterület kér most figyelmet és energiát tőled',
+    mercury: 'a Merkúr néhány hétig itt jár: ezen a téren jönnek a hírek, beszélgetések, döntendő apróságok',
+    venus: 'a Vénusz néhány hétig itt jár: itt könnyebb a kapcsolódás, a kellemes és az anyagi ügyek',
+    mars: 'a Mars ~hat hétig itt jár: ide kerül a tetterőd — és a súrlódás is',
+    jupiter: 'a Jupiter ~egy évig itt jár: ezen a téren nyílnak a lehetőségek és nő a bizalom',
+    saturn: 'a Szaturnusz ~két és fél évig itt jár: itt kér felelősséget, türelmet és szerkezetet'
+  },
+  frame: {
+    profection: 'Éves profekció: %H%. ház (%S%), az év ura a %L% · havi profekció: %MH%. ház',
+    lunar: 'lunáris hónap: %A% – %B%',
+    asc: 'Az Aszcendensed %AS%: a házak és a sarokpontok ebből számolódnak — a napi kép ezért a tiéd, nem a napjegyedé.',
+    noAsc: 'Aszcendens nélkül (nincs születési idő) a házakat a napjegyedtől számoljuk — ez a napjegy-horoszkópok közelítése.'
+  },
   starsNote: 'A csillagok: a nap pontos érintéseinek összege területenként — trigon/szextil +, kvadrát/szembenállás −, együttállás a bolygó természete szerint; a Nap, a Vénusz és a Mars kétszeres, a Merkúr másfélszeres, a Hold egyszeres súllyal. Három csillag = nincs kiemelt érintés.',
   quiet: 'Csendes nap: nincs pontos gyors tranzit a képleted fő pontjaira — a hangnemet a Hold háza és fázisa adja.'
 };
