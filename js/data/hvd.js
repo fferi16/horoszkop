@@ -76,6 +76,43 @@ window.HDATA.hvd = {
     szahaszrara: 'Szellemi kapcsolódás, világkép, értelemkeresés.'
   },
 
+  /* --- A kontúrtípusok leírása ---
+     A forráskönyv (Bekenyova, I. rész) és a nyilvános kalkulátorok CSAK a
+     típusneveket adják meg, leírást nem (docs/18, 11. pont). Az alábbi szövegek
+     saját olvasatok: a névből, a klasszikus nedvtanból (fizikai), a Pavlov-féle
+     művészi/gondolkodó/kevert típustanból (intellektuális) és a sorhoz tartozó
+     két csakraértékből következnek — nem a rendszer hivatalos definíciói. */
+  typeText: {
+    fizikai: {
+      'Szangvinikus': 'Élénk, gyorsan kapcsolódó, jó terhelhetőségű testi alkat: könnyen indul és könnyen pihen, a hangulata a mozgással együtt jár.',
+      'Szangvinikus-kolerikus': 'Élénk és lendületes alkat erős cselekvési kényszerrel: gyorsan bekapcsolódik, sokat bír, de a lassú, egyhangú munkát rosszul tűri.',
+      'Érzékeny kolerikus': 'Heves, gyorsan reagáló alkat vékonyabb testi tartalékkal: nagy a lendület és a vágy (magas Szvadhisthána), de az alap (Muladhára) alacsony — a kitörések után pihenőt kér.',
+      'Melankolikus': 'Lassabban induló, visszafogott testi alkat: kevesebb nyers energia, több érzékenység — jól tervezett, egyenletes terhelés mellett működik a legjobban.',
+      'Flegmatikus': 'Nyugodt, kitartó, nehezen kimozdítható alkat magas alappal (Muladhára) és alacsony vágykészlettel: jól bírja a monotóniát, lassan gyújt, de sokáig ég.',
+      'Szangvinikus-flegmatikus': 'Erős alap és jó rugalmasság együtt: nagy testi tartalék nyugodt, de kapcsolódásra kész működéssel — a rendszer egyik legkiegyensúlyozottabb fizikai típusa.'
+    },
+    erzelmi: {
+      'Szenvedélyes': 'Erős akarat (Manipura) és erős szív (Anahata) együtt: intenzíven él át mindent, egészben adja magát — a rendszer szerint az érzelmi túlfűtöttség a kockázat.',
+      'Egoista (vezéri)': 'Az akarat és az önérvényesítés vezet, a kapcsolódás második: természetes vezető, aki irányítani akar — a rendszer szerint a mások igényeire figyelés a gyakorlófeladat.',
+      'Empatikus': 'A szív erősebb az akaratnál: ráhangolódik másokra, jól érzi a hangulatokat — a rendszer szerint a saját határok tartása a gyakorlófeladat.',
+      'Önzetlen, integratív': 'Alacsony önérvényesítés, nyitott szív: összekötő, békítő, magát háttérbe toló típus — a rendszer szerint a saját akarat felvállalása a gyakorlófeladat.',
+      'Hideg': 'Mindkét érzelmi csakra alacsony: távolságtartó, józan, nehezen felmelegedő érzelmi működés — a rendszer szerint nem hiány, hanem takarékos üzemmód, amit a bizalom old.',
+      'Szentimentális': 'Közepes akarat, visszafogott szív: érzelmileg befelé forduló, a múltat és az emlékeket dédelgető típus, aki mélyen érez, de keveset mutat.'
+    },
+    intellektualis: {
+      'Harmonikus, művészi': 'A kifejezés (Visuddha) erősebb az elemzésnél (Adzsna): képekben, egészekben gondolkodó, alkotó elme — Pavlov „művészi" típusa.',
+      'Diszkrét': 'Az elemző csakra magas, a kifejezés alacsony: lépésről lépésre, részletekben és kategóriákban gondolkodik, sokat tud, keveset mond ki.',
+      'Szuperproduktív': 'Mindkét szellemi csakra a felső sávban: nagy termelékenységű elme, amely egyszerre alkot és elemez — a rendszer szerint a túlterhelés és a szétforgácsolódás a kockázat.',
+      'Produktív, gondolkodó': 'Erős elemzés, jó kifejezés: rendszerező, következtető elme, amely az eredményét meg is tudja fogalmazni — Pavlov „gondolkodó" típusa termékeny változatban.',
+      'Alkalmazott, gondolkodó': 'Az elemzés viszi, a kifejezés gyenge: gyakorlatias, problémamegoldó gondolkodás, amely a kézzelfogható feladatokban mutatkozik meg, nem az előadásban.',
+      'Alkalmazott, kevert': 'Mindkét szellemi csakra a mérsékelt sávban: a gyakorlatra hangolt, sokoldalú, de nem szélsőséges elme — a rendszer szerint a legkönnyebben taníthatók közé tartozik.',
+      'Harmonikus, gondolkodó': 'Magas elemzés mérsékelt kifejezéssel: elmélyült, elméleti, összefüggéseket kereső gondolkodás — Pavlov „gondolkodó" típusa.',
+      'Produktív, kevert': 'Mindkét szellemi csakra a középső-felső sávban: kiegyensúlyozott, terhelhető elme, amely alkotó és elemző feladatot egyaránt visz.',
+      'Produktív, művészi': 'Magas kifejezés jó elemzéssel: alkotó, közlő elme, amely a formát és a tartalmat egyszerre kezeli — művészi, tanítói, kommunikációs pályák típusa.',
+      'Analóg': 'Nagyon magas kifejezés (Visuddha) alacsony elemzéssel: egészben, hasonlóságokban és ráérzésben gondolkodó elme, amely a lépésenkénti levezetést kerüli — a „diszkrét" tükörképe.'
+    }
+  },
+
   /* --- 1. tábla: fizikai marker (1–23) → Muladhára, Szvadhisthána, temperamentum --- */
   physical: {
     1: [33, 55, 'Szangvinikus'], 2: [55, 72, 'Szangvinikus-kolerikus'],
