@@ -11,7 +11,7 @@
   'use strict';
 
   /* Cache-törés: minden kiadásnál emeld (az index.html-ben is ugyanez legyen). */
-  var VERSION = '2026-09-08b';
+  var VERSION = '2026-09-08c';
 
   var MODULES = [
     /* ---- csillagászati könyvtár (Astronomy Engine, MIT) ---- */
@@ -29,6 +29,7 @@
     'data/timing.js',         // releasing, fogyatkozások, lunáris visszatérés szövegei
     'data/extras2.js',        // azték, Chiron, szoláris ív, félpontok, asztrokartográfia szövegei
     'data/forecast.js',       // napi/heti előrejelzés szövegei
+    'data/forecast-texts.js', // a tranzit × natális pont × fényszög konkrét olvasatai
     'data/degrees.js',        // fokok jelentései (Sabian, egyiptomi határok)
     'data/patterns.js',       // fényszög-alakzatok
     'data/stars.js',          // klasszikus állócsillagok
