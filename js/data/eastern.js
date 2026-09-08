@@ -422,6 +422,22 @@ window.HDATA.eastern = {
       nyul: 'Macska',
       bivaly: 'Vízibivaly',
       kecske: 'Kecske'
+    },
+    /* Állatonként: a vietnami hagyomány saját hangsúlyai (Wikipedia: Vietnamese
+       zodiac; a kínai jelentésekkel közös alap mellett). Kulcs: a kínai állatkulcs. */
+    animalText: {
+      patkany: 'Tý — a vietnami hagyományban a szerencse hozója: a patkány éve a leleményességé és a bőségé, a szülöttét élelmesnek, gyors eszűnek tartják.',
+      bivaly: 'Sửu — nem ökör, hanem vízibivaly, a rizsföldek munkatársa: a kemény munkával szerzett jólét, a kitartás és a megbízhatóság jegye.',
+      tigris: 'Dần — az erő és a bátorság jegye, a falvak védelmezője a hagyományban: a szülöttét határozottnak, néha lobbanékonynak tartják.',
+      nyul: 'Mão — Vietnamban macska, nem nyúl (a kínai 卯 írásjegy kiejtése a vietnami mèo, „macska" szóra hasonlít): nyugodt, gyakorlatias, okos és művészi hajlamú jegy — a nyúl félénksége helyett a macska önállósága.',
+      sarkany: 'Thìn — a császári jegy, a jang és az eső ura: a vietnami hagyomány a sárkányt a nemzet ősének tartja (Lạc Long Quân), szülöttét nagyra hivatottnak, energikusnak.',
+      kigyo: 'Tỵ — a bölcsesség és a rejtett tudás jegye: a szülöttét megfontoltnak, elegánsnak, titoktartónak tartják.',
+      lo: 'Ngọ — a szabadság és az önbizalom jegye: mozgékony, nyílt, nehezen megköthető természet.',
+      kecske: 'Mùi — Vietnamban kecske (nem juh): szelíd, művészi, békeszerető jegy, amelyet a hagyomány gondoskodónak és kissé aggodalmasnak tart.',
+      majom: 'Thân — a lelemény és a játékosság jegye: gyors észjárás, humor, alkalmazkodás.',
+      kakas: 'Dậu — a szorgalom és az őszinteség jegye: pontos, egyenes, néha kritikus természet.',
+      kutya: 'Tuất — a hűség és az igazságérzet jegye: megbízható, védelmező, elveihez ragaszkodó.',
+      diszno: 'Hợi — a becsületesség, a türelem és a bőség jegye, a hagyományban a termékenységgel is összekötik: nyílt szívű, élvezetkedvelő természet.'
     }
   },
 

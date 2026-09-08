@@ -1368,7 +1368,8 @@
     if (vn) {
       var map = vn.animalMap || {};
       var vName = map[bz.year.animal] || bz.year.animalHu;
-      item(s, 'Vietnami zodiákus', vName, vn.intro || '');
+      var vText = get(vn, 'animalText.' + bz.year.animal, '');
+      item(s, 'Vietnami zodiákus', vName, (vText ? vText + ' ' : '') + (vn.intro || ''));
     }
 
     /* --- kilenc csillag ki (japán honmeisei) --- */
@@ -2268,7 +2269,12 @@
     if (lore) {
       var key = mp.key === 'ujhold' ? 'newMoon' : (mp.key === 'telihold' ? 'fullMoon' :
         (mp.waxing ? 'waxing' : 'waning'));
-      if (lore[key]) item(s, 'Holdhoz fűződő néphit', '', lore[key]);
+      var mpAge = mp.age.toFixed(1).replace('.', ',');
+      var mpVal = key === 'newMoon' ? 'újholdkor (holdújságkor) születtél'
+        : key === 'fullMoon' ? 'holdtöltekor születtél'
+        : (key === 'waxing' ? 'növő holdon születtél' : 'fogyó holdon születtél') + ' (' + mpAge + ' napos hold)';
+      if (lore[key]) item(s, 'Holdhoz fűződő néphit', mpVal, 'Te ' + mpVal + ' — a néphit szerint ' +
+        lore[key].charAt(0).toLowerCase() + lore[key].slice(1));
     }
 
     // populáris „cigány horoszkóp"
@@ -2369,6 +2375,21 @@
       'A bioritmus-elmélet szerint a ciklusok a születés pillanatában indulnak ' +
       'nulláról, és azóta megszakítás nélkül futnak. Minden érték ebből a ' +
       'napszámból következik.');
+    // a mai állás egy mondatban — a modell saját nyelvén, a cáfoltság jelzésével
+    var prim = full.values.filter(function (v) { return v.primary; });
+    var todayVal = prim.map(function (v) {
+      return v.name.toLowerCase() + ' ' + (v.percent > 0 ? '+' : '') + v.percent + '%';
+    }).join(' · ');
+    var todayTxt = prim.map(function (v) {
+      var st = v.phase === 'critical' ? 'ma nullátmeneten, „kritikus napon" van'
+        : v.phase === 'high' ? 'a pozitív, „magas" szakaszban jár' + (v.rising ? ' és még emelkedik' : ', de már ereszkedik')
+        : 'a negatív, „gyenge" szakaszban jár' + (v.rising ? ', de már kapaszkodik felfelé' : ' és még mélyül');
+      return signArt(v.name.toLowerCase()) + ' ciklusod ' + st;
+    }).join('; ');
+    item(b, 'A mai állásod', todayVal,
+      'A modell szerint ' + todayTxt + '. ' +
+      (full.criticalCount ? 'A hagyomány a kritikus napot baleset- és hibahajlamosnak tartja. ' : '') +
+      'Ez a cáfolt bioritmus-elmélet saját olvasata — a tényleges napi formádat az alvás, a fény és a terhelés adja, nem ez a görbe.');
     item(b, 'A teljes ciklus záródása', full.cycleRestart.toLocaleString('hu-HU') + ' nap múlva',
       'A három elsődleges ciklus 21 252 naponta — nagyjából 58 és fél évente — ' +
       'kerül újra egyszerre nullára, ugyanabba az állásba, mint a születésedkor.');
@@ -3909,8 +3930,14 @@
     // a négy Elsődleges Ajándék szövegesen is, hogy a szűrés/nyomtatás is adja
     var act = seqs[0];
     act.spheres.forEach(function (sp) {
+      // a szféra általános leírása helyett a SAJÁT kulcs tartalma (feladatlista 8.)
+      var own = sp.giftText || sp.keyNote || '';
+      var t = (own ? own + ' ' : '') +
+        'Árnyékként ' + (sp.shadowText ? sp.shadowText.replace(/\.$/, '') : sp.shadow.toLowerCase()) + '. ' +
+        (sp.lineName ? sp.line + '. vonal — ' + sp.lineName + ': ' + sp.lineText + ' ' : '') +
+        '(' + sp.name + ': ' + sp.text.charAt(0).toLowerCase() + sp.text.slice(1) + ')';
       item(s, sp.name + ' — ' + sp.gate + '. génkulcs, ' + sp.line + '. vonal',
-        sp.shadow + ' → ' + sp.gift + ' → ' + sp.siddhi, sp.text);
+        sp.shadow + ' → ' + sp.gift + ' → ' + sp.siddhi, t);
     });
 
     s.notes.push(GK.intro);
