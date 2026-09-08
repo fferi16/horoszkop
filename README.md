@@ -149,7 +149,8 @@ jelenleg retrográd bolygók, mai névnap és jeles nap.
 
 ```
 app/
-  index.html            a felület váza
+  index.html            a felület váza — egyetlen szkriptet tölt be: js/modules.js
+  js/modules.js         az összes modul dokumentált, sorrendtartó listája (ide kerül az új)
   server.js             helyi kiszolgáló fejlesztéshez
   css/style.css         világos és sötét témával, nyomtatásra optimalizálva
   js/lib/               Astronomy Engine (MIT licenc)
