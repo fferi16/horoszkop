@@ -235,6 +235,7 @@ A motor több független referenciaponttal van hitelesítve:
 | 25 | [Draconikus, Vertex, aszteroidák](docs/25-draconikus-vertex-aszteroidak.md) | a Vertex trópusi degenerációja, aszteroida-pontosság JPL-méréssel |
 | 26 | [A hagyomány nedvei](docs/26-dosha.md) | váta/pitta/kapha a BPHS és a Sāravalī szerint — és miért nem ájurvédikus alkatmeghatározás |
 | 27 | [Éves profekció és az év ura](docs/27-profekcio.md) | Valens IV.11, Paulus 31, Firmicus II.27, Brennan — az év ura natális állapota, havi profekció, Nap/Hold-profekció |
+| 28 | [Szolár és progressziók](docs/28-szolar-es-progressziok.md) | Volguine, Shea, Eshelman, Blaschke/Brady — a szolár ASC és ura, a szolár Hold háza, a progresszív Hold évszaka |
 
 Minden fejezet magyar nyelvű, táblázatos, forrásmegjelöléssel, és következetesen
 elválasztja a hiteles hagyományt a modern konstrukcióktól, illetve a tudományt az
