@@ -10,6 +10,9 @@
 (function () {
   'use strict';
 
+  /* Cache-törés: minden kiadásnál emeld (az index.html-ben is ugyanez legyen). */
+  var VERSION = '2026-09-08a';
+
   var MODULES = [
     /* ---- csillagászati könyvtár (Astronomy Engine, MIT) ---- */
     'lib/astronomy.browser.js',
@@ -91,7 +94,7 @@
   var base = document.currentScript.src.replace(/modules\.js.*$/, '');
   MODULES.forEach(function (path) {
     var s = document.createElement('script');
-    s.src = base + path;
+    s.src = base + path + '?v=' + VERSION;
     s.async = false;
     document.head.appendChild(s);
   });

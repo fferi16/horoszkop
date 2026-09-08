@@ -9,6 +9,7 @@
   "scripts": {
     "start": "electron .",
     "web": "node app/server.js",
+    "test": "node tests/run.js",
     "dist": "electron-builder --win"
   },
   "build": {

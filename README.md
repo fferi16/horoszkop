@@ -185,6 +185,13 @@ hibaforrása.
 
 ### Ellenőrzött számítások
 
+A gépi önellenőrzés a `tests/` mappában van, függőség nélkül: `npm test` (vagy
+`node tests/run.js hd lots` egy-egy témára). A böngésző nélküli futtató a `modules.js`
+sorrendjében tölti be az összes modult, és a lenti táblázat állításait ellenőrzi —
+plusz négy teljes profilt épít fel (idővel és idő nélkül), hogy egyetlen szekció se
+essen szét és ne maradjon „undefined" a szövegekben.
+
+
 A motor több független referenciaponttal van hitelesítve:
 
 | Amit ellenőriztünk | Referencia |
