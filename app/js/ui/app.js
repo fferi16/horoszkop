@@ -1371,6 +1371,7 @@
     $('btnSave').hidden = false;
     $('btnPrint').hidden = false;
     applyFilter(state.filter);
+    layoutToc();          // csak most, amikor a #result már látható és mérhető
     bindChronoTool();
     $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -1522,6 +1523,22 @@
       }, { rootMargin: '-40px 0px 0px 0px' });
       grid._io.observe(grid);
     }
+  }
+
+  /* A blokkok magasságát megmérjük, és annyi 8px-es rácssort adunk nekik,
+     amennyi kell — a rács így lyukak nélkül, a sorrendet megtartva pakol. */
+  function layoutToc() {
+    var grid = $('tocGrid');
+    if (!grid || !grid.children.length) return;
+    var cs = getComputedStyle(grid);
+    var unit = parseFloat(cs.gridAutoRows) || 8;
+    var gap = parseFloat(cs.rowGap) || 12;
+    var blocks = [].slice.call(grid.children);
+    blocks.forEach(function (b) { b.style.gridRowEnd = 'auto'; });
+    var spans = blocks.map(function (b) {
+      return Math.ceil((b.getBoundingClientRect().height + gap) / (unit + gap));
+    });
+    blocks.forEach(function (b, i) { b.style.gridRowEnd = 'span ' + spans[i]; });
   }
 
   /* ---------------- szűrés ---------------- */
@@ -2239,6 +2256,11 @@
         e.preventDefault(); e.target.click();
       }
     });
+    var rsz = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(rsz); rsz = setTimeout(layoutToc, 120);
+    });
+
     $('crumbUp').addEventListener('click', function () {
       $('tocGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
