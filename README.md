@@ -234,6 +234,7 @@ A motor több független referenciaponttal van hitelesítve:
 | 24 | [Firdaria](docs/24-firdaria.md) | perzsa időurak, a vitatott éjszakai sorrend, alperiódusok — Abu Ma'sar alapján |
 | 25 | [Draconikus, Vertex, aszteroidák](docs/25-draconikus-vertex-aszteroidak.md) | a Vertex trópusi degenerációja, aszteroida-pontosság JPL-méréssel |
 | 26 | [A hagyomány nedvei](docs/26-dosha.md) | váta/pitta/kapha a BPHS és a Sāravalī szerint — és miért nem ájurvédikus alkatmeghatározás |
+| 27 | [Éves profekció és az év ura](docs/27-profekcio.md) | Valens IV.11, Paulus 31, Firmicus II.27, Brennan — az év ura natális állapota, havi profekció, Nap/Hold-profekció |
 
 Minden fejezet magyar nyelvű, táblázatos, forrásmegjelöléssel, és következetesen
 elválasztja a hiteles hagyományt a modern konstrukcióktól, illetve a tudományt az

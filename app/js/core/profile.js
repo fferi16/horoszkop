@@ -2416,13 +2416,8 @@
 
     item(s, 'Életkor', age.years + ' év (' + age.days.toLocaleString('hu-HU') + ' nap)', '');
 
-    // éves profekció
-    if (out.input.hasTime && out.chart.ascSign) {
-      var pr = C.profection(age.years, out.chart.ascSign.index);
-      item(s, 'Éves profekció', pr.house + '. ház – ' + pr.sign,
-        'A hellenisztikus technika szerint ebben az életévedben ez a ház és jegy ' +
-        'kerül fókuszba; a jegy uralkodója az „év ura".');
-    }
+    // éves és havi profekció, az év ura (docs/27-profekcio.md)
+    buildProfection(out, s);
 
     // Szaturnusz-visszatérés
     var natalSat = out.chart.planets.saturn.lon;
@@ -2474,6 +2469,209 @@
     if (todayFeast) item(s, 'Mai jeles nap', todayFeast.name || '', todayFeast.text || '');
 
     out.sections.push(s);
+  }
+
+  /* ================= éves profekció és az év ura ================= */
+
+  /* A profektált ház témái — a hellenisztikus házjelentések (Valens IV.11,
+     Brennan összefoglalása), NEM a modern pszichológiai házkulcsok. */
+  var PROF_HOUSE = {
+    1: 'a test, az egészség, a jellem és a saját újrakezdés',
+    2: 'a pénz, a megélhetés és a vagyon',
+    3: 'a testvérek, a tanulás, a rövid utak és a kommunikáció',
+    4: 'a szülők, az otthon, a lakhely és a család',
+    5: 'a gyermekek, az alkotás, a szerelem és az öröm',
+    6: 'a betegség, a sérülés, a kötelességből végzett munka és az alárendeltek',
+    7: 'a házasság, a társ, a szerződéses kapcsolatok és a nyílt ellenfelek',
+    8: 'a válság, az örökség, mások pénze és a nagy lezárások',
+    9: 'az utazás, a külföld, a felsőbb tanulás és a hit',
+    10: 'a hivatás, a hírnév, az előrelépés és a feljebbvalók',
+    11: 'a barátok, a csoportok, a szövetségek és a remények',
+    12: 'a veszteség, a betegség, az elzártság és a rejtett ellenségek'
+  };
+  var CLASSICAL = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn'];
+  var PROF_BENEFIC = ['venus', 'jupiter'], PROF_MALEFIC = ['mars', 'saturn'];
+
+  /* Az év ura szekta szerinti minősége (Brennan, ep. 153; Valens IV.11). */
+  function sectQuality(key, sect) {
+    if (!sect) return '';
+    var day = sect === 'day';
+    var sn = day ? 'nappali' : 'éjszakai';
+    var Sn = day ? 'A nappali' : 'Az éjszakai';
+    if (key === 'jupiter' || key === 'venus') {
+      var inSectB = day ? key === 'jupiter' : key === 'venus';
+      return inSectB
+        ? ' ' + Sn + ' képletedben ez a szektádhoz tartozó jótevő — a hagyomány szerint ez a legkönnyebben járó fajta év.'
+        : ' Jótevő, bár nem a ' + sn + ' szektádhoz tartozó: segít, de mérsékeltebben, mint a szekta saját jótevője tenné.';
+    }
+    if (key === 'mars' || key === 'saturn') {
+      var inSectM = day ? key === 'saturn' : key === 'mars';
+      return inSectM
+        ? ' ' + Sn + ' képletedben ez a szektádhoz tartozó rosszindulatú bolygó: követel és fegyelmez, de a hagyomány szerint kezelhető formában.'
+        : ' ' + Sn + ' képletedben ez a szektán kívüli rosszindulatú bolygó — a hagyomány ezt tartja a legpróbálóbb fajta évnek, ezért érdemes a támogató fényszögeket is figyelembe venni.';
+    }
+    return ' A ' + (key === 'sun' ? 'Nap' : key === 'moon' ? 'Hold' : 'Merkúr') +
+      ' semleges úr: az évet nem a természete, hanem a képletbeli helyzete és fényszögei színezik.';
+  }
+
+  /** Jótevő/rosszindulatú fényszögek egy natális pontra (Valens II.17 mintájára). */
+  function profContacts(c, lon, skipKey) {
+    var hits = [];
+    PROF_BENEFIC.concat(PROF_MALEFIC).forEach(function (k) {
+      var p = c.planets[k];
+      if (!p || k === skipKey) return;
+      var d = Math.abs(HCORE.angleDiff(p.lon, lon)), asp = null;
+      if (d <= 8) asp = 'együttállása';
+      else if (Math.abs(d - 180) <= 8) asp = 'szembenállása';
+      else if (Math.abs(d - 120) <= 7) asp = 'trigonja';
+      else if (Math.abs(d - 90) <= 7) asp = 'kvadrátja';
+      else if (Math.abs(d - 60) <= 5) asp = 'szextilje';
+      if (asp) hits.push({ key: k, name: p.name, aspect: asp, benefic: PROF_BENEFIC.indexOf(k) >= 0 });
+    });
+    return hits;
+  }
+
+  function signArt(name) { return (/^[AÁEÉIÍOÓÖŐUÚÜŰ]/.test(name) ? 'az ' : 'a ') + name; }
+  /* -tól/-től a bolygónevekhez (Jupitertől, a többi -tól). */
+  function fromPlanet(name) { return name + (/^Jupiter$/.test(name) ? 'től' : 'tól'); }
+
+  function buildProfection(out, s) {
+    var c = out.chart, now = new Date();
+    if (!c || !c.planets || !c.planets.sun || !out.age) return;
+    var hasAsc = !!(out.input.hasTime && c.ascSign && c.houses);
+    var start = hasAsc ? c.ascSign : c.planets.sun.sign;
+    var years = out.age.years;
+    var pr = C.profection(years, start.index);
+    var signKey = HCORE.SIGN_KEYS[pr.signIndex];
+    var lordKey = TRAD_DOM[signKey];
+    var lord = c.planets[lordKey];
+    if (!lord) return;
+
+    // az év határai: születésnaptól születésnapig
+    var bm = out.input.month - 1, bd = out.input.day;
+    var lastBday = new Date(now.getFullYear(), bm, bd);
+    if (lastBday > now) lastBday = new Date(now.getFullYear() - 1, bm, bd);
+    var nextBday = new Date(lastBday.getFullYear() + 1, bm, bd);
+    var span = fmtTransitDate(lastBday) + ' – ' + fmtTransitDate(nextBday);
+
+    var origin = hasAsc ? 'az Aszcendensedtől' : 'a napjegyedtől';
+    var t = 'A ' + (years + 1) + '. életévedben (' + span + ') ' + origin +
+      ' számolt egészjegyes ' + pr.house + '. ház, ' + signArt(pr.sign) + ' jegye aktív: ' +
+      PROF_HOUSE[pr.house] + ' ügyei kerülnek előtérbe.';
+    if (years % 12 === 0) {
+      t += ' Ez tizenkét éves ciklus nyitó éve — a hagyomány szerint 12, 24, 36, 48, 60 évesen ' +
+        'mindig az 1. ház jön: új életszakasz, a saját test és személy újraalapozása.';
+    }
+    if (!hasAsc) {
+      t += ' Születési idő nélkül nincs Aszcendens, ezért a Napból profektálunk (Firmicus II.27 ' +
+        'és Valens IV.11 is ismeri ezt): a Nap-profekció a hagyomány szerint a rang, az elismerés ' +
+        'és az apa ügyeit mutatja, a ház-tematika pedig itt a napjegytől számolt házat jelenti.';
+    }
+
+    // az év ura és natális állapota — a ház itt EGÉSZJEGYES, mint maga a profekció
+    var wsHouse = function (p) { return ((p.sign.index - start.index + 12) % 12) + 1; };
+    var lordHouse = hasAsc ? wsHouse(lord) : null;
+    var dig = tradDignity(lordKey, lord.sign.key);
+    var ang = hasAsc ? angularity(lordHouse) : null;
+    t += ' Az év ura ' + signArt(pr.sign) + ' hagyományos uralkodója, a ' + lord.name + ', amely a képletedben ' +
+      SIGN_IN[lord.sign.key] + (lordHouse ? ', egészjegyes számítással ' + houseArticle(lordHouse) + ' ' + lordHouse + '. házban' : '') +
+      ' áll, ' + dig.name + (ang ? ', ' + ang.name : '') + (lord.retrograde ? ', retrográd mozgással' : '') + '.';
+    if (dig.name !== 'vendégségben') t += ' ' + dig.text;
+    if (ang) t += ' ' + ang.text;
+    t += sectQuality(lordKey, out.sect);
+    if (lordHouse && lordHouse !== pr.house) {
+      t += ' Ez a Brennan-féle „átvitel": a ' + pr.house + '. ház témái idén ' + houseArticle(lordHouse) + ' ' +
+        lordHouse + '. ház felől — ' + PROF_HOUSE[lordHouse] + ' irányából — kapnak formát.';
+    } else if (lordHouse === pr.house) {
+      t += ' Az úr a saját házában áll, így az év témája önmagából, külső közvetítés nélkül bontakozik ki.';
+    }
+
+    // jótevő/rosszindulatú fényszögek az év urára
+    var hits = profContacts(c, lord.lon, lordKey);
+    if (hits.length) {
+      var good = hits.filter(function (h) { return h.benefic; }), bad = hits.filter(function (h) { return !h.benefic; });
+      var parts = [];
+      if (good.length) parts.push(good.map(function (h) { return 'a ' + h.name + ' ' + h.aspect; }).join(' és ') + ' támogatja');
+      if (bad.length) parts.push(bad.map(function (h) { return 'a ' + h.name + ' ' + h.aspect; }).join(' és ') + ' nehezíti');
+      t += ' Az év urát a képletedben ' + parts.join(', ') + '.';
+    } else {
+      t += ' Az év urát sem jótevő, sem rosszindulatú bolygó nem érinti szorosan a képletedben — az évet nem torzítja el erős segítség vagy akadály.';
+    }
+
+    // natális bolygók a profektált jegyben (Valens V.7: az átadást ők kapják)
+    var occ = CLASSICAL.filter(function (k) { return c.planets[k] && c.planets[k].sign.index === pr.signIndex; });
+    if (occ.length) {
+      var names = occ.map(function (k) { return signArt(c.planets[k].name); });
+      var desc = occ.map(function (k) {
+        if (PROF_BENEFIC.indexOf(k) >= 0) return 'a ' + c.planets[k].name + ' jótevőként könnyíti';
+        if (PROF_MALEFIC.indexOf(k) >= 0) return 'a ' + c.planets[k].name + ' rosszindulatúként próbára teszi';
+        return 'a ' + c.planets[k].name + ' a saját természete (' +
+          (k === 'sun' ? 'az önazonosság és az elismerés' : k === 'moon' ? 'a közérzet, az otthon és a nők' : 'a beszéd, az üzlet és a tanulás') + ') felől színezi';
+      });
+      t += ' A profektált jegyben a képletedben ' + names.join(', ') + ' áll — Valens szerint ilyenkor az átadást elsősorban ' +
+        (occ.length > 1 ? 'ők kapják' : 'ez a bolygó kapja') + ', nem az uralkodó: ' + desc.join('; ') + ' az évet.';
+    } else {
+      t += ' A profektált jegy a képletedben üres, ezért Valens szabálya szerint egyedül az uralkodójától, a ' + fromPlanet(lord.name) + ' függ az év.';
+    }
+
+    // most futó tranzitok a profektált jegyen át és az év urához
+    var transiting = [];
+    HCORE.BODIES.forEach(function (b) {
+      if (CLASSICAL.indexOf(b.key) < 0 || b.key === 'moon') return;
+      var lon = HCORE.eclipticLongitude(b.body, now);
+      if (HCORE.toSign(lon).index === pr.signIndex) transiting.push(b.name);
+    });
+    var toLord = [];
+    ['jupiter', 'saturn'].forEach(function (k) {
+      var b = null; HCORE.BODIES.forEach(function (x) { if (x.key === k) b = x; });
+      if (!b) return;
+      var d = Math.abs(HCORE.angleDiff(HCORE.eclipticLongitude(b.body, now), lord.lon)), asp = null;
+      if (d <= 3) asp = 'együttáll'; else if (Math.abs(d - 180) <= 3) asp = 'szemben áll';
+      else if (Math.abs(d - 90) <= 3) asp = 'kvadrátot vet'; else if (Math.abs(d - 120) <= 3) asp = 'trigont vet';
+      if (asp) toLord.push('a ' + b.name + ' ' + asp);
+    });
+    if (transiting.length || toLord.length) {
+      t += ' Ma:';
+      if (transiting.length) t += ' a profektált jegyen most ' + transiting.join(', ') + ' halad át — a hagyomány szerint az ilyen tranzit ebben az évben nyomatékosabb.';
+      if (toLord.length) t += ' Az év urára ' + toLord.join(', ') + ' (3°-on belül), ami Brennan szerint az év egyik kiemelt időszaka.';
+    }
+
+    var label = hasAsc ? 'Éves profekció' : 'Éves profekció (a Napból)';
+    item(s, label, pr.house + '. ház – ' + pr.sign + ' · az év ura: ' + lord.name, t);
+
+    // havi profekció: a születésnaptól havonta egy jegy, az éves jegyből indulva
+    var months = (now.getFullYear() - lastBday.getFullYear()) * 12 + now.getMonth() - lastBday.getMonth();
+    if (now.getDate() < bd) months--;
+    months = Math.max(0, Math.min(11, months));
+    var mIdx = (pr.signIndex + months) % 12, mHouse = ((pr.house - 1 + months) % 12) + 1;
+    var mKey = HCORE.SIGN_KEYS[mIdx], mLord = c.planets[TRAD_DOM[mKey]];
+    var mStart = new Date(lastBday.getFullYear(), lastBday.getMonth() + months, bd);
+    var mEnd = new Date(lastBday.getFullYear(), lastBday.getMonth() + months + 1, bd);
+    var mOcc = CLASSICAL.filter(function (k) { return c.planets[k] && c.planets[k].sign.index === mIdx; })
+      .map(function (k) { return signArt(c.planets[k].name); });
+    item(s, 'Havi profekció', (months + 1) + '. hónap · ' + HCORE.SIGN_NAMES[mIdx] + ' (' + mHouse + '. ház)',
+      'A születésnapodtól számolt ' + (months + 1) + '. hónapban (' + fmtTransitDate(mStart) + ' – ' + fmtTransitDate(mEnd) +
+      ') az éves jegytől továbblépve ' + signArt(HCORE.SIGN_NAMES[mIdx]) + ' jegye és ' + houseArticle(mHouse) + ' ' + mHouse + '. ház van soron: ' +
+      PROF_HOUSE[mHouse] + ' ügyei. A hónap ura a ' + (mLord ? mLord.name : '?') +
+      (mLord && mLord.sign.index !== mIdx ? ', amely a képletedben ' + SIGN_IN[mLord.sign.key] + ' áll' : '') + '.' +
+      (mOcc.length ? ' A hónap jegyében a képletedben ' + mOcc.join(', ') + ' áll, ezért ez a hónap az évnél is hangsúlyosabb.' : '') +
+      ' (Ptolemaiosz 28, Abu Ma\'shar 30 napos hónapokkal számolt; itt a születésnap-évforduló szerinti hónapokat használjuk.)');
+
+    // Nap- és Hold-profekció (Valens IV.11: rang és apa / egészség és anya)
+    if (hasAsc) {
+      var sp = C.profection(years, c.planets.sun.sign.index), mp2 = C.profection(years, c.planets.moon.sign.index);
+      var sK = HCORE.SIGN_KEYS[sp.signIndex], mK = HCORE.SIGN_KEYS[mp2.signIndex];
+      var sL = c.planets[TRAD_DOM[sK]], mL = c.planets[TRAD_DOM[mK]];
+      var q = function (k) { return PROF_BENEFIC.indexOf(k) >= 0 ? 'jótevő' : PROF_MALEFIC.indexOf(k) >= 0 ? 'rosszindulatú' : 'semleges'; };
+      var both = q(TRAD_DOM[sK]) === 'jótevő' && q(TRAD_DOM[mK]) === 'jótevő';
+      item(s, 'Nap- és Hold-profekció', 'Nap → ' + sp.sign + ' · Hold → ' + mp2.sign,
+        'Valens nemcsak az Aszcendenst, hanem a Napot és a Holdat is továbblépteti. A Napodból számolva idén ' +
+        signArt(sp.sign) + ' jegye van soron (ura a ' + sL.name + ', ' + q(TRAD_DOM[sK]) + ') — ez a rang, az elismerés és az apa ügyeit mutatja; ' +
+        'a Holdadból ' + signArt(mp2.sign) + ' jegye (ura a ' + mL.name + ', ' + q(TRAD_DOM[mK]) + ') — ez az egészség, a közérzet és az anya ügyeit. ' +
+        (PROF_MALEFIC.indexOf(lordKey) >= 0 && both
+          ? 'Valens IV.11 szerint ha rosszindulatú uralja az évet, de a fények jótevőhöz érnek, az év „némi kétség, aggodalom és bosszúság után erőteljes és kiemelkedő lesz" — a te képletedben pontosan ez a felállás.'
+          : 'Valens szerint a három pont együtt ítéli meg az évet: az Aszcendens-profekció adja a fő témát, a Nap és a Hold profekciója a rangot, illetve a testi közérzetet.'));
+    }
   }
 
   /* ================= a következő 5 év tranzitjai ================= */
@@ -3077,6 +3275,52 @@
 
   /* ================= sorsrészek és firdaria ================= */
 
+  /* ================= hagyományos méltóság és angularitás =================
+     A sorsrészek (buildLots) és az éves profekció (buildProfection) közös
+     segédei — docs/23-sorsreszek.md, docs/27-profekcio.md. */
+
+  var ANGULAR = [1, 4, 7, 10], SUCCEDENT = [2, 5, 8, 11];
+
+  /* HAGYOMÁNYOS méltóság: a nyugati adattábla modern uralkodókkal dolgozik
+     (Skorpió = Plútó, Vízöntő = Uránusz), ami hellenisztikus technikában
+     értelmezhetetlen — egy Skorpióban álló Mars így nem kapna otthon-jelzést. */
+  var TRAD_DOM = {
+    kos: 'mars', bika: 'venus', ikrek: 'mercury', rak: 'moon',
+    oroszlan: 'sun', szuz: 'mercury', merleg: 'venus', skorpio: 'mars',
+    nyilas: 'jupiter', bak: 'saturn', vizonto: 'saturn', halak: 'jupiter'
+  };
+  var TRAD_EXALT = {
+    kos: 'sun', bika: 'moon', szuz: 'mercury', halak: 'venus',
+    bak: 'mars', rak: 'jupiter', merleg: 'saturn'
+  };
+  var OPPOSITE = {
+    kos: 'merleg', bika: 'skorpio', ikrek: 'nyilas', rak: 'bak',
+    oroszlan: 'vizonto', szuz: 'halak', merleg: 'kos', skorpio: 'bika',
+    nyilas: 'ikrek', bak: 'rak', vizonto: 'oroszlan', halak: 'szuz'
+  };
+  function tradDignity(pkey, signKey) {
+    if (TRAD_DOM[signKey] === pkey)
+      return { name: 'otthonában', text: 'Saját jegyében: a hagyomány szerint itt működik a legszabadabban.' };
+    if (TRAD_EXALT[signKey] === pkey)
+      return { name: 'felmagasztalva', text: 'Exaltációban: kiemelt, ünnepi működés.' };
+    var opp = OPPOSITE[signKey];
+    if (opp && TRAD_DOM[opp] === pkey)
+      return { name: 'száműzetésben', text: 'Száműzetésben: a jegy természete szemben áll a bolygóéval.' };
+    if (opp && TRAD_EXALT[opp] === pkey)
+      return { name: 'esésben', text: 'Esésben: itt a leghalkabb — több tudatosságot kér.' };
+    return { name: 'vendégségben', text: 'Se nem erősíti, se nem gyengíti a jegy (peregrinus).' };
+  }
+
+  function angularity(hs) {
+    if (!hs) return null;
+    if (ANGULAR.indexOf(hs) >= 0)
+      return { key: 'sarok', name: 'sarokházban', text: 'A legerősebb elhelyezés.' };
+    if (SUCCEDENT.indexOf(hs) >= 0)
+      return { key: 'kovetkezo', name: 'következő házban', text: 'Közepesen erős elhelyezés.' };
+    return { key: 'lehanyatlo', name: 'lehanyatló házban',
+      text: 'A hagyomány szerint ez a gyengébb elhelyezés — Valens a nehezebb esetek közé sorolja.' };
+  }
+
   function buildLots(out) {
     var LD = get(D(), 'lots', null);
     var FD = get(D(), 'firdaria', null);
@@ -3108,48 +3352,6 @@
     /* Valens szerint a sorsrészt NEM jegy vagy ház szerint értelmezzük — a
        „Fortuna a 12 házban" séma modern kitalálmány. Ami attesztált:
        az angularitás foka, és az UR állása. (docs/23-sorsreszek.md) */
-    var ANGULAR = [1, 4, 7, 10], SUCCEDENT = [2, 5, 8, 11];
-
-    /* HAGYOMÁNYOS méltóság: a nyugati adattábla modern uralkodókkal dolgozik
-       (Skorpió = Plútó, Vízöntő = Uránusz), ami hellenisztikus technikában
-       értelmezhetetlen — egy Skorpióban álló Mars így nem kapna otthon-jelzést. */
-    var TRAD_DOM = {
-      kos: 'mars', bika: 'venus', ikrek: 'mercury', rak: 'moon',
-      oroszlan: 'sun', szuz: 'mercury', merleg: 'venus', skorpio: 'mars',
-      nyilas: 'jupiter', bak: 'saturn', vizonto: 'saturn', halak: 'jupiter'
-    };
-    var TRAD_EXALT = {
-      kos: 'sun', bika: 'moon', szuz: 'mercury', halak: 'venus',
-      bak: 'mars', rak: 'jupiter', merleg: 'saturn'
-    };
-    var OPPOSITE = {
-      kos: 'merleg', bika: 'skorpio', ikrek: 'nyilas', rak: 'bak',
-      oroszlan: 'vizonto', szuz: 'halak', merleg: 'kos', skorpio: 'bika',
-      nyilas: 'ikrek', bak: 'rak', vizonto: 'oroszlan', halak: 'szuz'
-    };
-    function tradDignity(pkey, signKey) {
-      if (TRAD_DOM[signKey] === pkey)
-        return { name: 'otthonában', text: 'Saját jegyében: a hagyomány szerint itt működik a legszabadabban.' };
-      if (TRAD_EXALT[signKey] === pkey)
-        return { name: 'felmagasztalva', text: 'Exaltációban: kiemelt, ünnepi működés.' };
-      var opp = OPPOSITE[signKey];
-      if (opp && TRAD_DOM[opp] === pkey)
-        return { name: 'száműzetésben', text: 'Száműzetésben: a jegy természete szemben áll a bolygóéval.' };
-      if (opp && TRAD_EXALT[opp] === pkey)
-        return { name: 'esésben', text: 'Esésben: itt a leghalkabb — több tudatosságot kér.' };
-      return { name: 'vendégségben', text: 'Se nem erősíti, se nem gyengíti a jegy (peregrinus).' };
-    }
-
-    function angularity(hs) {
-      if (!hs) return null;
-      if (ANGULAR.indexOf(hs) >= 0)
-        return { key: 'sarok', name: 'sarokházban', text: 'A legerősebb elhelyezés.' };
-      if (SUCCEDENT.indexOf(hs) >= 0)
-        return { key: 'kovetkezo', name: 'következő házban', text: 'Közepesen erős elhelyezés.' };
-      return { key: 'lehanyatlo', name: 'lehanyatló házban',
-        text: 'A hagyomány szerint ez a gyengébb elhelyezés — Valens a nehezebb esetek közé sorolja.' };
-    }
-
     /** A sorsrész ura (HAGYOMÁNYOS uralkodó) és annak natális állása. */
     function rulerOf(lon) {
       var sd = signData(HCORE.toSign(lon).key);
