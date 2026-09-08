@@ -2941,20 +2941,52 @@
 
     /* --- szolárhoroszkóp --- */
     var sr = HCORE.activeSolarReturn(out.chart.planets.sun.lon, out.utc, now);
+    var hasTime = !!(out.input.hasTime && out.chart.houses);
     var srChart = HCORE.chart({
       date: sr.start, lat: out.place.lat, lon: out.place.lon,
       system: out.input.houseSystem || 'placidus', withHouses: true
     });
+    var HOUSES = get(D(), 'western.houses', []);
+    var houseTitle = function (n) { return HOUSES[n - 1] ? HOUSES[n - 1].title.toLowerCase() : ''; };
     item(s, 'A mostani szolár éved',
       fmtTransitDate(sr.start) + ' – ' + fmtTransitDate(sr.end), AD.solarIntro);
-    if (srChart.ascSign) {
-      item(s, 'A szolárképlet aszcendense',
-        srChart.ascSign.name + ' (' + srChart.ascSign.text + ')',
-        'Az év „fellépése", stílusa — ilyen hangnemben szólít meg az idei éved. ' +
-        get(D(), 'western.ascendantText.' + srChart.ascSign.key, ''));
+
+    if (hasTime && srChart.ascSign) {
+      // szolár aszcendens: az év fellépése + melyik születési házba esik + az ura
+      var sa = srChart.ascSign;
+      var saNatalHouse = HCORE.houseOf(srChart.houses.asc, out.chart.houses.cusps);
+      var saRulerName = (signData(sa.key) || {}).ruler;
+      var saRuler = null;
+      for (var rk in srChart.planets) if (srChart.planets[rk].name === saRulerName) saRuler = srChart.planets[rk];
+      var ascText = 'Az idei éved fellépése: ' + get(AD, 'srAsc.' + sa.key, '') +
+        ' ' + AD.srAscNatalHouse.replace('%H%', saNatalHouse).replace('%T%', houseTitle(saNatalHouse));
+      if (saRuler && saRuler.house) {
+        ascText += ' A szolár aszcendens ura, a ' + saRuler.name + ', a szolárképlet ' + saRuler.house +
+          '. házában (' + houseTitle(saRuler.house) + ') áll — Shea szerint ez a bolygó az év ura, és a háza mutatja, honnan jönnek az év fő eseményei.';
+      }
+      item(s, 'A szolárképlet aszcendense', sa.name + ' (' + sa.text + ')', ascText);
+
+      // születési bolygók a szolár sarokpontokon
+      var angles = [['aszcendens', srChart.houses.asc], ['MC', srChart.houses.mc],
+        ['deszcendens', srChart.houses.asc + 180], ['IC', srChart.houses.mc + 180]];
+      var onAngle = [];
+      CLASSICAL.forEach(function (k) {
+        var np = out.chart.planets[k];
+        if (!np) return;
+        angles.forEach(function (a) {
+          if (Math.abs(HCORE.angleDiff(np.lon, a[1])) <= 3) onAngle.push({ name: signArt(np.name), angle: a[0] });
+        });
+      });
+      if (onAngle.length) {
+        item(s, 'Születési bolygó a szolár sarokponton',
+          onAngle.map(function (o) { return o.name + ' – ' + o.angle; }).join(', '),
+          AD.srAngles.replace('%P%', onAngle.map(function (o) { return o.name; }).join(', '))
+            .replace('%A%', onAngle.map(function (o) { return o.angle; }).join(', ')));
+      }
+
       var sunHouse = srChart.planets.sun.house;
       if (sunHouse) {
-        var hMeta = get(D(), 'western.houses', [])[sunHouse - 1];
+        var hMeta = HOUSES[sunHouse - 1];
         item(s, 'Az év fő hangsúlya: ' + sunHouse + '. ház' +
           (hMeta ? ' — ' + hMeta.title : ''), '',
           'A szolárképletben a Nap háza mutatja, mely életterület áll az év ' +
@@ -2962,9 +2994,14 @@
           (get(D(), 'western.planetInHouse.sun.' + sunHouse, '') ||
            get(D(), 'westernExt.planetInHouse.sun.' + sunHouse, '')));
       }
-      item(s, 'A szolár Hold', srChart.planets.moon.sign.name +
-        (srChart.planets.moon.house ? ' · ' + srChart.planets.moon.house + '. ház' : ''),
-        'Az év érzelmi alaphangja és igényei ebből a jegyből szólnak.');
+      var srMoon = srChart.planets.moon;
+      item(s, 'A szolár Hold', srMoon.sign.name + (srMoon.house ? ' · ' + srMoon.house + '. ház' : ''),
+        (srMoon.house ? get(AD, 'srMoonHouse.' + srMoon.house, '') + ' ' : '') +
+        'Az év érzelmi hangneme a ' + srMoon.sign.name + ' jegyéből szól: ' + get(AD, 'srMoonSign.' + srMoon.sign.key, '') + '.');
+    } else {
+      var srMoon0 = srChart.planets.moon;
+      item(s, 'A szolár Hold', srMoon0.sign.name,
+        'Az év érzelmi hangneme a ' + srMoon0.sign.name + ' jegyéből szól: ' + get(AD, 'srMoonSign.' + srMoon0.sign.key, '') + '. ' + AD.srNoTime);
     }
     s.notes.push(AD.solarNote);
 
@@ -2980,7 +3017,7 @@
     item(s, 'Szekunder progressziók', '', AD.progIntro);
     item(s, 'Progresszív Nap', progSun.text,
       (progSun.index === natalSunSign.index
-        ? AD.progSunSame : AD.progSunShift).replace('%S%', progSun.name));
+        ? AD.progSunSame : AD.progSunShift).replace('a %S%', signArt(progSun.name)));
 
     // a progresszív Hold jegyváltása: hátralévő fok / napi (=évi) mozgás
     var moonSpeed = HCORE.dailyMotion('Moon', pDate);      // fok / progressziós év
@@ -2991,9 +3028,18 @@
       var d2 = new Date(now.getTime() + yearsLeft * 365.2425 * 86400000);
       until = d2.getFullYear() + '. ' + HU_MONTHS[d2.getMonth()];
     }
-    item(s, 'Progresszív Hold', progMoon.text,
-      AD.progMoon.replace('%S%', progMoon.name)
-        .replace('%T%', until || 'a következő jegyváltásig'));
+    var pmText = AD.progMoon.replace('a %S%', signArt(progMoon.name))
+      .replace('%T%', until || 'a következő jegyváltásig') + ' ' +
+      get(AD, 'progMoonSign.' + progMoon.key, '');
+    if (until) pmText += ' A jegyváltás ' + until + ' körül jön: onnantól ' +
+      (progMoon.index % 2 === 0 ? 'befelé fordulóbb' : 'kifelé nyitóbb') + ' évszak következik (a jegyek felváltva kifelé és befelé irányulnak).';
+    if (hasTime) {
+      var pmHouse = HCORE.houseOf(progMoonLon, out.chart.houses.cusps);
+      pmText += ' ' + AD.progMoonHouse.replace('%H%', pmHouse).replace('%T%', houseTitle(pmHouse));
+      var hm = HOUSES[pmHouse - 1];
+      if (hm && hm.keywords) pmText += ' Kulcsszavai: ' + hm.keywords.join(', ') + '.';
+    }
+    item(s, 'Progresszív Hold', progMoon.text, pmText);
 
     var phase = HCORE.moonPhase(pDate);
     item(s, 'Progressziós holdfázis', phase.symbol + ' ' + phase.name,
