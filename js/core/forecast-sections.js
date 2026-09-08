@@ -76,11 +76,32 @@
 
   function eventText(ctx, ev) {
     var t = T(), q = ev.aspect.quality;
-    var txt = 'A tranzit ' + ev.planet.name + ' ' + ev.aspect.name + 'ba ér ' + (t.target[ev.target.key] || ev.target.name) + ': ' +
-      t.planet[ev.planet.key] + ', ' + t.quality[q] + '.';
-    if (q === 'conj' && t.conjNature[ev.planet.key]) txt += t.conjNature[ev.planet.key];
-    if (ev.house) txt += ' Az égen ez a képleted ' + ev.house + '. házában (' + ctx.houseTitle(ev.house) + ') zajlik.';
+    var pair = t.pair && t.pair[ev.planet.key] && t.pair[ev.planet.key][ev.target.key];
+    var txt;
+    if (pair && pair[q]) {
+      txt = pair[q];
+    } else {
+      txt = 'A tranzit ' + ev.planet.name + ' ' + ev.aspect.name + 'ba ér ' + (t.target[ev.target.key] || ev.target.name) + ': ' +
+        t.planet[ev.planet.key] + ', ' + t.quality[q] + '.';
+    }
+    if (ev.house) txt += ' (Az égen a képleted ' + ev.house + '. házában, ' + ctx.houseTitle(ev.house) + ' terepén.)';
     return txt;
+  }
+  /** A nap egy bekezdésben: a Hold háza + a legfontosabb érintések, folyó szöveggé fűzve. */
+  function daySummary(ctx, moonHouse, mp, events, voc, from, to) {
+    var t = T();
+    var parts = [];
+    var mh = (t.moonHouseLong && t.moonHouseLong[moonHouse]) || t.moonHouse[moonHouse];
+    parts.push(mh);
+    var ph = t.phase[mp.key];
+    if (ph) parts.push('A Hold ' + mp.name.toLowerCase() + ' fázisban jár — ' + ph.replace(/^[^:]+:\s*/, '') + '.');
+    var W = { sun: 2, venus: 2, mars: 2, mercury: 1.5, moon: 1 };
+    var sorted = events.slice().sort(function (a, b) { return (W[b.planet.key] || 1) - (W[a.planet.key] || 1); });
+    sorted.slice(0, 3).forEach(function (ev) {
+      parts.push(fmtTime(ev.date, ctx.tz) + '-kor a ' + ev.planet.name + ' ' + ev.aspect.name + 'ba ér ' + (t.target[ev.target.key] ? t.target[ev.target.key].split(' — ')[0] : ev.target.name) + ': ' + eventText(ctx, ev).replace(/ \(Az égen.*\)$/, ''));
+    });
+    if (voc.length) parts.push('Üresjárat ' + (from && voc[0].start < from ? 'tegnap ' : '') + fmtTime(voc[0].start, ctx.tz) + '-tól ' + (to && voc[0].end >= to ? 'holnap ' : '') + fmtTime(voc[0].end, ctx.tz) + '-ig: ekkor ne indíts újat, fejezz be, pihenj.');
+    return parts.join(' ');
   }
   function shortEvent(ctx, ev) {
     return fmtTime(ev.date, ctx.tz) + ' ' + ev.planet.symbol + ' ' + ev.aspect.name + ' ' + ev.target.symbol + ' ' + ev.target.name;
@@ -103,6 +124,8 @@
 
     item(s, fmtDay(mid, ctx.tz), bigThree(ctx) + ' · ' + ctx.place.name,
       (ctx.hasTime ? t.frame.asc.replace('%AS%', SIGN_IN[c.ascSign.key] || c.ascSign.name) : t.frame.noAsc) + ' ' + frameLine(ctx, now));
+
+    item(s, 'A nap egy bekezdésben', '', daySummary(ctx, moonHouse, mp, events, voc, from, to));
 
     item(s, 'A nap mérlege', Fc.DOMAINS.map(function (k) { return t.domains[k].icon + ' ' + starsText(sc.stars[k]); }).join('  '),
       (sc.reasons.length
@@ -222,7 +245,8 @@
       var tag = d === best && d.total > 0 ? ' · a hét legjobb napja' : d === worst && d.total < 0 ? ' · a hét legnehezebb napja' : '';
       item(s, (i === 0 ? 'Ma — ' : '') + fmtDay(d.mid, ctx.tz) + tag,
         Fc.DOMAINS.map(function (k) { return t.domains[k].icon + starsText(d.sc.stars[k]); }).join(' ') + ' · ☽ ' + d.moon.name + ' ' + d.moonHouse + '. ház',
-        (d.evs.length ? d.evs.map(function (ev) { return shortEvent(ctx, ev); }).join(' · ') + '.' : t.quiet) +
+        (d.evs.length ? d.evs.map(function (ev) { return shortEvent(ctx, ev); }).join(' · ') + '. ' +
+          eventText(ctx, d.evs.slice().sort(function (a, b) { return (b.planet.key === 'moon' ? 1 : 2) - (a.planet.key === 'moon' ? 1 : 2); })[0]).replace(/ \(Az égen.*\)$/, '') : t.quiet) +
         ' ' + t.moonHouse[d.moonHouse] + '.');
     });
     weekEvents(ctx, from, to, s, true);
