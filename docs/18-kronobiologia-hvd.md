@@ -528,3 +528,28 @@ Az app szempontjából ez akkor használható tisztességesen, ha **szórakoztat
 **Módszertani megjegyzés a rekonstrukcióhoz**
 
 Az 1. és 2. táblázatot először **visszafejtettem** a könyv egyetlen közölt példájából (1987 → 17 · 21 · 20, március → 22 · 23 · 11), kínai maradéktétellel megkeresve az `1981-12-31` horgonynapot. Ezután **megtaláltam a könyv eredeti táblázat-képeit** (base64-ben beágyazva a szabadon olvasható e-book-változatokba), és a képlet-alapú rekonstrukciót soronként összevetettem velük. A 3. táblázatot előbb egy kalkulátor 40 egymást követő dátumra adott kimenetéből építettem fel, majd a könyv 3. táblázat-képével **sorról sorra igazoltam** — az egyezés hiánytalan.
+
+---
+
+## 11. A kontúrtípusok leírása — forráshelyzet (2026-09-08 kiegészítés)
+
+A 3. táblázat 6 fizikai, 6 érzelmi és 10 intellektuális **típusnevet** ad (pl. „érzékeny
+kolerikus", „önzetlen, integratív", „analóg"), de **egyik elérhető forrás sem írja le, mit
+jelentenek**: Bekenyova I. része csak a címkéket közli (a típusleírásokat a II. részre,
+„Типологии личности", ígéri), a chakra-numerolog.ru könyvrészlet, a reikiblog.ru cikk és a
+chakra-diagnostic.com oldal szintén csak a neveket és a darabszámot (7/6/10) hozza; a
+kalkulátorok fizetős riportba zárják a szöveget.
+
+Ezért az appban (`hvd.js → typeText`) **saját olvasatok** szerepelnek, világosan jelölve:
+- a fizikai típusoknál a klasszikus nedvtan (szangvinikus/kolerikus/melankolikus/flegmatikus)
+  jelentése + a sor Muladhára/Szvadhisthána-értéke (pl. „érzékeny kolerikus" = alacsony
+  Muladhára, magas Szvadhisthána);
+- az érzelmi típusoknál a név és a Manipura (akarat) / Anahata (szív) arány;
+- az intellektuális típusoknál Pavlov *művészi / gondolkodó / kevert* típustana (1927), amelyre
+  az orosz nevek (художественный / мыслительный / смешанный) nyilvánvalóan épülnek, + a
+  Visuddha (kifejezés) / Adzsna (elemzés) arány; a „diszkrét–analóg" pár a részletező vs.
+  egészben látó gondolkodást jelöli.
+
+Minden kontúrsor emellett kiírja a felhasználó két csakraértékét a rendszer saját sávjaival
+(gyenge / normál / túlzott), így a szöveg a saját számaira vonatkozik, nem a kontúr általános
+definíciójára.

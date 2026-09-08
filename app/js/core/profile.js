@@ -1708,11 +1708,22 @@
       'A rendszer e három számmal indexeli a tábláit: az összes lenti kontúr- ' +
       'és csakraérték ebből a három induló állásból következik.');
 
+    // kontúrok: a típus leírása + a két csakraérték a rendszer sávjai szerint
+    var bandOf = function (v) {
+      var sc = HD.scale || [];
+      for (var bi = 0; bi < sc.length; bi++) if (v <= sc[bi].max) return sc[bi].name;
+      return '';
+    };
+    var chakraName = function (k) { return get(HD, 'chakraNames.' + k, k); };
     pr.contours.forEach(function (c) {
       var meta = HD.contours[c.key];
+      var tt = get(HD, 'typeText.' + c.key + '.' + c.type, '');
+      var parts = meta.chakras.map(function (ck, ci) {
+        return chakraName(ck) + ' ' + c.parts[ci] + '% (' + bandOf(c.parts[ci]) + ')';
+      }).join(', ');
       item(s, meta.name + ' — ' + (c.type || ''),
         c.parts[0] + '% + ' + c.parts[1] + '% = ' + c.sum,
-        meta.text);
+        (tt ? tt + ' ' : '') + 'Nálad: ' + parts + '. ' + meta.text);
     });
 
     item(s, 'Életenergia', String(pr.lifeEnergy),
