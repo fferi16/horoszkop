@@ -180,18 +180,11 @@
 
     <section class="card hero" id="hero"></section>
 
-    <nav class="filters" id="filters">
-      <button type="button" class="toc-btn" id="tocBtn" aria-expanded="false" aria-controls="tocPanel">☰ Tartalom</button>
-      <div class="toc-panel" id="tocPanel" hidden></div>
-      <button data-cat="all">Mind</button>
-      <button data-cat="osszegzes" class="active">Összegzés</button>
-      <button data-cat="nyugati">Nyugati</button>
-      <button data-cat="kelet">Keleti</button>
-      <button data-cat="szam">Számok</button>
-      <button data-cat="ezoterikus">Egyéb rendszerek</button>
-      <button data-cat="nepi">Népi</button>
-      <button data-cat="tudomany">Tudomány</button>
-    </nav>
+    <nav class="toc-grid" id="tocGrid" aria-label="Tartalom"></nav>
+    <div class="crumb" id="crumb" hidden>
+      <span class="crumb-cat" id="crumbCat"></span>
+      <button type="button" class="ghost" id="crumbUp">▲ Tartalom</button>
+    </div>
 
     <div id="sections"></div>
 
