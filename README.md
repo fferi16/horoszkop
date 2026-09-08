@@ -74,7 +74,7 @@ A program teljes egészében a böngésződben fut — a születési adatok nem 
 | **+ név** | numerológiai sorsszám, lélekszám, személyiségszám, névnap |
 | **+ nem** | Kua-szám, akan lélek-név |
 
-### A 22 szekció
+### A szekciók (36)
 
 **Nyugati** — napjegy, holdjegy, aszcendens, MC, mind a 10 bolygó + holdcsomópont és
 Lilith fokra pontosan, retrográd jelöléssel, 12 ház, fényszögek orbisokkal, dekanátus,
@@ -142,8 +142,20 @@ foggal, hetedik gyermek…), és a populáris „cigány horoszkóp" jegye.
   (Életerő, Teljesítmény, Bölcsesség), 29 napos görbe. Egyértelműen jelölve, hogy ez
   cáfolt elmélet, és hogy a *nevén kívül* semmi köze a kronobiológiához.
 
-**Hol tartasz most** — életkor, éves profekció, Szaturnusz-visszatérés, mai holdfázis,
-jelenleg retrográd bolygók, mai névnap és jeles nap.
+**Időzítés** — *Hol tartasz most*: életkor, **éves és havi profekció** az év urának
+natális állapotával (Valens), Nap/Hold-profekció, **lunáris visszatérés** (a mostani
+holdhónap képlete), Szaturnusz-visszatérés, mai holdfázis, retrográd bolygók, névnap.
+*Éves égi kép*: szolár ASC és ura, szolár Hold, progresszív Hold évszaka, **szoláris ív
+direkciók** 5 évre. *Sorsrészek és időurak*: a hét hermetikus sorsrész, firdaria.
+**Zodiacal releasing** (Valens IV): 1–2. szintű életfejezetek a Szellem Pontjából, a kötés
+elengedése, csúcsidőszakok a Fortunától. **Fogyatkozások a képletben**: prenatális nap- és
+holdfogyatkozás, a következő 5 év képletet érintő fogyatkozásai (Brady orbisával).
+*A következő 5 év tranzitjai*.
+
+**Kiegészítő nyugati rétegek** — draconikus képlet, Vertex (Clark kerete), a négy fő
+aszteroida és a **Chiron** (JPL-pályaelemekből, jegy + ház + Chiron-ciklus), **félpontok**
+(Ebertin bolygóképei a 90°-os tárcsán), **asztrokartográfia** (Lewis-vonalak a 212 városra
+vetítve), és az **azték tonalpohualli** a maja Tzolkin mellett.
 
 ### Technikai felépítés
 
@@ -201,6 +213,10 @@ A motor több független referenciaponttal van hitelesítve:
 | MCTQ / MSF<sub>sc</sub> | a képlet kézi számítással egyeztetve (SD<sub>week</sub>-korrekció be- és kikapcsolva) |
 | Éberséggörbe | a modell a mérésekből ismert mintázatot adja: délelőtti csúcs ~10:30, holtpont ~14:15, esti csúcs ~19:15 |
 | Élhelyzetek | szökőnap, DST-váltás órája, déli félteke, sarkkör közeli szélesség, idő nélküli születés |
+| Chiron | JPL Horizons oszkuláló elemek (1900–2050, 730 naponként): 2000-01-01-re 11°34' Nyilas (Horizons: 11°33') |
+| Azték tonalpohualli | 2026-09-08 = 8 Atl (azteccalendar.com), Tenochtitlan eleste (1521-08-13 jul.) = 1 Coatl — a Caso-korreláció horgonya |
+| Fogyatkozások | a születés előtti utolsó nap-/holdfogyatkozás (pl. 1989-03-07 részleges nap-, 1989-02-20 teljes holdfogyatkozás) a NASA-katalógussal egyezik |
+| Zodiacal releasing | 360 napos évek; 1989-03-15-re a Halak 12 → Kos 15 → Bika 8 → Ikrek 20 sorozat, a kötés elengedése 2041-01 (17,6 év a fejezet elejétől) |
 
 ---
 
@@ -239,6 +255,7 @@ A motor több független referenciaponttal van hitelesítve:
 | 29 | [Temperamentum és MC](docs/29-temperamentum-es-mc.md) | Lilly/Greenbaum nedvtani pontozás (nem napjegy-elem), az MC jegye, ura és a rajta álló bolygó |
 | 30 | [Vertex és prenatális lunáció](docs/30-vertex-es-prenatalis-lunacio.md) | Clark Vertex-kerete (jegy vs. Deszcendens, ház, bolygó a tengelyen); Ptolemaiosz III.2 lunáció-szabály, a lunáció ura és határura |
 | 31 | [Zodiacal releasing, fogyatkozások, lunáris visszatérés](docs/31-releasing-fogyatkozas-lunar.md) | Valens IV.4–10 / Brennan (360 napos év, kötés elengedése, csúcsok); Brady fogyatkozás-szabályai; Townley havi képlete |
+| 32 | [Azték, Chiron, szoláris ív, félpontok, asztrokartográfia](docs/32-aztek-chiron-szolarisiv-felpontok-asztrokartografia.md) | tonalpohualli (Caso 584283, Éjszaka Urai); Chiron JPL-elemekkel + Reinhart/Clow keret; Tyl szoláris ív; Ebertin félpontok; Lewis-vonalak városlistával |
 
 Minden fejezet magyar nyelvű, táblázatos, forrásmegjelöléssel, és következetesen
 elválasztja a hiteles hagyományt a modern konstrukcióktól, illetve a tudományt az

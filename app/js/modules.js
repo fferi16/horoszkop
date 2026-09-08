@@ -24,6 +24,7 @@
     'data/western-cusp.js',   // házcsúcsokon álló jegyek
     'data/western-deep.js',   // „A képlet szerkezete és erőviszonyai" szövegei
     'data/timing.js',         // releasing, fogyatkozások, lunáris visszatérés szövegei
+    'data/extras2.js',        // azték, Chiron, szoláris ív, félpontok, asztrokartográfia szövegei
     'data/degrees.js',        // fokok jelentései (Sabian, egyiptomi határok)
     'data/patterns.js',       // fényszög-alakzatok
     'data/stars.js',          // klasszikus állócsillagok
@@ -74,6 +75,7 @@
     'core/humandesign.js',    // Human Design képlet
     'core/lots.js',           // sorsrészek és firdaria
     'core/timing.js',         // zodiacal releasing, fogyatkozások, lunáris visszatérés
+    'core/locational.js',     // asztrokartográfia, szoláris ív, félpontok, azték, Chiron-ciklus
     'core/extras.js',         // draconikus, Vertex, aszteroidák
     'core/dosha.js',          // nedvek
     'core/profile.js',        // a teljes profil összeállítása — UTOLSÓ a magban
