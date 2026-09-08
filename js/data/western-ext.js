@@ -570,5 +570,30 @@ window.HDATA.westernExt = {
       square: 'A növekedés és a korlát folyamatos ütközése: időzítési nehézségek és torlódó tervek — de éppen ez tanítja meg a valóságos léptéket.',
       sextile: 'A tervezés és a lehetőség jó szövetsége: a kitartó, mértéktartó építkezés idővel meghozza a gyümölcsét.'
     }
+  },
+
+  /* Az MC (X. ház csúcsa) jegye — a hivatás stílusa és a nyilvános arc.
+     Saját megfogalmazás a tizedik ház hagyományos jelentései alapján (docs/29). */
+  mcInSign: {
+    kos: 'A nyilvános arcod az úttörőé: olyan pályán vagy elemedben, ahol kezdeményezni, versenyezni és önállóan dönteni lehet — vezetés, sport, vállalkozás, sürgős helyzetek. A világ a bátorságodról és a lendületedről ismer, a türelmetlenséged is látszik.',
+    bika: 'A nyilvános arcod a megbízható építőé: a hivatásban a tartós érték, a kézzelfogható eredmény és a biztonság vezet — pénzügy, mesterség, föld, művészet, élelem. A világ a kitartásodról és a nyugalmadról ismer; a lassú, de biztos előrehaladás a te utad.',
+    ikrek: 'A nyilvános arcod a közvetítőé: a hivatásban a szó, az információ és a sokféleség számít — írás, tanítás, média, kereskedelem, közvetítés. A világ a gyors eszedről és a rugalmasságodról ismer; több párhuzamos pálya is jellemző lehet.',
+    rak: 'A nyilvános arcod a gondoskodóé: olyan pályán érzed magad a helyeden, ahol óvni, táplálni, otthont teremteni lehet — ellátás, nevelés, vendéglátás, ingatlan, család körüli szakmák. A világ az érzékenységedről és a védelmező erődről ismer.',
+    oroszlan: 'A nyilvános arcod a szereplőé: a hivatásban látni akarnak és te látszani akarsz — színpad, vezetés, alkotás, gyerekekkel való munka, szórakoztatás. A világ a kisugárzásodról és a nagyvonalúságodról ismer; az elismerés nem hiúság, hanem üzemanyag.',
+    szuz: 'A nyilvános arcod a szakértőé: a hivatásban a pontosság, a szolgálat és a részletek mestersége vezet — egészségügy, elemzés, adminisztráció, kézművesség, szerkesztés. A világ a megbízhatóságodról és a hozzáértésedről ismer, akkor is, ha nem kérsz reflektorfényt.',
+    merleg: 'A nyilvános arcod a diplomatáé: a hivatásban a kapcsolat, az egyensúly és a szépség számít — jog, tanácsadás, művészet, design, közvetítés. A világ a tapintatodról és az ízlésedről ismer; társsal vagy partnerségben gyakran jobban működsz, mint egyedül.',
+    skorpio: 'A nyilvános arcod a kutatóé: olyan pályán vagy elemedben, ahol a mélyre lehet ásni — pszichológia, gyógyítás, nyomozás, válságkezelés, mások erőforrásainak kezelése. A világ az intenzitásodról és az átalakító erődről ismer; a felszínes szerep nem elég neked.',
+    nyilas: 'A nyilvános arcod a tanítóé és az utazóé: a hivatásban a távlat, a jelentés és a szabadság vezet — oktatás, kiadás, jog, külföld, hit, sport. A világ az optimizmusodról és a széles látókörödről ismer.',
+    bak: 'A nyilvános arcod az építőmesteré: a hivatás nálad struktúra, felelősség és lépcsőfokok — vezetés, közigazgatás, mérnöki és üzleti pályák, hosszú távú karrier. A világ a fegyelmedről és a megbízhatóságodról ismer; a csúcsra lassan, de tartósan érsz fel.',
+    vizonto: 'A nyilvános arcod az újítóé: olyan pályán érzed magad a helyeden, ahol a jövő, a technológia, a közösség vagy a szokatlan megoldás számít — tudomány, informatika, társadalmi ügyek, hálózatok. A világ a függetlenségedről és az eredetiségedről ismer.',
+    halak: 'A nyilvános arcod a segítőé és a művészé: a hivatásban az együttérzés, a képzelet és az odaadás vezet — gyógyítás, művészet, zene, lelki segítés, jótékonyság. A világ az érzékenységedről és a befogadó erődről ismer; a kemény könyöklés nem a te terepe.'
+  },
+
+  /* Nedvtani alkat (temperamentum) — Lilly / Greenbaum módszere, docs/29. */
+  temperament: {
+    szangvinikus: { name: 'Szangvinikus', q: 'meleg és nedves', text: 'Gyors, társas, derűlátó, nagyvonalú alkat, amely könnyen kapcsolódik és könnyen lelkesedik; a hagyomány szerint a veszélye a szétszórtság és a felszínesség.' },
+    kolerikus: { name: 'Kolerikus', q: 'meleg és száraz', text: 'Tettre kész, döntésképes, becsvágyó, egyenes alkat, amely gyorsan cselekszik és nehezen tűri a késlekedést; a hagyomány szerint a veszélye a kiégés és a türelmetlenség.' },
+    melankolikus: { name: 'Melankolikus', q: 'hideg és száraz', text: 'Alapos, mély, elemző, hűséges alkat, amely lassabban nyílik meg, de amit vállal, azt végigviszi; a hagyomány szerint a veszélye az aggodalmaskodás és a magába zárkózás.' },
+    flegmatikus: { name: 'Flegmatikus', q: 'hideg és nedves', text: 'Nyugodt, türelmes, befogadó, kitartó alkat, amely nem keresi az ütközést és jól tűri az egyhangúságot; a hagyomány szerint a veszélye a sodródás és a kényelmesség.' }
   }
 };
