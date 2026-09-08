@@ -237,6 +237,7 @@ A motor több független referenciaponttal van hitelesítve:
 | 27 | [Éves profekció és az év ura](docs/27-profekcio.md) | Valens IV.11, Paulus 31, Firmicus II.27, Brennan — az év ura natális állapota, havi profekció, Nap/Hold-profekció |
 | 28 | [Szolár és progressziók](docs/28-szolar-es-progressziok.md) | Volguine, Shea, Eshelman, Blaschke/Brady — a szolár ASC és ura, a szolár Hold háza, a progresszív Hold évszaka |
 | 29 | [Temperamentum és MC](docs/29-temperamentum-es-mc.md) | Lilly/Greenbaum nedvtani pontozás (nem napjegy-elem), az MC jegye, ura és a rajta álló bolygó |
+| 30 | [Vertex és prenatális lunáció](docs/30-vertex-es-prenatalis-lunacio.md) | Clark Vertex-kerete (jegy vs. Deszcendens, ház, bolygó a tengelyen); Ptolemaiosz III.2 lunáció-szabály, a lunáció ura és határura |
 
 Minden fejezet magyar nyelvű, táblázatos, forrásmegjelöléssel, és következetesen
 elválasztja a hiteles hagyományt a modern konstrukcióktól, illetve a tudományt az
