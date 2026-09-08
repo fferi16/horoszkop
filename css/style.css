@@ -1107,3 +1107,4 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
 .crumb .ghost{margin-left:auto; padding:6px 12px; font-size:.85rem}
 #sections{scroll-margin-top:12px}
 @media print{ .toc-grid,.crumb{display:none !important} }
+table tr.hl td{background:var(--accent-soft); font-weight:600}
