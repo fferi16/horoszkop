@@ -104,3 +104,22 @@ a házszámítás a partner képletén nem fut. *Egy negyedik párral újra kell
   graha", „Méltóságpontok") — szándékosan azonosak mindenkinél.
 - A mai naptól függő tételek („Mai holdfázis", „Most retrográd", „Ma névnapja van") —
   mindenkinek ugyanazok, mert a napról szólnak, nem a személyről.
+
+## Állapot (2026-09-08, este)
+
+| # | Tétel | Állapot | Hol |
+|---|---|---|---|
+| 1 | Születési holdfázis üres szövege | ✅ kész — kulcs-eltérés (`novekvo-sarlo` vs `novekvo_sarlo`) javítva, Holdkor személyes olvasattal | `core/profile.js` buildMoonSection |
+| 2 | Éves profekció | ✅ kész — az év ura natális állapota (méltóság, egészjegyes ház, szekta, kontaktok), bolygók a profektált jegyben, tranzitok, havi profekció, Nap/Hold-profekció; idő nélkül Nap-profekció | `buildProfection`, docs/27 |
+| 3 | Szolár és progressziók | ✅ kész — szolár ASC jegye + ura + születési háza, születési bolygó a szolár sarkon, szolár Hold háza/jegye, progresszív Hold jegye + háza + jegyváltás iránya | `buildAnnual`, `data/annual.js`, docs/28 |
+| 4 | MC, Temperamentum, Holdjegy | ✅ kész — Lilly/Greenbaum nedvtani pontozás, MC jegye + ura háza + bolygó az MC-n, Holdjegy személyes szövege | `buildTemperament`, `mcText`, docs/29 |
+| 5 | Csakraanalízis kontúrtípusok | ✅ kész — 22 típusleírás (saját, jelölve) + a két csakraérték sávokkal | `data/hvd.js typeText`, docs/18 §11 |
+| 6 | Vertex | ✅ kész — jegy a Deszcendenssel szemben, ház, bolygó a tengelyen, Anti-Vertex | `buildExtras`, `HDATA.vertex`, docs/30 |
+| 7 | Prenatális lunáció | ✅ kész — fok (Ptolemaiosz-szabály teliholdnál), ház, ura + méltóság + kontaktok, határúr, bolygó a fokon, hyleg-jelzés | `buildConception`, `HDATA.prenatal`, docs/30 |
+| 8 | Gene Keys tételsorok | ✅ kész — a saját kulcs ajándék/árnyék szövege és a vonal, a szféra leírása zárójelben | `buildGeneKeys` |
+| 9 | Bioritmus mai olvasat | ✅ kész — „A mai állásod" sor a három ciklussal, cáfoltság jelezve | buildChrono bioritmus rész |
+| 10 | Vietnami zodiákus | ✅ kész — 12 állat saját szövege (Wikipedia: Vietnamese zodiac) | `data/eastern.js vietnamese.animalText` |
+| 11 | Népi holdhiedelem | ✅ kész — a tétel értéke a saját holdállás (növő/fogyó, holdkor), a szöveg ehhez kötve; a forrás (docs/08) csak 4 fázist ismer, finomabb bontás nincs | buildHungarian |
+| 12 | Szinasztria házátfedés | ✅ ellenőrizve, nem hiba — két új párral (1985-08-20, 1970-02-03) 8-8 különböző házsor jött ki | — |
+
+Külön: a node-os tesztcsomagok (hd_test, gk_test, lots_test, extras_test, dosha_test) még mindig nincsenek a repóban — `tests/` alá újra kell írni őket.
