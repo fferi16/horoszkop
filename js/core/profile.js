@@ -89,6 +89,8 @@
     buildLots(out);
     buildReleasing(out);
     buildExtras(out);
+    buildMidpoints(out);
+    buildAstrocarto(out);
     buildVedic(out);
     buildDosha(out);
     buildChinese(out);
@@ -2158,6 +2160,8 @@
         (tz.sign.text || '') + (tz.tone ? ' A ' + tz.number + '-es tónus: ' + (tz.tone.keyword || '') + '. ' + (tz.tone.text || '') : ''));
     }
 
+    buildAztec(out, s);
+
     // kelta fa
     var tree = C.findByRange(get(D(), 'exotic.celtic.trees', []), i.month, i.day);
     if (tree) item(s, 'Kelta fajegy', tree.name, tree.text || '');
@@ -2996,6 +3000,155 @@
     item(s, 'A mostani holdhónapod', fmtTransitDate(lr.start) + ' – ' + fmtTransitDate(lr.end) + ' · ' + lrChart.ascSign.name + ' aszcendens', t);
   }
 
+  /* ================= azték tonalpohualli (docs/32) ================= */
+
+  function buildAztec(out, s) {
+    var AZ = get(D(), 'aztec', null), LC = HCORE.locational;
+    if (!AZ || !LC || !C.jdn) return;
+    var i = out.input;
+    var t = LC.aztec(C.jdn(i.year, i.month, i.day));
+    var sg = AZ.signs[t.signIndex], lord = AZ.lords[t.lordIndex];
+    var tre = AZ.signs[t.trecenaIndex];
+    item(s, 'Azték napjegy (tonalpohualli)', t.number + ' ' + sg.name + ' — ' + sg.hu,
+      sg.text + ' Védőistene ' + sg.deity + ', égtája ' + sg.dir + '. ' +
+      AZ.trecena.replace('%T%', (t.number === 1 ? 'a saját, 1 ' : '1 ') + tre.name + ' (' + tre.hu + ')') + ' ' + AZ.numberNote);
+    item(s, 'Az Éjszaka Ura a születésed napján', lord.name + ' — ' + lord.hu,
+      'A kilenc Éjszaka Ura kilencnaponta váltja egymást; a te napodé ' + lord.name + ': ' + lord.text + '. ' + AZ.lordNote);
+    s.notes.push(AZ.intro);
+  }
+
+  /* ================= Chiron (docs/32) ================= */
+
+  function buildChiron(out, s, ast) {
+    var CH = get(D(), 'chiron', null), LC = HCORE.locational, c = out.chart;
+    if (!CH || !ast) return;
+    var ch = null;
+    ast.forEach(function (a) { if (a.key === 'chiron') ch = a; });
+    if (!ch) return;
+    var hasH = !!(out.input.hasTime && c.houses);
+    var house = hasH ? HCORE.houseOf(ch.lon, c.houses.cusps) : null;
+    var st = get(CH, 'sign.' + ch.sign.key, '');
+    var t = CH.intro + ' A Chironod ' + SIGN_IN[ch.sign.key] + ' áll: ' + st.charAt(0).toLowerCase() + st.slice(1);
+    if (house) t += ' A seb terepe ' + houseArticle(house) + ' ' + house + '. házadban van — ' + get(CH, 'house.' + house, '') + '.';
+    // szoros fényszög a Chironra
+    var hits = profContacts(c, ch.lon, 'chiron');
+    var lum = [];
+    ['sun', 'moon'].forEach(function (k) {
+      var d = Math.abs(HCORE.angleDiff(c.planets[k].lon, ch.lon));
+      if (d <= 6) lum.push(signArt(c.planets[k].name) + ' együttállása');
+      else if (Math.abs(d - 180) <= 6) lum.push(signArt(c.planets[k].name) + ' szembenállása');
+      else if (Math.abs(d - 90) <= 6) lum.push(signArt(c.planets[k].name) + ' kvadrátja');
+    });
+    if (lum.length) t += ' A Chironodat ' + lum.join(' és ') + ' érinti: a seb a személyiség középpontjához kötődik, nem marad háttérben.';
+    else if (hits.length) t += ' A Chironodat ' + hits.map(function (h) { return 'a ' + h.name + ' ' + h.aspect; }).join(', ') + ' érinti.';
+    item(s, '⚷ Chiron — a sebzett gyógyító', ch.sign.text + (house ? ' · ' + house + '. ház' : ''), t);
+    // ciklus
+    if (LC && LC.chironCycle) {
+      var cyc = LC.chironCycle(ch.lon, out.utc, 85), now = new Date();
+      var lines = [];
+      cyc.forEach(function (ev) {
+        var past = ev.last < now;
+        var when = ev.n > 1 ? fmtTransitDate(ev.first) + ' – ' + fmtTransitDate(ev.last) : fmtTransitDate(ev.first);
+        lines.push((past ? 'Volt: ' : 'Jön: ') + when + ' (' + Math.round(ev.age) + ' évesen) — ' + (CH.cycle[ev.aspect] || ''));
+      });
+      if (lines.length) item(s, 'A Chiron-ciklusod', '', lines.join(' ') + ' ' + CH.cycleNote);
+    }
+  }
+
+  /* ================= szoláris ív direkciók (docs/32) ================= */
+
+  function buildSolarArc(out, s) {
+    var SA = get(D(), 'solarArc', null), LC = HCORE.locational, TD = get(D(), 'transits', null), c = out.chart;
+    if (!SA || !LC || !LC.solarArcHits) return;
+    var now = new Date();
+    var pts = [];
+    CLASSICAL.forEach(function (k) { pts.push({ key: k, name: c.planets[k].name, lon: c.planets[k].lon }); });
+    ['uranus', 'neptune', 'pluto'].forEach(function (k) { if (c.planets[k]) pts.push({ key: k, name: c.planets[k].name, lon: c.planets[k].lon, outer: true }); });
+    var hasH = !!(out.input.hasTime && c.houses);
+    if (hasH) { pts.push({ key: 'asc', name: 'Aszcendens', lon: c.houses.asc }); pts.push({ key: 'mc', name: 'MC', lon: c.houses.mc }); }
+    var res = LC.solarArcHits(pts, pts, out.utc, now, 5);
+    var dirSun = HCORE.toSign(HCORE.norm360(c.planets.sun.lon + res.arc));
+    var t = SA.intro + ' ' + SA.arcNow.replace('%A%', fmtDeg(res.arc)).replace('%S%', dirSun.name)
+      .replace('%AS%', hasH ? HCORE.toSign(HCORE.norm360(c.houses.asc + res.arc)).name : '—');
+    if (!hasH) t = t.replace(' az Aszcendensed — jegyébe ért a direkció szerint', '');
+    var lines = [];
+    res.hits.forEach(function (h) {
+      if (h.planet.outer && h.target.outer) return;          // külső–külső: nemzedéki, nem személyes
+      if (lines.length >= 10) return;
+      var meaning = '';
+      if (TD) {
+        var tm = get(TD, 'targets.' + h.target.key + '.domain', '');
+        if (typeof tm === 'string') meaning = tm.replace(/^Ez a tranzit/, 'Ez a direkció');
+      }
+      lines.push(SA.line.replace('%P%', h.planet.name).replace('%A%', SA.aspectHu[h.aspect]).replace('%T%', h.target.name)
+        .replace('%D%', fmtTransitDate(h.date)).replace('%M%', meaning));
+    });
+    item(s, 'Szoláris ív direkciók — a következő 5 év', fmtDeg(res.arc) + ' ív · ' + res.rate.toFixed(2).replace('.', ',') + '°/év',
+      t + ' ' + (lines.length ? lines.join(' ') : SA.none));
+  }
+
+  /* ================= félpontok (docs/32) ================= */
+
+  function buildMidpoints(out) {
+    var MD = get(D(), 'midpoints', null), LC = HCORE.locational, c = out.chart;
+    if (!MD || !LC || !LC.midpointPictures) return;
+    var hasH = !!(out.input.hasTime && c.houses);
+    var pairs = [];
+    CLASSICAL.forEach(function (k) { pairs.push({ key: k, name: c.planets[k].name, lon: c.planets[k].lon }); });
+    if (hasH) { pairs.push({ key: 'asc', name: 'Aszcendens', lon: c.houses.asc }); pairs.push({ key: 'mc', name: 'MC', lon: c.houses.mc }); }
+    var bodies = [];
+    CLASSICAL.concat(['uranus', 'neptune', 'pluto']).forEach(function (k) { if (c.planets[k]) bodies.push({ key: k, name: c.planets[k].name, lon: c.planets[k].lon }); });
+    var pics = LC.midpointPictures(pairs, bodies, 1.5);
+    var s = section('felpontok', 'Félpontok — bolygóképek (Ebertin)', '⧫', 'nyugati');
+    var order = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'asc', 'mc'];
+    pics.slice(0, 8).forEach(function (p) {
+      var a = p.a, b = p.b2;
+      if (order.indexOf(a.key) > order.indexOf(b.key)) { a = p.b2; b = p.a; }
+      var pk = a.key + '/' + b.key;
+      var pairText = MD.pair[pk] || '';
+      var bodyText = MD.body[p.body.key] || '';
+      item(s, p.body.name + ' = ' + a.name + '/' + b.name,
+        HCORE.toSign(p.mid).text + ' · ' + p.orb.toFixed(1).replace('.', ',') + '° ' + (p.direct ? '(közvetlen)' : '(90°-os tárcsa)'),
+        'A ' + a.name + '/' + b.name + ' félpont témája ' + pairText + '; ' + bodyText + '.');
+    });
+    if (!pics.length) item(s, 'Nincs szoros bolygókép', '', MD.none);
+    s.notes.push(MD.intro);
+    out.sections.push(s);
+  }
+
+  /* ================= asztrokartográfia (docs/32) ================= */
+
+  function buildAstrocarto(out) {
+    var AC = get(D(), 'astrocarto', null), LC = HCORE.locational, G = get(D(), 'geo', null), c = out.chart;
+    if (!AC || !LC || !G || !out.input.hasTime) return;
+    var cities = [].concat(G.hu || [], G.abroad || [], G.world || []);
+    var planets = [];
+    ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'].forEach(function (k) {
+      var p = c.planets[k];
+      if (p) planets.push({ key: k, name: p.name, symbol: p.symbol, lon: p.lon, lat: p.lat || 0 });
+    });
+    var hits = LC.cityHits(planets, out.utc, cities, 4);
+    var s = section('asztrokarto', 'Asztrokartográfia — hol erősek a bolygóid', '🗺', 'ezoterikus');
+    var any = false;
+    hits.forEach(function (h) {
+      var parts = [];
+      ['MC', 'IC', 'ASC', 'DSC'].forEach(function (k) {
+        var list = h.lines[k];
+        if (!list.length) return;
+        parts.push(AC.angle[k] + ': ' + list.slice(0, 4).map(function (x) { return x.city + ' (' + x.d.toFixed(1).replace('.', ',') + '°)'; }).join(', '));
+      });
+      if (!parts.length) return;
+      any = true;
+      var fmtLon = function (x) { return Math.abs(x).toFixed(1).replace('.', ',') + '° ' + (x >= 0 ? 'K' : 'Ny'); };
+      item(s, h.symbol + ' ' + h.name + '-vonalak', 'MC ' + fmtLon(h.mc) + ' · IC ' + fmtLon(h.ic),
+        'Ezen a helyen ' + AC.planet[h.key] + '. ' + parts.join(' ') + '.');
+    });
+    if (!any) item(s, 'Vonalak a városlistán', '', AC.none);
+    s.notes.push(AC.intro);
+    s.notes.push(AC.hint);
+    out.sections.push(s);
+  }
+
   /* ================= a következő 5 év tranzitjai ================= */
 
   var HU_MONTHS = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.',
@@ -3366,6 +3519,7 @@
     var phase = HCORE.moonPhase(pDate);
     item(s, 'Progressziós holdfázis', phase.symbol + ' ' + phase.name,
       AD.phases[phase.key] || '');
+    buildSolarArc(out, s);
 
     out.sections.push(s);
   }
@@ -3619,6 +3773,7 @@
     var ast = AD ? X.asteroids(out.utc) : null;
     if (ast && ast.length) {
       ast.forEach(function (a) {
+        if (a.key === 'chiron') return;      // a Chiron saját tételt kap (buildChiron)
         var sd = signData(a.sign.key);
         // nem általánosságban mondjuk el, mit jelent az aszteroida, hanem hogy
         // a felhasználó SAJÁT jegyében milyen természetet ölt
@@ -3636,6 +3791,7 @@
           a.text + inSign);
       });
     }
+    buildChiron(out, s, ast);
 
     s.extras = {
       draconic: dr ? {
