@@ -1074,7 +1074,10 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
 }
 
 /* ---- tartalom-rács (kategóriablokkok) és morzsasáv ---- */
-.toc-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin:0 0 22px; align-items:start}
+/* 8px-es rácssorok: a JS méri a blokkokat és annyi sort foglal nekik, amekkorák —
+   így a következő blokk közvetlenül az előző alá kerül (masonry-szerű kirakás). */
+.toc-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:12px; margin:0 0 22px; grid-auto-rows:8px; align-items:start}
 .toc-block{
   background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius);
   padding:14px 16px; box-shadow:var(--shadow); cursor:pointer;
