@@ -10,7 +10,7 @@
     });
   };
 
-  var state = { place: null, profile: null, filter: 'all' };
+  var state = { place: null, profile: null, filter: 'osszegzes' };
 
   /* ---------------- helyválasztó ---------------- */
 
@@ -1283,9 +1283,20 @@
     return html;
   }
 
+  /* A szekció összecsukva indul: cím + a lényeg 3 chipben. A törzs (a jelenlegi
+     teljes tartalom) kattintásra nyílik. Az Összegzés kategória nyitva indul. */
   function renderSection(s, i) {
-    var html = '<section class="card" id="sec-' + i + '" data-cat="' + esc(s.category) + '">' +
-      '<h2>' + iconHtml(s.icon) + esc(s.title) + '</h2>';
+    var open = s.category === 'osszegzes';
+    var lead = (s.items || []).filter(function (it) { return it.value; }).slice(0, 3)
+      .map(function (it) {
+        return '<span class="chip"><b>' + esc(it.label) + '</b>' + esc(it.value) + '</span>';
+      }).join('');
+    var html = '<section class="card' + (open ? '' : ' collapsed') + '" id="sec-' + i +
+      '" data-cat="' + esc(s.category) + '">' +
+      '<h2>' + iconHtml(s.icon) + esc(s.title) +
+      '<button type="button" class="sec-toggle" aria-label="Kibontás"></button></h2>' +
+      (lead ? '<div class="sec-lead">' + lead + '</div>' : '') +
+      '<div class="sec-body">';
 
     if (s.items.length) {
       html += '<div class="sec-items">' + s.items.map(function (it) {
@@ -1340,7 +1351,7 @@
         return '<p>' + esc(n) + '</p>';
       }).join('') + '</div>';
     }
-    return html + '</section>';
+    return html + '</div></section>';
   }
 
   function renderProfile(p) {
@@ -2158,6 +2169,13 @@
     window.addEventListener('beforeprint', openDetailsForPrint);
     window.addEventListener('afterprint', restoreDetailsAfterPrint);
 
+    $('sections').addEventListener('click', function (e) {
+      var h = e.target.closest ? e.target.closest('h2, .sec-toggle') : null;
+      if (!h) return;
+      var card = h.closest('.card');
+      if (card) card.classList.toggle('collapsed');
+    });
+
     $('filters').addEventListener('click', function (e) {
       if (e.target.dataset.cat) { applyFilter(e.target.dataset.cat); toggleToc(false); }
     });
@@ -2174,7 +2192,8 @@
       var sec = $('sec-' + link.dataset.toc);
       if (!sec) return;
       // ha a szűrő épp eltakarja a célszekciót, visszaváltunk „Mind"-re
-      if (state.filter !== 'all' && sec.dataset.cat !== state.filter) applyFilter('all');
+      if (state.filter !== 'all' && sec.dataset.cat !== state.filter) applyFilter(sec.dataset.cat);
+      sec.classList.remove('collapsed');
       toggleToc(false);
       sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });

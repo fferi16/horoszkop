@@ -1077,3 +1077,32 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
   font-variant-numeric:tabular-nums;
 }
 .tr-txt{font-size:.92rem; line-height:1.55}
+
+/* ---- összecsukható szekciók: cím + lényeg, a törzs kattintásra ---- */
+.card h2{cursor:pointer; user-select:none}
+.card h2 .sec-toggle{
+  margin-left:auto; flex:none; width:28px; height:28px; border-radius:50%;
+  border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer;
+  font-size:.8rem; line-height:1; transition:transform .18s;
+}
+.card h2 .sec-toggle::before{content:'▾'}
+.card.collapsed h2 .sec-toggle{transform:rotate(-90deg)}
+.card.collapsed h2{margin-bottom:0; border-bottom:none; padding-bottom:4px}
+.card.collapsed h2::after{display:none}
+.card.collapsed .sec-body{display:none}
+.card.collapsed{padding-bottom:16px}
+.sec-lead{display:flex; flex-wrap:wrap; gap:7px; margin:8px 0 0}
+.card:not(.collapsed) .sec-lead{margin-bottom:16px}
+.sec-lead .chip{
+  display:inline-flex; gap:6px; align-items:baseline; max-width:100%;
+  font-size:.8rem; padding:4px 10px; border-radius:999px;
+  background:var(--bg); border:1px solid var(--line); color:var(--ink);
+}
+.sec-lead .chip b{font-weight:600; color:var(--muted); font-size:.7rem;
+  text-transform:uppercase; letter-spacing:.05em; white-space:nowrap}
+@media print{
+  #sections .card{display:block !important}
+  .card.collapsed .sec-body{display:block}
+  .sec-toggle,.sec-lead{display:none !important}
+  .card.collapsed h2{margin-bottom:18px; border-bottom:1px solid var(--line); padding-bottom:12px}
+}
