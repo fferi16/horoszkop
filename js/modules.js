@@ -28,6 +28,7 @@
     'data/western-deep.js',   // „A képlet szerkezete és erőviszonyai" szövegei
     'data/timing.js',         // releasing, fogyatkozások, lunáris visszatérés szövegei
     'data/extras2.js',        // azték, Chiron, szoláris ív, félpontok, asztrokartográfia szövegei
+    'data/forecast.js',       // napi/heti előrejelzés szövegei
     'data/degrees.js',        // fokok jelentései (Sabian, egyiptomi határok)
     'data/patterns.js',       // fényszög-alakzatok
     'data/stars.js',          // klasszikus állócsillagok
@@ -79,6 +80,7 @@
     'core/lots.js',           // sorsrészek és firdaria
     'core/timing.js',         // zodiacal releasing, fogyatkozások, lunáris visszatérés
     'core/locational.js',     // asztrokartográfia, szoláris ív, félpontok, azték, Chiron-ciklus
+    'core/forecast.js',       // napi/heti előrejelzés magja (gyors tranzitok, üresjárat, bolygóórák)
     'core/extras.js',         // draconikus, Vertex, aszteroidák
     'core/dosha.js',          // nedvek
     'core/profile.js',        // a teljes profil összeállítása — UTOLSÓ a magban
@@ -86,7 +88,8 @@
     /* ---- felület ---- */
     'ui/wheel.js',            // képletkerék rajzolása
     'ui/charts.js',           // grafikonok
-    'ui/app.js'               // az alkalmazás
+    'ui/app.js',              // az alkalmazás
+    'ui/forecast.js'          // Előrejelzés nézet (az app.js után: annak űrlapját használja)
   ];
 
   // Az async=false biztosítja, hogy a dinamikusan beszúrt szkriptek
