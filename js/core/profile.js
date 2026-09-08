@@ -114,6 +114,8 @@
     buildAnnual(out);
     buildTransits(out);
     buildEclipses(out);
+    // Előrejelzés: Ma, A hét, A hónap, Az év (core/forecast-sections.js, docs/33)
+    if (HCORE.forecastSections) HCORE.forecastSections(out).forEach(function (fs) { out.sections.push(fs); });
     buildSynastry(out);
     buildSummary(out);
 

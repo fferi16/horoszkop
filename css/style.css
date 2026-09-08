@@ -127,11 +127,9 @@ body{
 }
 .mode-tile .mt-sub{font-size:.84rem; color:var(--muted)}
 /* láthatóság mód szerint: választás előtt csak a csempék látszanak */
-body:not(.mode-horoszkop):not(.mode-elorejelzes) #formCard,
+body:not(.mode-horoszkop) #formCard,
 body:not(.mode-horoszkop) #result{display:none !important}
-body.mode-elorejelzes #formCard .actions{display:none}
 body:not(.mode-tarot) #tarotBox{display:none !important}
-body:not(.mode-elorejelzes) #forecastBox{display:none !important}
 @media (max-width:560px){ .mode-nav{grid-template-columns:1fr} }
 @media print{ .mode-nav{display:none !important} }
 
@@ -1110,33 +1108,3 @@ svg.matrix-svg{max-width:460px; width:100%; height:auto; color:var(--ink); min-w
 #sections{scroll-margin-top:12px}
 @media print{ .toc-grid,.crumb{display:none !important} }
 table tr.hl td{background:var(--accent-soft); font-weight:600}
-
-/* ---- Előrejelzés nézet ---- */
-.fc-controls{display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:end; margin:10px 0 16px}
-.fc-buttons{display:flex; gap:8px}
-@media (max-width:640px){ .fc-controls{grid-template-columns:1fr} }
-.fc-day{margin:0 0 18px}
-.fc-day h3{margin:0 0 6px; font-family:var(--serif); font-size:1.25rem}
-.fc-meta{color:var(--muted); font-size:.9rem; margin:0 0 10px}
-.fc-stars{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:12px 0}
-.fc-star{background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:10px 12px}
-.fc-star .n{font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
-.fc-star .s{font-size:1.15rem; letter-spacing:2px; color:var(--accent2)}
-.fc-star .s .off{opacity:.25}
-.fc-ev{border-left:3px solid var(--accent); padding:6px 12px; margin:8px 0; background:var(--bg2); border-radius:0 10px 10px 0}
-.fc-ev .t{font-weight:600; font-variant-numeric:tabular-nums}
-.fc-ev.soft{border-color:#3a9d5d} .fc-ev.hard{border-color:#c0392b} .fc-ev.voc{border-color:var(--muted); opacity:.9}
-.fc-week{display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin:12px 0}
-@media (max-width:760px){ .fc-week{grid-template-columns:repeat(2,1fr)} }
-.fc-wday{background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:10px; cursor:pointer}
-.fc-wday:hover{border-color:var(--accent)}
-.fc-wday.best{border-color:#3a9d5d; box-shadow:0 0 0 2px rgba(58,157,93,.25)}
-.fc-wday.worst{border-color:#c0392b}
-.fc-wday .d{font-weight:600} .fc-wday .sub{font-size:.78rem; color:var(--muted)}
-.fc-wday .row{display:flex; justify-content:space-between; font-size:.85rem; margin-top:4px}
-.fc-hours{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:6px; margin:8px 0}
-.fc-hour{font-size:.8rem; padding:4px 8px; border:1px solid var(--line); border-radius:8px; background:var(--bg2)}
-.fc-hour.now{border-color:var(--accent2); font-weight:600}
-.fc-hour.night{opacity:.75}
-.fc-reasons{font-size:.85rem; color:var(--muted); margin:6px 0 0}
-

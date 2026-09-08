@@ -1431,7 +1431,7 @@
     '🌱': 'fogantatas', '△': 'fenyszogek', '✷': 'allocsillagok', '⏳': 'holtartasz',
     '☀': 'szolar', '🪐': 'tranzitok', '✨': 'osszegzes', '♡': 'szinasztria',
     '◈': 'humandesign', '⬡': 'genekeys', '⊗': 'sorsreszek', '✧': 'kiegeszitok',
-    '☘': 'nedvek', '⏩': 'releasing', '🌘': 'fogyatkozasok', '⧫': 'felpontok', '🗺': 'asztrokarto'
+    '☘': 'nedvek', '⏩': 'releasing', '🌘': 'fogyatkozasok', '⧫': 'felpontok', '🗺': 'asztrokarto', '🔭': 'mode-elorejelzes'
   };
 
   function iconSrc(slug, theme) {
@@ -1488,6 +1488,7 @@
     ['ezoterikus', 'Egyéb rendszerek', ''],
     ['nepi', 'Népi hagyomány', ''],
     ['tudomany', 'Tudomány', ''],
+    ['elorejelzes', 'Előrejelzés', 'Ma, a hét, a hónap, az év'],
     ['all', 'Teljes profil', 'Minden szekció egyben']
   ];
 
@@ -1693,7 +1694,7 @@
   var MODE_KEY = 'asztrolab.mode';
 
   function setMode(mode, persist) {
-    document.body.classList.remove('mode-horoszkop', 'mode-tarot', 'mode-elorejelzes');
+    document.body.classList.remove('mode-horoszkop', 'mode-tarot');
     if (mode) document.body.classList.add('mode-' + mode);
     [].forEach.call(document.querySelectorAll('.mode-tile'), function (t) {
       t.classList.toggle('active', t.dataset.mode === mode);
@@ -1713,7 +1714,7 @@
     });
     var saved = null;
     try { saved = localStorage.getItem(MODE_KEY); } catch (e) {}
-    if (saved === 'horoszkop' || saved === 'tarot' || saved === 'elorejelzes') setMode(saved, false);
+    if (saved === 'horoszkop' || saved === 'tarot') setMode(saved, false);
     document.dispatchEvent(new CustomEvent('hmode', { detail: { mode: saved } }));
   }
 

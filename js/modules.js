@@ -11,7 +11,7 @@
   'use strict';
 
   /* Cache-törés: minden kiadásnál emeld (az index.html-ben is ugyanez legyen). */
-  var VERSION = '2026-09-08a';
+  var VERSION = '2026-09-08b';
 
   var MODULES = [
     /* ---- csillagászati könyvtár (Astronomy Engine, MIT) ---- */
@@ -81,6 +81,7 @@
     'core/timing.js',         // zodiacal releasing, fogyatkozások, lunáris visszatérés
     'core/locational.js',     // asztrokartográfia, szoláris ív, félpontok, azték, Chiron-ciklus
     'core/forecast.js',       // napi/heti előrejelzés magja (gyors tranzitok, üresjárat, bolygóórák)
+    'core/forecast-sections.js', // az előrejelzés szekciói a profilban (Ma, A hét, A hónap, Az év)
     'core/extras.js',         // draconikus, Vertex, aszteroidák
     'core/dosha.js',          // nedvek
     'core/profile.js',        // a teljes profil összeállítása — UTOLSÓ a magban
@@ -88,8 +89,7 @@
     /* ---- felület ---- */
     'ui/wheel.js',            // képletkerék rajzolása
     'ui/charts.js',           // grafikonok
-    'ui/app.js',              // az alkalmazás
-    'ui/forecast.js'          // Előrejelzés nézet (az app.js után: annak űrlapját használja)
+    'ui/app.js'               // az alkalmazás
   ];
 
   // Az async=false biztosítja, hogy a dinamikusan beszúrt szkriptek
