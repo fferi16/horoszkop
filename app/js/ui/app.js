@@ -1693,7 +1693,7 @@
   var MODE_KEY = 'asztrolab.mode';
 
   function setMode(mode, persist) {
-    document.body.classList.remove('mode-horoszkop', 'mode-tarot');
+    document.body.classList.remove('mode-horoszkop', 'mode-tarot', 'mode-elorejelzes');
     if (mode) document.body.classList.add('mode-' + mode);
     [].forEach.call(document.querySelectorAll('.mode-tile'), function (t) {
       t.classList.toggle('active', t.dataset.mode === mode);
@@ -1701,6 +1701,7 @@
     if (persist) {
       try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
     }
+    document.dispatchEvent(new CustomEvent('hmode', { detail: { mode: mode } }));
   }
 
   function initMode() {
@@ -1712,7 +1713,8 @@
     });
     var saved = null;
     try { saved = localStorage.getItem(MODE_KEY); } catch (e) {}
-    if (saved === 'horoszkop' || saved === 'tarot') setMode(saved, false);
+    if (saved === 'horoszkop' || saved === 'tarot' || saved === 'elorejelzes') setMode(saved, false);
+    document.dispatchEvent(new CustomEvent('hmode', { detail: { mode: saved } }));
   }
 
   /* ------- kártyavető: tarot / Lenormand / cigánykártya ------- */
@@ -2281,4 +2283,6 @@
     });
   });
 
+  /* a külön nézetek (ui/forecast.js) számára: űrlap-olvasás, állapot, HTML-escape */
+  window.HAPP = { readForm: readForm, state: state, esc: esc, iconHtml: iconHtml };
 })();

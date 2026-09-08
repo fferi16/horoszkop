@@ -52,6 +52,11 @@
       <span class="mt-title">Kártyavetés</span>
       <span class="mt-sub">Tarot, Lenormand és cigánykártya kirakásokkal</span>
     </button>
+    <button type="button" class="mode-tile" data-mode="elorejelzes">
+      <span class="mt-icon"><img class="icon-img" data-icon-slug="mode-elorejelzes" alt="🔭" src="assets/sec/mode-elorejelzes-d.webp"></span>
+      <span class="mt-title">Előrejelzés</span>
+      <span class="mt-sub">Napi és heti égi kép a saját képletedre</span>
+    </button>
   </nav>
 
   <!-- ============ ŰRLAP ============ -->
@@ -149,6 +154,21 @@
   </section>
 
   <!-- ============ KÁRTYAVETÉS ============ -->
+  <!-- ============ ELŐREJELZÉS ============ -->
+  <section class="card forecast-box" id="forecastBox">
+    <h2>Előrejelzés — napi és heti égi kép</h2>
+    <p class="muted">A fenti születési adatokból számol. Válassz napot, és nézd meg a napot vagy az egész hetet.</p>
+    <div class="fc-controls">
+      <label class="field"><span>Nap</span><input type="date" id="fcDate"></label>
+      <label class="field"><span>Tartózkodási hely</span><input type="text" id="fcPlace" placeholder="alapból a születési hely" list="placeList"></label>
+      <div class="fc-buttons">
+        <button type="button" class="primary" id="fcDay">☽ Ez a nap</button>
+        <button type="button" class="ghost" id="fcWeek">📅 A hét</button>
+      </div>
+    </div>
+    <div id="fcOut"></div>
+  </section>
+
   <section class="card tarot-box" id="tarotBox">
     <h2><span class="icon">🃏</span>Kártyavetés — tarot, Lenormand, cigánykártya</h2>
     <div id="tarotRec"></div>

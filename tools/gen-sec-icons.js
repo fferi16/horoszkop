@@ -25,7 +25,8 @@ const ICONS = {
   releasing: 'a spiral path of twelve small stepping stones winding around a glowing lot symbol, chapters of life, unfolding scroll',
   fogyatkozasok: 'a solar eclipse: black moon disc covering the sun with a thin radiant corona ring, a small crescent below',
   felpontok: 'two small stars joined by a thin arc with a bright point exactly at the midpoint, geometric balance, a faint 90 degree dial',
-  asztrokarto: 'a stylized globe with graceful curved meridian lines and a glowing planetary line crossing it, old map feeling'
+  asztrokarto: 'a stylized globe with graceful curved meridian lines and a glowing planetary line crossing it, old map feeling',
+  'mode-elorejelzes': 'an antique brass telescope pointed at a crescent moon and a small star, a tiny seven-day calendar strip below, forecast emblem'
 };
 
 function workflow(prefix, prompt, seed) {
