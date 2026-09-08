@@ -1468,21 +1468,60 @@
 
   /* ---------------- tartalomjegyzék ---------------- */
 
-  function buildToc(p) {
-    var panel = $('tocPanel');
-    if (!panel) return;
-    panel.innerHTML = p.sections.map(function (s, i) {
-      return '<a href="#sec-' + i + '" data-toc="' + i + '">' +
-        '<span class="t-icon">' + iconHtml(s.icon) + '</span>' + esc(s.title) + '</a>';
-    }).join('');
+  /* A kategóriák sorrendje és neve a tartalom-rácsban. */
+  var CATS = [
+    ['osszegzes', 'Összegzés', 'A lényeg egy helyen'],
+    ['nyugati', 'Nyugati asztrológia', ''],
+    ['kelet', 'Keleti rendszerek', ''],
+    ['szam', 'Számok és mátrixok', ''],
+    ['ezoterikus', 'Egyéb rendszerek', ''],
+    ['nepi', 'Népi hagyomány', ''],
+    ['tudomany', 'Tudomány', ''],
+    ['all', 'Teljes profil', 'Minden szekció egyben']
+  ];
+
+  function catName(cat) {
+    for (var i = 0; i < CATS.length; i++) if (CATS[i][0] === cat) return CATS[i][1];
+    return cat;
   }
 
-  function toggleToc(open) {
-    var panel = $('tocPanel'), btn = $('tocBtn');
-    if (!panel || !btn) return;
-    var show = (open != null) ? open : panel.hidden;
-    panel.hidden = !show;
-    btn.setAttribute('aria-expanded', show ? 'true' : 'false');
+  /* Tartalom-rács: kategóriánként egy blokk, benne a szekciók. A blokk is és
+     a szekció is kattintható. Nem menü — mindig látszik a fejléc alatt. */
+  function buildToc(p) {
+    var grid = $('tocGrid');
+    if (!grid) return;
+    var byCat = {};
+    p.sections.forEach(function (s, i) {
+      (byCat[s.category] = byCat[s.category] || []).push({ i: i, s: s });
+    });
+    var order = CATS.map(function (c) { return c[0]; });
+    Object.keys(byCat).forEach(function (c) {
+      if (order.indexOf(c) < 0) order.splice(order.length - 1, 0, c);
+    });
+
+    grid.innerHTML = order.map(function (cat) {
+      var list = byCat[cat] || [];
+      if (!list.length && cat !== 'all') return '';
+      var meta = CATS.filter(function (c) { return c[0] === cat; })[0] || [cat, cat, ''];
+      var links = list.map(function (e) {
+        return '<li><a href="#sec-' + e.i + '" data-toc="' + e.i + '">' +
+          iconHtml(e.s.icon) + '<span>' + esc(e.s.title) + '</span></a></li>';
+      }).join('');
+      var n = cat === 'all' ? p.sections.length : list.length;
+      return '<div class="toc-block" data-cat="' + esc(cat) + '" role="button" tabindex="0">' +
+        '<h3>' + esc(meta[1]) + '<span class="n">' + n + ' szekció</span></h3>' +
+        (meta[2] ? '<p class="sub">' + esc(meta[2]) + '</p>' : '') +
+        (links ? '<ul>' + links + '</ul>' : '') +
+        '</div>';
+    }).join('');
+
+    // a morzsasáv csak akkor látszik, ha a rács már kigörgött a képből
+    if (window.IntersectionObserver && !grid._io) {
+      grid._io = new IntersectionObserver(function (en) {
+        $('crumb').hidden = en[0].isIntersecting;
+      }, { rootMargin: '-40px 0px 0px 0px' });
+      grid._io.observe(grid);
+    }
   }
 
   /* ---------------- szűrés ---------------- */
@@ -1492,9 +1531,11 @@
     [].forEach.call(document.querySelectorAll('#sections .card'), function (c) {
       c.style.display = (cat === 'all' || c.dataset.cat === cat) ? '' : 'none';
     });
-    [].forEach.call(document.querySelectorAll('#filters button'), function (b) {
+    [].forEach.call(document.querySelectorAll('#tocGrid .toc-block'), function (b) {
       b.classList.toggle('active', b.dataset.cat === cat);
     });
+    var cc = $('crumbCat');
+    if (cc) cc.textContent = catName(cat);
   }
 
   /* ---------------- mentés ---------------- */
@@ -2176,34 +2217,30 @@
       if (card) card.classList.toggle('collapsed');
     });
 
-    $('filters').addEventListener('click', function (e) {
-      if (e.target.dataset.cat) { applyFilter(e.target.dataset.cat); toggleToc(false); }
-    });
-
-    $('tocBtn').addEventListener('click', function (e) {
-      e.stopPropagation();
-      toggleToc();
-    });
-
-    $('tocPanel').addEventListener('click', function (e) {
+    $('tocGrid').addEventListener('click', function (e) {
       var link = e.target.closest ? e.target.closest('a[data-toc]') : null;
-      if (!link) return;
-      e.preventDefault();
-      var sec = $('sec-' + link.dataset.toc);
-      if (!sec) return;
-      // ha a szűrő épp eltakarja a célszekciót, visszaváltunk „Mind"-re
-      if (state.filter !== 'all' && sec.dataset.cat !== state.filter) applyFilter(sec.dataset.cat);
-      sec.classList.remove('collapsed');
-      toggleToc(false);
-      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (link) {
+        e.preventDefault();
+        var sec = $('sec-' + link.dataset.toc);
+        if (!sec) return;
+        if (state.filter !== 'all' && sec.dataset.cat !== state.filter) applyFilter(sec.dataset.cat);
+        sec.classList.remove('collapsed');
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      var block = e.target.closest ? e.target.closest('.toc-block') : null;
+      if (block) {
+        applyFilter(block.dataset.cat);
+        $('sections').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
-
-    document.addEventListener('click', function (e) {
-      var panel = $('tocPanel');
-      if (panel && !panel.hidden && !$('filters').contains(e.target)) toggleToc(false);
+    $('tocGrid').addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('toc-block')) {
+        e.preventDefault(); e.target.click();
+      }
     });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') toggleToc(false);
+    $('crumbUp').addEventListener('click', function () {
+      $('tocGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     $('savedList').addEventListener('click', function (e) {
