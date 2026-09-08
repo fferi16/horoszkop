@@ -177,6 +177,16 @@
 
   function renderTable(t) {
     if (!t) return '';
+    if (t.type === 'generic') {
+      return '<div class="tbl-scroll"><table><thead><tr>' +
+        t.head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' +
+        t.rows.map(function (r) {
+          return '<tr' + (r.hl ? ' class="hl"' : '') + '>' +
+            r.cells.map(function (c) { return '<td>' + esc(String(c)) + '</td>'; }).join('') + '</tr>';
+        }).join('') + '</tbody></table></div>' +
+        (t.note ? '<p><small>' + esc(t.note) + '</small></p>' : '');
+    }
     if (t.type === 'planets') {
       return '<div class="tbl-scroll"><table><thead><tr><th>Égitest</th><th>Jegy</th>' +
         '<th>Pozíció</th><th>Ház</th><th>Napi mozgás</th></tr></thead><tbody>' +

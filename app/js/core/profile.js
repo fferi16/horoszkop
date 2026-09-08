@@ -87,6 +87,7 @@
     buildStructure(out);
     buildMoonSection(out);
     buildLots(out);
+    buildReleasing(out);
     buildExtras(out);
     buildVedic(out);
     buildDosha(out);
@@ -110,6 +111,7 @@
     buildCurrent(out);
     buildAnnual(out);
     buildTransits(out);
+    buildEclipses(out);
     buildSynastry(out);
     buildSummary(out);
 
@@ -2484,6 +2486,8 @@
 
     // éves és havi profekció, az év ura (docs/27-profekcio.md)
     buildProfection(out, s);
+    // lunáris visszatérés — a mostani holdhónap képlete (docs/31)
+    buildLunarReturn(out, s);
 
     // Szaturnusz-visszatérés
     var natalSat = out.chart.planets.saturn.lon;
@@ -2577,7 +2581,7 @@
         : ' ' + Sn + ' képletedben ez a szektán kívüli rosszindulatú bolygó — a hagyomány ezt tartja a legpróbálóbb fajta évnek, ezért érdemes a támogató fényszögeket is figyelembe venni.';
     }
     return ' A ' + (key === 'sun' ? 'Nap' : key === 'moon' ? 'Hold' : 'Merkúr') +
-      ' semleges úr: az évet nem a természete, hanem a képletbeli helyzete és fényszögei színezik.';
+      ' semleges úr: az időszakot nem a természete, hanem a képletbeli helyzete és fényszögei színezik.';
   }
 
   /** Jótevő/rosszindulatú fényszögek egy natális pontra (Valens II.17 mintájára). */
@@ -2831,6 +2835,165 @@
       (hasAsc ? '' : ' Születési idő nélkül az Aszcendens és ura kimarad a számításból, így az eredmény tájékoztató.');
     item(s, 'Temperamentum', value, t);
     out.summary.temperament = main.name;
+  }
+
+  /* ================= zodiacal releasing (docs/31) ================= */
+
+  function buildReleasing(out) {
+    var TD = get(D(), 'timing.releasing', null), E = HCORE.lots, c = out.chart;
+    if (!TD || !E || !HCORE.releasing || !out.input.hasTime || !c.houses) return;
+    var isDay = out.sect ? out.sect === 'day' : E.isDayBirth(c.planets.sun.lon, c.houses.asc);
+    var lons = {};
+    CLASSICAL.forEach(function (k) { lons[k] = c.planets[k].lon; });
+    var L = E.compute(lons, c.houses.asc, isDay);
+    if (!L) return;
+    var now = new Date();
+    var spIdx = HCORE.toSign(L.spirit).index, foIdx = HCORE.toSign(L.fortune).index;
+    var spStart = spIdx === foIdx ? (spIdx + 1) % 12 : spIdx;   // Brennan: azonos jegynél a Szellem a következőből indul
+    var R = HCORE.releasing(spStart, foIdx, out.utc, now);
+    var RF = HCORE.releasing(foIdx, foIdx, out.utc, now);
+    if (!R || !R.current) return;
+
+    var s = section('releasing', 'Életszakaszok — zodiacal releasing', '⏩', 'nyugati');
+    var SN = HCORE.SIGN_NAMES, SK = HCORE.SIGN_KEYS;
+    var ascIdx = c.ascSign.index;
+    var ws = function (idx) { return ((idx - ascIdx + 12) % 12) + 1; };
+
+    /* egy periódus minősége: úr natális állapota, bolygók a jegyben, csúcs */
+    function judge(idx, level) {
+      var key = SK[idx], lk = TRAD_DOM[key], lord = c.planets[lk];
+      var dig = tradDignity(lk, lord.sign.key), lh = ws(lord.sign.index), ang = angularity(lh);
+      var t = 'A jegy ura a ' + lord.name + ', amely a képletedben ' + SIGN_IN[lord.sign.key] + ', egészjegyes ' + lh + '. házban áll, ' +
+        dig.name + ', ' + ang.name + '.' + sectQuality(lk, out.sect);
+      var occ = CLASSICAL.filter(function (k) { return c.planets[k].sign.index === idx; }).map(function (k) { return signArt(c.planets[k].name); });
+      t += occ.length
+        ? ' A jegyben a képletedben ' + occ.join(', ') + ' áll — Valens szerint ezek a bolygók adják a szakasz konkrét tartalmát.'
+        : ' A jegy a képletedben üres, ezért a szakaszt az ura és a jegy jellege viszi.';
+      t += ' A jegy az Aszcendensedtől számolva ' + houseArticle(ws(idx)) + ' ' + ws(idx) + '. ház: ' + PROF_HOUSE[ws(idx)] + ' ügyei.';
+      return t;
+    }
+    var fmtP = function (p) { return fmtTransitDate(p.start) + ' – ' + fmtTransitDate(p.end); };
+    var peakText = function (p) { return p.peak ? 'Csúcsidőszak — ' + TD.peak[p.peak] + '.' : 'A jegy ' + TD.noPeak + '.'; };
+
+    var cur = R.current, cur2 = R.current2;
+    item(s, 'Mostani fejezet (1. szint) — ' + SN[cur.sign], fmtP(cur) + ' · ' + cur.years + ' év',
+      'A Szellem Pontod ' + SIGN_IN[SK[spIdx]] + ' áll, a fejezetek innen indulnak. ' + peakText(cur) + ' ' + judge(cur.sign, 1));
+    if (cur2) {
+      item(s, 'Mostani bekezdés (2. szint) — ' + SN[cur2.sign], fmtP(cur2) + ' · ' + cur2.months + ' hónap',
+        (cur2.lb ? TD.lb + ' ' : '') + peakText(cur2) + ' ' + judge(cur2.sign, 2) +
+        (R.next2 ? ' A következő bekezdés ' + fmtTransitDate(R.next2.start) + '-tól ' + SN[R.next2.sign] + (R.next2.lb ? ' (kötés elengedése)' : '') + '.' : ''));
+    }
+    var turns = [];
+    if (R.nextLB) turns.push(TD.nextLB.replace('%D%', fmtTransitDate(R.nextLB.start)).replace('%S%', signArt(SN[R.nextLB.sign])));
+    if (R.nextPeak) turns.push(TD.nextPeak.replace('%D%', fmtTransitDate(R.nextPeak.period.start)).replace('%L%', R.nextPeak.level)
+      .replace('%S%', SN[R.nextPeak.period.sign]).replace('%P%', R.nextPeak.period.peak));
+    if (turns.length) item(s, 'Következő fordulópontok', '', turns.join(' '));
+    if (RF && RF.current) {
+      item(s, 'A test és a körülmények fejezete (Fortunából) — ' + SN[RF.current.sign], fmtP(RF.current) + ' · ' + RF.current.years + ' év',
+        TD.spiritNote + ' ' + judge(RF.current.sign, 1));
+    }
+    s.table = {
+      type: 'generic', head: ['Fejezet', 'Kezdet', 'Vég', 'Év', 'Ura', 'Csúcs'],
+      rows: R.L1.map(function (p) {
+        return { hl: p === cur, cells: [SN[p.sign], fmtTransitDate(p.start), fmtTransitDate(p.end), p.years,
+          c.planets[TRAD_DOM[SK[p.sign]]].name, p.peak ? p.peak + '. hely' : '–'] };
+      }),
+      note: 'A Szellem Pontjából indított 1. szintű fejezetek; a kiemelt sor a mostani. A csúcs a Fortuna jegyétől számolt sarokhely.'
+    };
+    s.notes.push(TD.intro);
+    s.notes.push(TD.disclaimer);
+    out.sections.push(s);
+  }
+
+  /* ================= fogyatkozások (docs/31) ================= */
+
+  function buildEclipses(out) {
+    var TD = get(D(), 'timing.eclipses', null), c = out.chart;
+    if (!TD || !HCORE.prenatalEclipses) return;
+    var s = section('fogyatkozasok', 'Fogyatkozások a képletedben', '🌘', 'nyugati');
+    var hasH = !!(out.input.hasTime && c.houses);
+    var HOUSES = get(D(), 'western.houses', []);
+    var hTitle = function (h) { return HOUSES[h - 1] ? HOUSES[h - 1].title.toLowerCase() : ''; };
+    var targets = [];
+    CLASSICAL.forEach(function (k) { targets.push({ name: c.planets[k].name, lon: c.planets[k].lon }); });
+    if (hasH) { targets.push({ name: 'Aszcendens', lon: c.houses.asc }); targets.push({ name: 'MC', lon: c.houses.mc }); }
+    function hitsOf(lon) {
+      var hs = [];
+      targets.forEach(function (t) {
+        var d = Math.abs(HCORE.angleDiff(t.lon, lon));
+        var asp = d <= 3 ? 'együttállás' : Math.abs(d - 180) <= 3 ? 'szembenállás' : Math.abs(d - 90) <= 3 ? 'kvadrát' : null;
+        if (asp) hs.push((t.name === 'MC' ? 'az MC' : signArt(t.name)) + ' (' + asp + ')');
+      });
+      return hs;
+    }
+    function describe(e) {
+      var sg = HCORE.toSign(e.lon);
+      var h = hasH ? HCORE.houseOf(e.lon, c.houses.cusps) : null;
+      return { sign: sg, house: h, hits: hitsOf(e.lon),
+        kind: TD.kinds[e.kind] || e.kind, typeHu: e.type === 'solar' ? 'napfogyatkozás' : 'holdfogyatkozás' };
+    }
+    var pre = HCORE.prenatalEclipses(out.utc);
+    [['solar', 'Prenatális napfogyatkozás', TD.prenatalSolar], ['lunar', 'Prenatális holdfogyatkozás', TD.prenatalLunar]].forEach(function (row) {
+      var e = pre[row[0]];
+      if (!e) return;
+      var d = describe(e);
+      var t = row[2].replace('%S%', d.sign.text).replace('%H%', d.house ? ', ' + houseArticle(d.house) + ' ' + d.house + '. házadban (' + hTitle(d.house) + ')' : '');
+      t += ' ' + (d.hits.length ? TD.hits.replace('%P%', d.hits.join(', ')) : TD.noHits);
+      item(s, row[1], d.kind + ' ' + d.typeHu + ', ' + e.date.toLocaleDateString('hu-HU') + ' · ' + d.sign.text, t);
+    });
+    if (pre.near) {
+      var dn = describe(pre.near);
+      item(s, 'Fogyatkozás közelében születtél', dn.kind + ' ' + dn.typeHu + ' · ' + dn.sign.text,
+        TD.bornNear.replace('%D%', pre.near.date.toLocaleDateString('hu-HU')).replace('%K%', dn.kind).replace('%T%', dn.typeHu));
+    }
+    // a következő 5 év
+    var now = new Date();
+    var list = HCORE.eclipsesBetween(now, new Date(now.getTime() + 5 * 365.25 * 86400000));
+    var shown = 0;
+    if (list.length && hasH) {
+      var h1 = HCORE.houseOf(list[0].lon, c.houses.cusps), h2 = ((h1 + 5) % 12) + 1;
+      s.notes.push(TD.houseAxis.replace('%A%', Math.min(h1, h2)).replace('%B%', Math.max(h1, h2)));
+    }
+    list.forEach(function (e) {
+      var d = describe(e);
+      if (!d.hits.length || shown >= 10) return;
+      shown++;
+      item(s, e.date.toLocaleDateString('hu-HU') + ' — ' + d.kind + ' ' + d.typeHu, d.sign.text + (d.house ? ' · ' + d.house + '. ház' : ''),
+        TD.upcoming.replace('%K%', d.kind.charAt(0).toUpperCase() + d.kind.slice(1)).replace('%T%', d.typeHu).replace('%S%', d.sign.text)
+          .replace('%H%', d.house ? houseArticle(d.house) + ' ' + d.house + '. házban (' + hTitle(d.house) + ')' : 'a ' + d.sign.name + ' jegyében')
+          .replace('%P%', d.hits.join(', ')).replace('%M%', e.type === 'solar' ? TD.solarMeaning : TD.lunarMeaning));
+    });
+    if (!shown) item(s, 'A következő öt év', '', TD.upcomingNone);
+    s.notes.unshift(TD.upcomingIntro);
+    s.notes.unshift(TD.intro);
+    out.sections.push(s);
+  }
+
+  /* ================= lunáris visszatérés (docs/31) ================= */
+
+  function buildLunarReturn(out, s) {
+    var TD = get(D(), 'timing.lunar', null), c = out.chart;
+    if (!TD || !HCORE.activeLunarReturn || !out.input.hasTime || !c.houses) return;
+    var now = new Date();
+    var lr = HCORE.activeLunarReturn(c.planets.moon.lon, now);
+    var lrChart = HCORE.chart({ date: lr.start, lat: out.place.lat, lon: out.place.lon,
+      system: out.input.houseSystem || 'placidus', withHouses: true });
+    if (!lrChart.ascSign) return;
+    var HOUSES = get(D(), 'western.houses', []);
+    var hTitle = function (h) { return HOUSES[h - 1] ? HOUSES[h - 1].title.toLowerCase() : ''; };
+    var sh = lrChart.planets.sun.house, mh = lrChart.planets.moon.house;
+    var t = 'Az aszcendens ' + SIGN_IN[lrChart.ascSign.key] + ': ' + get(TD, 'asc.' + lrChart.ascSign.key, '') + '. ';
+    t += (sh === mh ? TD.sameHouse.replace('%ST%', hTitle(sh))
+      : TD.body.replace('%SH%', houseArticle(sh) + ' ' + sh).replace('%ST%', hTitle(sh)).replace('%MH%', houseArticle(mh) + ' ' + mh).replace('%MT%', hTitle(mh)));
+    var angles = [lrChart.houses.asc, lrChart.houses.mc, lrChart.houses.asc + 180, lrChart.houses.mc + 180];
+    var on = [];
+    CLASSICAL.forEach(function (k) {
+      var np = c.planets[k];
+      angles.forEach(function (a) { if (Math.abs(HCORE.angleDiff(np.lon, a)) <= 3 && on.indexOf(signArt(np.name)) < 0) on.push(signArt(np.name)); });
+    });
+    if (on.length) t += ' ' + TD.angles.replace('%P%', on.join(', '));
+    t += ' ' + TD.intro + ' ' + TD.note;
+    item(s, 'A mostani holdhónapod', fmtTransitDate(lr.start) + ' – ' + fmtTransitDate(lr.end) + ' · ' + lrChart.ascSign.name + ' aszcendens', t);
   }
 
   /* ================= a következő 5 év tranzitjai ================= */
