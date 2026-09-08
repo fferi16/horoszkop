@@ -54,3 +54,48 @@ window.HDATA.asteroids = {
     Vesta: [[0,2.3616987,0.089179,7.13337,104.81786,148.49156,142.29716],[730,2.3609844,0.0892855,7.13416,104.81538,148.7785,340.27725],[1460,2.3605671,0.0903625,7.13156,104.78398,148.33527,178.98766],[2191,2.3613267,0.0902229,7.13114,104.77392,148.03302,17.88636],[2921,2.3618357,0.0895658,7.13075,104.77549,147.81641,216.43323],[3652,2.3613869,0.088919,7.12771,104.75258,148.16378,54.58425],[4382,2.3611398,0.0892974,7.12847,104.73973,148.37731,252.62038],[5113,2.3609404,0.0896896,7.12919,104.73511,147.90763,91.61678],[5843,2.3616842,0.0892017,7.12797,104.73177,147.75785,290.07723],[6574,2.3614513,0.0886929,7.12865,104.72068,147.7856,128.62285],[7304,2.3613678,0.088037,7.13077,104.70321,148.74204,325.77836],[8035,2.3616201,0.0884779,7.1303,104.69463,148.77139,164.24919],[8765,2.362082,0.0887925,7.13177,104.67273,148.45503,2.83053],[9496,2.3619555,0.08819,7.1326,104.67162,148.40377,201.41309],[10226,2.3612776,0.0877725,7.13246,104.66331,148.53038,39.50864],[10957,2.3614387,0.0887107,7.13825,104.57555,149.68268,236.78077],[11687,2.3617316,0.0891448,7.13819,104.57548,149.64272,75.09176],[12418,2.361671,0.0892968,7.13755,104.56495,149.33069,273.98037],[13148,2.361551,0.0887741,7.13823,104.5301,149.25316,112.31889],[13879,2.3613929,0.0885911,7.13846,104.52467,149.54085,310.51217],[14609,2.3616291,0.0897889,7.13595,104.45147,149.80278,148.47784],[15340,2.3613455,0.0903704,7.13738,104.43656,149.52111,347.39436],[16070,2.3608666,0.0903401,7.13751,104.43557,149.24432,185.99079],[16801,2.3610576,0.0894041,7.13471,104.3996,149.18944,24.58789],[17531,2.3614649,0.0895367,7.13494,104.38916,149.43925,222.59884],[18262,2.3619733,0.0902069,7.13388,104.38702,149.48851,61.08154],[18992,2.3611539,0.0902817,7.13244,104.36948,148.92425,260.00617],[19723,2.3607565,0.0900088,7.13296,104.36069,148.65552,98.8385],[20453,2.3615739,0.0887949,7.13029,104.34761,149.00529,296.6946],[21184,2.3617558,0.0889449,7.12973,104.33704,149.2268,135.01798],[21914,2.3615609,0.0894389,7.13087,104.32928,149.25284,333.28482],[22645,2.3611868,0.0892643,7.13189,104.32668,148.78905,172.28391],[23375,2.3613443,0.0886958,7.13116,104.31595,148.73568,10.57156],[24106,2.3630151,0.0879671,7.1348,104.2815,149.48542,208.28427],[24836,2.3618257,0.0884344,7.13535,104.28177,149.96897,46.01333],[25567,2.3612354,0.0888943,7.13573,104.27026,149.92671,244.57774],[26297,2.361285,0.088574,7.1374,104.24474,149.48808,83.26681],[27028,2.3619496,0.0881668,7.13705,104.24078,149.71432,281.51743],[27758,2.3630633,0.0882159,7.1356,104.19585,150.3732,119.10844],[28489,2.3612425,0.089504,7.14162,104.1376,150.72579,317.26393],[29219,2.361086,0.0898265,7.14149,104.13272,150.50483,155.74441],[29950,2.3614121,0.0892943,7.14051,104.09274,150.14393,354.66498],[30680,2.361855,0.089102,7.14092,104.08453,150.39415,192.68537],[31411,2.3616443,0.0892974,7.14076,104.08359,150.69107,30.9295],[32141,2.3606405,0.0905621,7.13892,104.02138,150.44327,229.45879],[32872,2.3610476,0.0905802,7.13904,104.01508,150.111,68.36732],[33602,2.362154,0.0898567,7.13615,104.00678,149.78404,267.00986],[34333,2.3615571,0.0895294,7.13494,103.9785,150.1394,105.20753],[35063,2.3609097,0.0897608,7.13596,103.97237,150.37033,303.24864],[35794,2.3606797,0.0903562,7.13493,103.96138,149.84583,142.31315],[36524,2.3615351,0.0900226,7.13393,103.95145,149.58678,340.88794],[37255,2.3619396,0.0892553,7.1349,103.94715,149.60521,179.46007],[37985,2.3614378,0.0886452,7.13328,103.93751,150.22106,17.00157],[38716,2.3614098,0.0890394,7.13337,103.92581,150.29856,215.43004],[39446,2.3613669,0.0892433,7.13521,103.91467,149.90384,54.07019],[40177,2.3619346,0.0887311,7.13443,103.91485,149.83728,252.68937],[40907,2.361547,0.0882671,7.13437,103.90115,149.98495,90.80601],[41638,2.3613481,0.0885263,7.14049,103.85118,151.21262,287.95925],[42368,2.3616948,0.0889121,7.14004,103.84636,151.14142,126.26723],[43099,2.362224,0.0891576,7.14009,103.82304,150.80895,325.1532],[43829,2.3619087,0.0885726,7.14181,103.80929,150.83578,163.3754],[44560,2.3612602,0.0882322,7.14171,103.80395,151.08748,1.60169],[45290,2.3612777,0.0897478,7.1434,103.7051,151.67084,199.22334],[46021,2.3615457,0.0901781,7.14405,103.70227,151.52864,37.95145],[46751,2.3612424,0.090218,7.14347,103.69688,151.23051,236.57351],[47482,2.3612651,0.0895106,7.14228,103.65646,151.14712,75.204],[48212,2.3613184,0.0895594,7.14295,103.64829,151.48476,273.09655],[48943,2.3614644,0.0904983,7.1397,103.61758,151.42444,111.67154],[49673,2.3612364,0.0906938,7.13963,103.59951,151.02182,310.45486],[50404,2.3607455,0.0905571,7.14016,103.59703,150.74598,149.31853],[51134,2.3611029,0.0893491,7.13645,103.56935,150.89472,347.407],[51865,2.3615338,0.0896092,7.13635,103.55798,151.11005,185.73059],[52595,2.361976,0.0902212,7.13733,103.5559,151.08044,24.0426],[53326,2.3612971,0.0899241,7.13634,103.55314,150.60887,223.09519],[54056,2.3609494,0.0895005,7.13649,103.54227,150.42168,61.54438],[54787,2.362143,0.0884844,7.13723,103.53024,151.14965,259.24329]]
   }
 };
+
+/* Vertex — jegy- és házolvasatok. Brian Clark (The Vertex and Anti-Vertex)
+   kerete: a Vertex jegye a kapcsolatokban nem tudatos, „a Deszcendens mögötti"
+   minőség; a háza az a terep, ahol a sorsszerűnek érzett találkozások történnek;
+   a tengely ±10°-án álló bolygó a kényszerítő kapcsolati minta; az Anti-Vertex
+   a tartalék-aszcendens. Saját megfogalmazás — docs/30. */
+window.HDATA.vertex = {
+  sign: {
+    kos: 'a versengés és a kihívás: olyan emberek hozzák felszínre a szenvedélyedet, akik szembeszállnak veled — a kapcsolatban a saját harciasságod lep meg',
+    bika: 'a ragaszkodás és a testi biztonság: a kapcsolatokban a birtoklás és az elengedni-nem-tudás dolgozik benned rejtve',
+    ikrek: 'a befejezetlenség és a keresés: az „ikerlélek" utáni kutatás, testvér- és barát-kapcsolatok nyitva maradt ügyei',
+    rak: 'a gondoskodás és a függőség: anya-gyerek jellegű minták bukkannak elő a felnőtt kapcsolatokban — védeni és védve lenni',
+    oroszlan: 'a láttatás és a büszkeség: a kapcsolat színpaddá válik, ahol az elismerés-éhséged és a nagylelkűséged egyszerre lepleződik le',
+    szuz: 'a szolgálat és a javítás: rejtett kényszer, hogy a másikat „megjavítsd", vagy hogy hasznos légy ahhoz, hogy szerethető lehess',
+    merleg: 'a kiegyenlítés és a tükrözés: mások által látod meg, amit önmagadról nem — a harmónia-igény mögötti önfeladás a tanulnivaló',
+    skorpio: 'az érzelmi intenzitás és a veszteségtől való félelem: a kapcsolatok mélyre visznek, a dráma és a kötődés ereje meglep',
+    nyilas: 'a jelentéskeresés és a szabadság: tanító- vagy idegen-jellegű találkozások tágítják ki az életedet, néha a biztonságod árán',
+    bak: 'a felelősség és a tekintély: apa- vagy mester-jellegű kapcsolatok hozzák elő a saját érettségedet — vagy a korlátaidat',
+    vizonto: 'a különállás és a közösség: barátságból lett sorsszerű kapcsolatok, a távolságtartás mögötti odatartozás-vágy',
+    halak: 'az önfeladás és a megváltás: megmentő–megmentett minták, a határaid elmosódása a másikban — az együttérzés mint kényszer'
+  },
+  house: {
+    4: 'az otthon, a család és a gyökerek: a sorsszerű találkozások a családon, a lakhelyen, a magánéleten keresztül érkeznek (egyenlítőközeli szélességen fordul ide)',
+    5: 'a szerelem, az alkotás és a gyerekek: a sorsfordító kapcsolatok szerelmi történetek, gyerekek vagy közös alkotás formájában jönnek',
+    6: 'a munka és a mindennapok: a sorsfordító emberek munkatársként, segítőként, betegség vagy szolgálat révén lépnek be az életedbe',
+    7: 'a társ és a szerződéses kapcsolat: maga a párkapcsolat és a házasság a sorsszerű terep — itt a legerősebb a Vertex hagyományos jelentése',
+    8: 'a válság, az intimitás és a közös erőforrások: a sorsfordító találkozások veszteségen, örökségen, mély összefonódáson keresztül alakítanak',
+    9: 'a távoli és az idegen: külföld, tanulás, hit — a sorsszerű emberek messziről vagy tanítóként érkeznek (egyenlítőközeli szélességen fordul ide)'
+  },
+  houseOther: 'a képletben szokatlan helyen áll (a Vertex mérsékelt szélességen az 5–8. házba esik) — az itt jelzett életterület a sorsszerű találkozások terepe'
+};
+
+/* Prenatális lunáció — Ptolemaiosz III.2, Dorotheus, Valens; a jegy, a ház, a
+   lunáció ura (jegyúr és határúr) és a natális állása. Saját megfogalmazás — docs/30. */
+window.HDATA.prenatal = {
+  newMoon: 'Újhold után születtél: a hagyomány szerint a születésed „magpillanata" egy kezdet — a képlet alaphangja az indítás, az előremozdulás, a még ki nem bontott lehetőség.',
+  fullMoon: 'Telihold után születtél: a hagyomány szerint a születésed „magpillanata" egy beteljesedés — a képlet alaphangja a tudatosodás, a kapcsolat, a korábbi ciklus lezárása és a látás.',
+  lord: 'A lunáció ura a hagyomány szerint annak a „háttérkezelője", milyen körülmények közé születtél, és milyen alapmotiváció fűt.',
+  boundGood: 'A fok határura (egyiptomi határok) a %P%: a hellenisztikus olvasat szerint ez lágy, támogató születési környezetet jelez.',
+  boundBad: 'A fok határura (egyiptomi határok) a %P%: a hellenisztikus olvasat szerint ez küzdelmesebb, keményebb születési körülményeket jelez.',
+  boundNeutral: 'A fok határura (egyiptomi határok) a %P%: semleges, a bolygó jellege szerint színezi a születési körülményeket.',
+  hylegOk: 'A lunáció foka „afetikus" (1., 7., 9., 10. vagy 11.) házban áll, ezért a régiek az életerő egyik lehetséges jelölőjeként (hyleg-jelölt) is számba vették volna.',
+  ptolemyNote: 'Teliholdnál Ptolemaiosz azt a fényt veszi, amely a születéskor a horizont felett állt — itt ez %L%.'
+};
+

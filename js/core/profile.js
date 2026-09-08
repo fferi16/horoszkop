@@ -2401,10 +2401,46 @@
     var s = section('fogantatas', 'Fogantatási horoszkóp', '🌱', 'ezoterikus');
     var pl = C.prenatalLunation(out.utc);
     if (pl) {
+      var PD = get(D(), 'prenatal', null), c = out.chart;
+      var hasH = !!(out.input.hasTime && c.houses);
+      var lumName = 'a Hold', lumKey = 'Moon';
+      if (pl.type === 'újhold') { lumKey = 'Sun'; lumName = 'a Nap'; }
+      else if (hasH) {
+        // Ptolemaiosz III.2: teliholdnál a születéskor a horizont felett álló fény
+        var sunAbove = c.planets.sun.house >= 7;
+        lumKey = sunAbove ? 'Sun' : 'Moon'; lumName = sunAbove ? 'a Nap' : 'a Hold';
+      }
+      var syz = HCORE.norm360(HCORE.eclipticLongitude(lumKey, pl.date));
+      var sz = HCORE.toSign(syz);
+      var szHouse = hasH ? HCORE.houseOf(syz, c.houses.cusps) : null;
+      var pt = PD ? (pl.type === 'újhold' ? PD.newMoon : PD.fullMoon) + ' ' : '';
+      pt += 'A lunáció foka ' + sz.text + (szHouse ? ', a képletedben ' + houseArticle(szHouse) + ' ' + szHouse + '. házban' : '') + '.';
+      if (pl.type === 'telihold' && PD && hasH) pt += ' ' + PD.ptolemyNote.replace('%L%', lumName);
+      // a lunáció ura (hagyományos jegyúr) és natális állása
+      var lk = TRAD_DOM[sz.key], lord = c.planets[lk];
+      if (lord) {
+        var dig = tradDignity(lk, lord.sign.key);
+        var lh = hasH ? lord.house : null;
+        pt += ' A lunáció ura ' + signArt(sz.name) + ' hagyományos uralkodója, a ' + lord.name + ', amely nálad ' + SIGN_IN[lord.sign.key] +
+          (lh ? ', ' + houseArticle(lh) + ' ' + lh + '. házban' : '') + ' áll, ' + dig.name + (lord.retrograde ? ', retrográd' : '') + '.' +
+          (PD ? ' ' + PD.lord : '') + (dig.name !== 'vendégségben' ? ' ' + dig.text : '');
+        var hits = profContacts(c, lord.lon, lk);
+        if (hits.length) pt += ' Az urat ' + hits.map(function (h) { return 'a ' + h.name + ' ' + h.aspect; }).join(', ') + ' érinti.';
+      }
+      // határúr (egyiptomi határok)
+      var terms = get(D(), 'degrees.terms.' + sz.key, []), tr = null;
+      for (var ti = 0; ti < terms.length; ti++) if (sz.degree >= terms[ti].from && sz.degree < terms[ti].to) tr = terms[ti].ruler;
+      if (tr && PD) {
+        var tmpl = (tr === 'Vénusz' || tr === 'Jupiter') ? PD.boundGood : (tr === 'Mars' || tr === 'Szaturnusz') ? PD.boundBad : PD.boundNeutral;
+        pt += ' ' + tmpl.replace('%P%', tr);
+      }
+      // bolygó a lunáció fokán
+      var conj = CLASSICAL.filter(function (k) { return c.planets[k] && Math.abs(HCORE.angleDiff(c.planets[k].lon, syz)) <= 3; })
+        .map(function (k) { return signArt(c.planets[k].name); });
+      if (conj.length) pt += ' A fokon a képletedben ' + conj.join(' és ') + ' áll (3°-on belül): ez a bolygó a születési körülmények legszemélyesebb jelölője.';
+      if (szHouse && [1, 7, 9, 10, 11].indexOf(szHouse) >= 0 && PD) pt += ' ' + PD.hylegOk;
       item(s, 'Prenatális lunáció', 'A születésed előtti utolsó ' + pl.type + ': ' +
-        pl.date.toLocaleDateString('hu-HU') + ' (' + pl.daysBefore + ' nappal korábban)',
-        'A hellenisztikus hagyomány a születés előtti utolsó újholdat vagy teliholdat ' +
-        'érzékeny pontként kezeli a képletben.');
+        pl.date.toLocaleDateString('hu-HU') + ' (' + pl.daysBefore + ' nappal korábban) · ' + sz.text, pt);
     }
     var ce = C.conceptionEstimate(out.utc);
     var ceSun = HCORE.eclipticLongitude('Sun', ce);
@@ -3366,14 +3402,33 @@
       var vl = X.vertex(c.houses.ramc, out.place.lat, eps);
       var reliable = X.vertexReliable(out.place.lat, eps);
       vtx = { lon: vl, sign: HCORE.toSign(vl), anti: HCORE.norm360(vl + 180), reliable: reliable };
-      item(s, 'Vertex', HCORE.toSign(vl).text +
-        (reliable ? '' : ' — a trópusokon megbízhatatlan'),
-        'A „harmadik tengely": az elsőrendű vertikális és az ekliptika metszéspontja ' +
-        'nyugaton. A modern hagyomány sorsszerű találkozásokhoz köti. Johndro dolgozta ' +
-        'ki, Jayne finomította — az ő javaslatára lett a mai Vertex a szemközti pont.' +
-        (reliable ? '' : ' FIGYELEM: a szülőhely a trópusokon van (|szélesség| < 23,44°), ' +
-          'ahol a Vertex geometriailag megbízhatatlan — más programok is gyakran az ' +
-          'Anti-Vertexet adják itt.'));
+      var VD = get(D(), 'vertex', null);
+      var vSign = HCORE.toSign(vl), aSign = HCORE.toSign(vtx.anti);
+      var vHouse = HCORE.houseOf(vl, c.houses.cusps);
+      var dscSign = HCORE.toSign(c.houses.asc + 180);
+      var vt = 'A „harmadik tengely": az elsőrendű vertikális és az ekliptika metszéspontja nyugaton (Johndro, Jayne). ' +
+        'A modern hagyomány a sorsszerűnek érzett találkozások pontjának tartja — Clark szerint azt mutatja, ami a kapcsolatokban nem tudatos, és mások hozzák felszínre.';
+      if (VD) {
+        vt += ' A Vertexed ' + SIGN_IN[vSign.key] + ' áll: nálad ' + get(VD, 'sign.' + vSign.key, '') + '.';
+        vt += dscSign.index === vSign.index
+          ? ' A Deszcendensed is ' + SIGN_IN[dscSign.key] + ' van, így a látható és a rejtett kapcsolati minta egybeesik és felerősödik.'
+          : ' A Deszcendensed ' + SIGN_IN[dscSign.key] + ' áll — ez a tudatosan keresett társ-minőség; a Vertex ' + signArt(vSign.name) + ' jegyében a mögötte lévő, kevésbé látott igény.';
+        vt += ' Háza ' + houseArticle(vHouse) + ' ' + vHouse + '.: ' + (get(VD, 'house.' + vHouse, '') || VD.houseOther) + '.';
+        var near = [];
+        CLASSICAL.concat(['uranus', 'neptune', 'pluto']).forEach(function (k) {
+          var p = c.planets[k];
+          if (!p) return;
+          var dv = Math.abs(HCORE.angleDiff(p.lon, vl)), da = Math.abs(HCORE.angleDiff(p.lon, vtx.anti));
+          if (dv <= 10) near.push(signArt(p.name) + ' a Vertexen (' + dv.toFixed(1).replace('.', ',') + '°)');
+          else if (da <= 10) near.push(signArt(p.name) + ' az Anti-Vertexen (' + da.toFixed(1).replace('.', ',') + '°)');
+        });
+        vt += near.length
+          ? ' A tengelyen ' + near.join(', ') + ' áll — Clark szerint az ilyen bolygó a kényszerítő, nehezen elengedhető kapcsolati mintát adja.'
+          : ' A tengelyen nem áll bolygó 10°-on belül, ezért a Vertex nálad inkább tranzitokra és a partner bolygóira érzékeny pont, nem állandó kapcsolati minta.';
+        vt += ' Az Anti-Vertex ' + SIGN_IN[aSign.key] + ' (' + aSign.text + '): a „tartalék-aszcendens", az a nem tudatos erőforrás, amelyre kapcsolati válságban támaszkodhatsz.';
+      }
+      if (!reliable) vt += ' FIGYELEM: a szülőhely a trópusokon van (|szélesség| < 23,44°), ahol a Vertex geometriailag megbízhatatlan — más programok is gyakran az Anti-Vertexet adják itt.';
+      item(s, 'Vertex', vSign.text + ' · ' + vHouse + '. ház' + (reliable ? '' : ' — a trópusokon megbízhatatlan'), vt);
     }
 
     /* --- aszteroidák --- */
