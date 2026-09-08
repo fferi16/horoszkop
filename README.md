@@ -263,6 +263,7 @@ A motor több független referenciaponttal van hitelesítve:
 | 30 | [Vertex és prenatális lunáció](docs/30-vertex-es-prenatalis-lunacio.md) | Clark Vertex-kerete (jegy vs. Deszcendens, ház, bolygó a tengelyen); Ptolemaiosz III.2 lunáció-szabály, a lunáció ura és határura |
 | 31 | [Zodiacal releasing, fogyatkozások, lunáris visszatérés](docs/31-releasing-fogyatkozas-lunar.md) | Valens IV.4–10 / Brennan (360 napos év, kötés elengedése, csúcsok); Brady fogyatkozás-szabályai; Townley havi képlete |
 | 32 | [Azték, Chiron, szoláris ív, félpontok, asztrokartográfia](docs/32-aztek-chiron-szolarisiv-felpontok-asztrokartografia.md) | tonalpohualli (Caso 584283, Éjszaka Urai); Chiron JPL-elemekkel + Reinhart/Clow keret; Tyl szoláris ív; Ebertin félpontok; Lewis-vonalak városlistával |
+| 33 | [Napi és heti előrejelzés](docs/33-napi-heti-elorejelzes.md) | gyors tranzitok (Hand), üresjáratú Hold (Lilly vs. modern), bolygóórák (Picatrix/Agrippa), lunációk (Rudhyar), pontozás öt területre — külön modul terve |
 
 Minden fejezet magyar nyelvű, táblázatos, forrásmegjelöléssel, és következetesen
 elválasztja a hiteles hagyományt a modern konstrukcióktól, illetve a tudományt az
