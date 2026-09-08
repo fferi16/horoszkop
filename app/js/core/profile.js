@@ -151,8 +151,7 @@
     if (sd) {
       item(s, 'Elem és minőség', sd.element + ' · ' + sd.quality + ' · ' + sd.polarity, '');
       item(s, 'Uralkodó bolygó', sd.ruler || '', '');
-      if (sd.temperament) item(s, 'Temperamentum', sd.temperament,
-        'A klasszikus nedvtan szerinti alkat, ami a hagyományban az elemhez kapcsolódik.');
+      buildTemperament(out, s);
       if (sd.positive) item(s, 'Erősségek', sd.positive.join(', '), '');
       if (sd.negative) item(s, 'Árnyoldalak', sd.negative.join(', '), '');
       if (sd.love) item(s, 'Párkapcsolatban', '', sd.love);
@@ -165,15 +164,14 @@
     }
 
     item(s, 'Holdjegy', moon.sign.name + ' ' + moon.sign.symbol + ' (' + moon.sign.text + ')',
-      'Az érzelmi működésed és a belső biztonságigényed jegye — a részletes ' +
-      'értelmezése a bolygók közötti Hold-kártyán olvasható.');
+      (get(D(), 'western.planetInSign.moon.' + moon.sign.key, '') || 'Az érzelmi működésed és a belső biztonságigényed jegye.') +
+      (moon.house ? ' A Holdad ' + houseArticle(moon.house) + ' ' + moon.house + '. házban áll — a részletes olvasata a bolygók közötti Hold-kártyán.' : ''));
 
     if (out.input.hasTime && c.ascSign) {
       out.summary.ascSign = c.ascSign.name;
       item(s, 'Aszcendens', c.ascSign.name + ' ' + c.ascSign.symbol + ' (' + c.ascSign.text + ')',
         get(D(), 'western.ascendantText.' + c.ascSign.key, ''));
-      item(s, 'MC (X. ház csúcsa)', c.mcSign.name + ' (' + c.mcSign.text + ')',
-        'A hivatás, a társadalmi szerep és a nyilvános arcod pontja.');
+      item(s, 'MC (X. ház csúcsa)', c.mcSign.name + ' (' + c.mcSign.text + ')', mcText(out));
       s.notes.push('A „nagy hármas": ' + sun.sign.name + ' Nap · ' + moon.sign.name +
         ' Hold · ' + c.ascSign.name + ' aszcendens.');
     } else {
@@ -2672,6 +2670,99 @@
           ? 'Valens IV.11 szerint ha rosszindulatú uralja az évet, de a fények jótevőhöz érnek, az év „némi kétség, aggodalom és bosszúság után erőteljes és kiemelkedő lesz" — a te képletedben pontosan ez a felállás.'
           : 'Valens szerint a három pont együtt ítéli meg az évet: az Aszcendens-profekció adja a fő témát, a Nap és a Hold profekciója a rangot, illetve a testi közérzetet.'));
     }
+  }
+
+  /* ================= MC jegyben, az MC ura, bolygó az MC-n ================= */
+
+  function mcText(out) {
+    var c = out.chart;
+    var t = get(D(), 'westernExt.mcInSign.' + c.mcSign.key, '') ||
+      'A hivatás, a társadalmi szerep és a nyilvános arcod pontja.';
+    // az MC ura és a háza: min keresztül éred el a nyilvános szerepet
+    var sd = signData(c.mcSign.key);
+    var rulerName = sd ? sd.ruler : null, ruler = null;
+    for (var k in c.planets) if (c.planets[k] && c.planets[k].name === rulerName) ruler = c.planets[k];
+    if (ruler && ruler.house) {
+      var hm = get(D(), 'western.houses', [])[ruler.house - 1];
+      t += ' Az MC ura, a ' + ruler.name + ', ' + houseArticle(ruler.house) + ' ' + ruler.house + '. házadban' +
+        (hm ? ' (' + hm.title.toLowerCase() + ')' : '') + ' áll: a hivatásod ' +
+        (hm && hm.keywords ? hm.keywords.slice(0, 3).join(', ') : 'ennek a háznak az ügyei') +
+        ' felől, ezeken az ügyeken keresztül épül.';
+    }
+    // bolygó az MC-n (±5°)
+    var on = [];
+    for (var k2 in c.planets) {
+      var p = c.planets[k2];
+      if (p && p.lon != null && CLASSICAL.concat(['uranus', 'neptune', 'pluto']).indexOf(k2) >= 0 &&
+          Math.abs(HCORE.angleDiff(p.lon, c.houses.mc)) <= 5) on.push(signArt(p.name));
+    }
+    if (on.length) t += ' Az MC-n ' + on.join(' és ') + ' áll (5°-on belül): ez a bolygó látszik rajtad a legjobban a nyilvánosság előtt, és a pályádat is a természete szerint formálja.';
+    return t;
+  }
+
+  /* ================= nedvtani alkat (temperamentum) =================
+     Lilly (Christian Astrology, 1647) és Greenbaum (Temperament: Astrology's
+     Forgotten Key, 2005) pontozása — docs/29. Nem a napjegy eleme! */
+
+  var Q_ELEMENT = { 'Tűz': ['meleg', 'száraz'], 'Föld': ['hideg', 'száraz'],
+    'Levegő': ['meleg', 'nedves'], 'Víz': ['hideg', 'nedves'] };
+  var Q_PLANET = { sun: ['meleg', 'száraz'], moon: ['hideg', 'nedves'], mercury: ['hideg', 'száraz'],
+    venus: ['meleg', 'nedves'], mars: ['meleg', 'száraz'], jupiter: ['meleg', 'nedves'], saturn: ['hideg', 'száraz'] };
+  var Q_SEASON = [['meleg', 'nedves'], ['meleg', 'száraz'], ['hideg', 'száraz'], ['hideg', 'nedves']]; // tavasz, nyár, ősz, tél
+  var SEASON_HU = ['tavaszi', 'nyári', 'őszi', 'téli'];
+  var Q_PHASE = [['meleg', 'nedves'], ['meleg', 'száraz'], ['hideg', 'száraz'], ['hideg', 'nedves']]; // újhold→I. negyed, →telihold, →III. negyed, →újhold
+  var PHASE_HU = ['újhold és első negyed között', 'első negyed és telihold között', 'telihold és utolsó negyed között', 'utolsó negyed és újhold között'];
+
+  function buildTemperament(out, s) {
+    var c = out.chart, TD = get(D(), 'westernExt.temperament', null);
+    if (!TD) return;
+    var score = { meleg: 0, hideg: 0, száraz: 0, nedves: 0 };
+    var votes = [];
+    function vote(label, q, w) {
+      if (!q) return;
+      score[q[0]] += w; score[q[1]] += w;
+      votes.push(label + ' — ' + q[0] + ', ' + q[1] + ' (' + w + ')');
+    }
+    var elemOf = function (signKey) { var sd = signData(signKey); return sd ? Q_ELEMENT[sd.element] : null; };
+    var hasAsc = !!(out.input.hasTime && c.ascSign);
+
+    // évszak a Nap jegyéből (déli féltekén fordítva)
+    var season = Math.floor(c.planets.sun.sign.index / 3);
+    if (out.place && out.place.lat < 0) season = (season + 2) % 4;
+    vote('A születésed évszaka (' + SEASON_HU[season] + ')', Q_SEASON[season], 2);
+    if (hasAsc) {
+      vote('Az Aszcendens jegye (' + c.ascSign.name + ')', elemOf(c.ascSign.key), 2);
+      var ar = TRAD_DOM[c.ascSign.key];
+      if (ar && c.planets[ar]) vote('Az Aszcendens ura (' + c.planets[ar].name + ')', Q_PLANET[ar], 1);
+    }
+    vote('A Hold jegye (' + c.planets.moon.sign.name + ')', elemOf(c.planets.moon.sign.key), 2);
+    var mp = c.moonPhase;
+    if (mp) {
+      var qi = Math.floor(HCORE.norm360(mp.angle) / 90);
+      vote('A születési holdfázis (' + PHASE_HU[qi] + ')', Q_PHASE[qi], 1);
+    }
+    var md = TRAD_DOM[c.planets.moon.sign.key];
+    if (md && c.planets[md]) vote('A Hold diszpozitorának jegye (' + c.planets[md].name + ' ' + SIGN_IN[c.planets[md].sign.key] + ')', elemOf(c.planets[md].sign.key), 1);
+
+    var hot = score.meleg >= score.hideg, dry = score.száraz >= score.nedves;
+    var key = hot ? (dry ? 'kolerikus' : 'szangvinikus') : (dry ? 'melankolikus' : 'flegmatikus');
+    var main = TD[key];
+    // második összetevő: a szorosabb tengely másik oldala
+    var dH = Math.abs(score.meleg - score.hideg), dM = Math.abs(score.száraz - score.nedves);
+    var second = null;
+    if (dH <= 1 || dM <= 1) {
+      var k2 = dH <= dM ? ((!hot) ? (dry ? 'kolerikus' : 'szangvinikus') : (dry ? 'melankolikus' : 'flegmatikus'))
+                        : (hot ? (!dry ? 'kolerikus' : 'szangvinikus') : (!dry ? 'melankolikus' : 'flegmatikus'));
+      second = TD[k2];
+    }
+    var value = main.name + (second ? '–' + second.name.toLowerCase() : '') +
+      ' (meleg ' + score.meleg + ' · hideg ' + score.hideg + ' · száraz ' + score.száraz + ' · nedves ' + score.nedves + ')';
+    var t = 'A nedvtani alkatot nem a napjegy eleme adja, hanem a képlet több tényezőjének szavazata (Lilly 1647, Greenbaum 2005): ' +
+      votes.join('; ') + '. Nálad a ' + main.q + ' minőség vezet, ez a ' + main.name.toLowerCase() + ' alkat: ' + main.text +
+      (second ? ' A másik tengely szoros, ezért ' + second.name.toLowerCase() + ' színezet is jelen van: ' + second.text : '') +
+      (hasAsc ? '' : ' Születési idő nélkül az Aszcendens és ura kimarad a számításból, így az eredmény tájékoztató.');
+    item(s, 'Temperamentum', value, t);
+    out.summary.temperament = main.name;
   }
 
   /* ================= a következő 5 év tranzitjai ================= */
